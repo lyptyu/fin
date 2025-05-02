@@ -23,6 +23,7 @@ declare module 'vue-router/auto-routes' {
     '/base-info/': RouteRecordInfo<'/base-info/', '/base-info', Record<never, never>, Record<never, never>>,
     'charts': RouteRecordInfo<'charts', '/charts', Record<never, never>, Record<never, never>>,
     'counter': RouteRecordInfo<'counter', '/counter', Record<never, never>, Record<never, never>>,
+    '/examine/': RouteRecordInfo<'/examine/', '/examine', Record<never, never>, Record<never, never>>,
     'forgot-password': RouteRecordInfo<'forgot-password', '/forgot-password', Record<never, never>, Record<never, never>>,
     '/id-card-upload/': RouteRecordInfo<'/id-card-upload/', '/id-card-upload', Record<never, never>, Record<never, never>>,
     'KeepAlive': RouteRecordInfo<'KeepAlive', '/keepalive', Record<never, never>, Record<never, never>>,

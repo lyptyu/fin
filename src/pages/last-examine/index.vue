@@ -68,30 +68,34 @@ const workData = ref(savedWorkData || {
   // 社保信息
   hasSocialSecurity: false, // 是否有社保
   socialSecurity: {
+    paymentSubject: '', // 缴费主体：个人/单位
+    area: '', // 社保地区
     totalMonths: '', // 连续缴社保合计月数
     currentUnitMonths: '', // 当前单位月数
     medicalBase: '', // 近半年平均医疗基数
     pensionBase: '', // 近半年平均养老基数
-    unitName: '', // 社保单位全称
-    unitRemark: '', // 社保单位补充
+    unitName: '', // 社保单位全称（仅单位缴费时需填写）
+    unitRemark: '', // 社保补充说明
   },
   // 公积金信息
   hasProvidentFund: false, // 是否有公积金
   providentFund: {
+    area: '', // 公积金地区
     totalMonths: '', // 连续缴公积金合计月数
     currentUnitMonths: '', // 当前单位月数
     averageBase: '', // 近半年平均公积金基数
     sameAsSocialSecurity: true, // 是否同社保单位
-    unitRemark: '', // 公积金单位补充
+    unitRemark: '', // 公积金补充说明
   },
   // 个税信息
   hasIncomeTax: false, // 是否有个税
   incomeTax: {
+    area: '', // 个税地区
     totalMonths: '', // 连续缴个税合计月数
     currentUnitMonths: '', // 当前单位月数
     averageSalary: '', // 近半年平均个税税前工资
     sameAsSocialSecurity: true, // 是否同社保单位
-    unitRemark: '', // 个税单位补充
+    unitRemark: '', // 个税补充说明
   },
   // 企业信息
   hasEnterprise: false, // 是否有企业
@@ -144,6 +148,43 @@ watch(() => workData.value.canInspect, (newValue) => {
   }
 })
 
+// 地区选择器的显示控制
+const showAreaPicker = ref(false)
+const showProvidentFundAreaPicker = ref(false)
+const showIncomeTaxAreaPicker = ref(false)
+
+// 处理地区选择
+function onAreaConfirm(type: 'socialSecurity' | 'providentFund' | 'incomeTax', { selectedOptions }) {
+  const area = selectedOptions[0]?.label || ''
+  if (type === 'socialSecurity') {
+    workData.value.socialSecurity.area = area
+    showAreaPicker.value = false
+  }
+  else if (type === 'providentFund') {
+    workData.value.providentFund.area = area
+    showProvidentFundAreaPicker.value = false
+  }
+  else if (type === 'incomeTax') {
+    workData.value.incomeTax.area = area
+    showIncomeTaxAreaPicker.value = false
+  }
+}
+
+// 监听社保缴费主体变化
+watch(() => workData.value.socialSecurity.paymentSubject, (newValue) => {
+  if (newValue === 'personal') {
+    workData.value.socialSecurity.unitName = ''
+  }
+})
+
+// 监听社保状态变化
+watch(() => workData.value.hasSocialSecurity, (newValue) => {
+  if (!newValue) {
+    workData.value.hasProvidentFund = false
+    workData.value.hasIncomeTax = false
+  }
+})
+
 // 加分选项数据
 const bonusData = ref(savedBonusData || {
   // 学历情况
@@ -188,6 +229,20 @@ const educationLevels = [
 
 const mockUnsettledRecords = [
   { time: '2023-01-01', institution: '机构A', amount: '30万', repaidAmount: '6万' },
+]
+
+// 社保公积金个税地区选项
+const areaOptions = [
+  { value: 'guangzhou', label: '广州' },
+  { value: 'shenzhen', label: '深圳' },
+  { value: 'foshan', label: '佛山' },
+  { value: 'dongguan', label: '东莞' },
+]
+
+// 缴费主体选项
+const paymentSubjectOptions = [
+  { value: 'personal', label: '个人' },
+  { value: 'company', label: '单位' },
 ]
 
 const bankList = [
@@ -584,6 +639,35 @@ function onSubmit() {
               </van-radio-group>
             </div>
             <div v-if="workData.hasSocialSecurity" class="form-item">
+              <div class="form-label">
+                <span style="color:red">*</span>缴费主体
+              </div>
+              <van-radio-group v-model="workData.socialSecurity.paymentSubject" direction="horizontal">
+                <van-radio v-for="option in paymentSubjectOptions" :key="option.value" :name="option.value">
+                  {{ option.label }}
+                </van-radio>
+              </van-radio-group>
+
+              <div class="form-label">
+                <span style="color:red">*</span>社保地区
+              </div>
+              <van-field
+                v-model="workData.socialSecurity.area"
+                readonly
+                clickable
+                name="社保地区"
+                placeholder="请选择社保地区"
+                :rules="[{ required: true, message: '请选择社保地区' }]"
+                @click="showAreaPicker = true"
+              />
+              <van-popup v-model:show="showAreaPicker" position="bottom">
+                <van-picker
+                  :columns="areaOptions"
+                  @confirm="onAreaConfirm('socialSecurity', $event)"
+                  @cancel="showAreaPicker = false"
+                />
+              </van-popup>
+
               <van-field
                 v-model="workData.socialSecurity.totalMonths"
                 label="连续缴社保合计"
@@ -629,20 +713,21 @@ function onSubmit() {
                 </template>
               </van-field>
               <van-field
+                v-if="workData.socialSecurity.paymentSubject === 'company'"
                 v-model="workData.socialSecurity.unitName"
                 label="社保单位全称"
                 placeholder="请输入单位名称"
               />
               <van-field
                 v-model="workData.socialSecurity.unitRemark"
-                label="社保单位补充"
-                placeholder="是否敏感行业(律师|公检法|租车等)或断缴等情况"
+                :label="workData.socialSecurity.paymentSubject === 'company' ? '社保补充（敏感行业等情况）' : '社保补充（断缴补缴等情况）'"
+                :placeholder="workData.socialSecurity.paymentSubject === 'company' ? '是否敏感行业(律师|公检法|租车等)' : '断缴补缴等情况'"
               />
             </div>
           </div>
 
           <!-- 公积金情况 -->
-          <div class="sub-section">
+          <div class="sub-section" v-if="workData.hasSocialSecurity">
             <div class="form-item">
               <div class="form-label">
                 <span style="color:red">*</span>是否有公积金
@@ -657,6 +742,26 @@ function onSubmit() {
               </van-radio-group>
             </div>
             <div v-if="workData.hasProvidentFund" class="form-item">
+              <div class="form-label">
+                <span style="color:red">*</span>公积金地区
+              </div>
+              <van-field
+                v-model="workData.providentFund.area"
+                readonly
+                clickable
+                name="公积金地区"
+                placeholder="请选择公积金地区"
+                :rules="[{ required: true, message: '请选择公积金地区' }]"
+                @click="showProvidentFundAreaPicker = true"
+              />
+              <van-popup v-model:show="showProvidentFundAreaPicker" position="bottom">
+                <van-picker
+                  :columns="areaOptions"
+                  @confirm="onAreaConfirm('providentFund', $event)"
+                  @cancel="showProvidentFundAreaPicker = false"
+                />
+              </van-popup>
+
               <van-field
                 v-model="workData.providentFund.totalMonths"
                 label="连续缴公积金合计"
@@ -690,7 +795,7 @@ function onSubmit() {
                   <span>元</span>
                 </template>
               </van-field>
-              <div class="form-item">
+              <div v-if="workData.socialSecurity.paymentSubject === 'company'" class="form-item">
                 <div class="form-label">
                   公积金单位名称
                 </div>
@@ -705,14 +810,14 @@ function onSubmit() {
               </div>
               <van-field
                 v-model="workData.providentFund.unitRemark"
-                label="公积金单位补充"
+                label="公积金补充"
                 placeholder="是否断缴等情况"
               />
             </div>
           </div>
 
           <!-- 个税情况 -->
-          <div class="sub-section">
+          <div class="sub-section" v-if="workData.hasSocialSecurity">
             <div class="form-item">
               <div class="form-label">
                 <span style="color:red">*</span>是否有个税
@@ -727,6 +832,26 @@ function onSubmit() {
               </van-radio-group>
             </div>
             <div v-if="workData.hasIncomeTax" class="form-item">
+              <div class="form-label">
+                <span style="color:red">*</span>个税地区
+              </div>
+              <van-field
+                v-model="workData.incomeTax.area"
+                readonly
+                clickable
+                name="个税地区"
+                placeholder="请选择个税地区"
+                :rules="[{ required: true, message: '请选择个税地区' }]"
+                @click="showIncomeTaxAreaPicker = true"
+              />
+              <van-popup v-model:show="showIncomeTaxAreaPicker" position="bottom">
+                <van-picker
+                  :columns="areaOptions"
+                  @confirm="onAreaConfirm('incomeTax', $event)"
+                  @cancel="showIncomeTaxAreaPicker = false"
+                />
+              </van-popup>
+
               <van-field
                 v-model="workData.incomeTax.totalMonths"
                 label="连续缴个税合计"
@@ -760,7 +885,7 @@ function onSubmit() {
                   <span>元</span>
                 </template>
               </van-field>
-              <div class="form-item">
+              <div v-if="workData.socialSecurity.paymentSubject === 'company'" class="form-item">
                 <div class="form-label">
                   个税单位名称
                 </div>
@@ -775,7 +900,7 @@ function onSubmit() {
               </div>
               <van-field
                 v-model="workData.incomeTax.unitRemark"
-                label="个税单位补充"
+                label="个税补充"
                 placeholder="是否断缴等情况"
               />
             </div>
