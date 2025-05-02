@@ -1,0 +1,32 @@
+// 征信报告上传相关接口
+
+// 上传征信报告
+export function uploadCreditReport(data: FormData) {
+  return Promise.resolve({ code: 0, message: '上传成功' })
+}
+
+// 获取征信报告状态
+export function getCreditReportStatus(mockType = 3) {
+  const mockData = {
+    1: {
+      status: 'strong-reject',
+      message: '很抱歉，您暂时不符合贷款条件',
+      amount: 0,
+    },
+    2: {
+      status: 'weak-reject',
+      message: '建议您3个月后再次尝试',
+      amount: 0,
+    },
+    3: {
+      status: 'success',
+      message: '恭喜您，审核通过！',
+      amount: 65000,
+    },
+  }
+
+  return Promise.resolve({
+    code: 0,
+    data: mockData[mockType] || mockData[3],
+  })
+}
