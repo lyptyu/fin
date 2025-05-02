@@ -980,6 +980,238 @@
               </template>
             </template>
           </div>
+
+          <!-- 03车产情况 -->
+          <div class="section">
+            <div class="section-title">03车产情况</div>
+            <div class="form-item">
+              <div class="radio-title">是否有车产</div>
+              <van-radio-group v-model="module3CarData.hasCar" direction="horizontal" class="radio-group">
+                <van-radio name="否">否</van-radio>
+                <van-radio name="是">是</van-radio>
+              </van-radio-group>
+            </div>
+            <template v-if="module3CarData.hasCar === '是'">
+              <div class="form-item">
+                <div class="radio-title">车辆类型</div>
+                <van-radio-group v-model="module3CarData.carType" direction="horizontal" class="radio-group">
+                  <van-radio name="一手车">一手车</van-radio>
+                  <van-radio name="二手车">二手车</van-radio>
+                </van-radio-group>
+              </div>
+              <!-- 一手车扩展 -->
+              <template v-if="module3CarData.carType === '一手车'">
+                <div class="form-item">
+                  <van-field
+                    v-model="module3CarData.carPlateArea"
+                    label="车牌地区"
+                    is-link
+                    readonly
+                    placeholder="请选择车牌地区"
+                    @click="handleCarPlateAreaClick"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module3CarData.carOwnMonths"
+                    label="名下"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                  <van-field
+                    v-model="module3CarData.carPlate"
+                    label="车牌"
+                    placeholder="请输入车牌"
+                  />
+                  <van-field
+                    v-model="module3CarData.carInvoice"
+                    label="发票"
+                    type="digit"
+                    placeholder="请输入金额"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>万</template>
+                  </van-field>
+                </div>
+              </template>
+              <!-- 二手车扩展 -->
+              <template v-if="module3CarData.carType === '二手车'">
+                <div class="form-item">
+                  <van-field
+                    v-model="module3CarData.carPlateArea"
+                    label="车牌地区"
+                    is-link
+                    readonly
+                    placeholder="请选择车牌地区"
+                    @click="handleCarPlateAreaClick"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module3CarData.carOwnMonths"
+                    label="名下"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                  <van-field
+                    v-model="module3CarData.carPlate"
+                    label="车牌"
+                    placeholder="请输入车牌"
+                  />
+                  <van-field
+                    v-model="module3CarData.carEval"
+                    label="评估"
+                    type="digit"
+                    placeholder="请输入金额"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>万</template>
+                  </van-field>
+                  <van-field
+                    v-model="module3CarData.carMileage"
+                    label="公里数"
+                    type="digit"
+                    placeholder="请输入公里数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>KM</template>
+                  </van-field>
+                </div>
+              </template>
+              <!-- 车产状态 -->
+              <div class="form-item">
+                <div class="radio-title">车产状态</div>
+                <van-radio-group v-model="module3CarData.carStatus" direction="horizontal" class="radio-group">
+                  <van-radio name="全款">全款</van-radio>
+                  <van-radio name="按揭">按揭</van-radio>
+                  <van-radio name="抵押">抵押</van-radio>
+                </van-radio-group>
+              </div>
+              <!-- 按揭扩展 -->
+              <template v-if="module3CarData.carStatus === '按揭'">
+                <div class="form-item">
+                  <van-field
+                    v-model="module3CarData.carMortgageAmount"
+                    label="按揭金额"
+                    type="digit"
+                    placeholder="请输入金额"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>万</template>
+                  </van-field>
+                  <van-field
+                    v-model="module3CarData.carMortgageMonths"
+                    label="月供"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                  <van-field
+                    v-model="module3CarData.carMortgageOrg"
+                    label="按揭机构"
+                    placeholder="请输入机构名称"
+                  />
+                </div>
+              </template>
+              <!-- 抵押扩展 -->
+              <template v-if="module3CarData.carStatus === '抵押'">
+                <div class="form-item">
+                  <van-field
+                    v-model="module3CarData.carPledgeAmount"
+                    label="抵押金额"
+                    type="digit"
+                    placeholder="请输入金额"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>万</template>
+                  </van-field>
+                  <van-field
+                    v-model="module3CarData.carPledgeMonths"
+                    label="月供"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                  <van-field
+                    v-model="module3CarData.carPledgeOrg"
+                    label="抵押机构"
+                    placeholder="请输入机构名称"
+                  />
+                </div>
+              </template>
+            </template>
+          </div>
+
+          <!-- 04金融资产情况 -->
+          <div class="section">
+            <div class="section-title">04金融资产情况</div>
+            <div class="form-item">
+              <div class="radio-title">是否有金融资产（限填4份）</div>
+              <van-radio-group v-model="module3AssetData.hasAsset" direction="horizontal" class="radio-group">
+                <van-radio name="否">否</van-radio>
+                <van-radio name="是">是</van-radio>
+              </van-radio-group>
+            </div>
+            <template v-if="module3AssetData.hasAsset === '是'">
+              <div class="form-item">
+                <van-field
+                  v-model="module3AssetData.assetCount"
+                  label="合计"
+                  type="digit"
+                  placeholder="请输入金融资产份数（最多4份）"
+                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  maxlength="1"
+                >
+                  <template #right-icon>份</template>
+                </van-field>
+              </div>
+              <template v-for="(asset, idx) in module3AssetData.assets" :key="idx">
+                <div class="asset-block">
+                  <div class="section-title">第{{ idx + 1 }}份金融资产</div>
+                  <div class="form-item">
+                    <van-field
+                      v-model="asset.type"
+                      label="类型"
+                      is-link
+                      readonly
+                      placeholder="请选择类型"
+                      @click="handleAssetTypeClick(idx)"
+                    />
+                  </div>
+                  <div class="form-item">
+                    <van-field
+                      v-model="asset.months"
+                      label="持有"
+                      type="digit"
+                      placeholder="请输入月数"
+                      :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                    >
+                      <template #right-icon>个月</template>
+                    </van-field>
+                    <van-field
+                      v-model="asset.amount"
+                      label="当前"
+                      type="digit"
+                      placeholder="请输入金额"
+                      :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                    >
+                      <template #right-icon>万</template>
+                    </van-field>
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
         </div>
       </van-cell-group>
 
@@ -1046,11 +1278,33 @@
         title="选择房产地区"
       />
     </van-popup>
+
+    <!-- 车牌地区选择器弹窗放最外层 -->
+    <van-popup v-model:show="showCarPlateAreaPicker" position="bottom">
+      <van-picker
+        :columns="carPlateAreaOptions"
+        @confirm="onCarPlateAreaConfirm"
+        @cancel="showCarPlateAreaPicker = false"
+        show-toolbar
+        title="选择车牌地区"
+      />
+    </van-popup>
+
+    <!-- 金融资产类型选择器弹窗放最外层 -->
+    <van-popup v-model:show="showAssetTypePicker" position="bottom">
+      <van-picker
+        :columns="assetTypeOptions"
+        @confirm="onAssetTypeConfirm"
+        @cancel="showAssetTypePicker = false"
+        show-toolbar
+        title="选择金融资产类型"
+      />
+    </van-popup>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, onMounted } from 'vue'
 import { showToast, showSuccessToast, showFailToast } from 'vant'
 import { useRouter } from 'vue-router'
 
@@ -1134,6 +1388,13 @@ const module2Data = reactive({
   taxNote: '',
   taxCompanyType: '',
   taxCompanyName: '',
+
+  // 企业信息
+  companyName: '',
+  companyAge: '',
+  companyIncome: '',
+  companyStaff: '',
+  companyNote: ''
 })
 
 // 修改社保地区选择相关代码
@@ -1274,6 +1535,40 @@ watch(() => module3Data.houseCount, (val) => {
   }
 })
 
+// 车牌地区选项
+const carPlateAreaOptions = [
+  { text: '广州', value: '广州' }, { text: '深圳', value: '深圳' }, { text: '珠海', value: '珠海' }, { text: '汕头', value: '汕头' }, { text: '佛山', value: '佛山' }, { text: '韶关', value: '韶关' }, { text: '湛江', value: '湛江' }, { text: '肇庆', value: '肇庆' }, { text: '江门', value: '江门' }, { text: '茂名', value: '茂名' }, { text: '惠州', value: '惠州' }, { text: '梅州', value: '梅州' }, { text: '汕尾', value: '汕尾' }, { text: '河源', value: '河源' }, { text: '阳江', value: '阳江' }, { text: '清远', value: '清远' }, { text: '东莞', value: '东莞' }, { text: '中山', value: '中山' }, { text: '潮州', value: '潮州' }, { text: '揭阳', value: '揭阳' }, { text: '云浮', value: '云浮' }, { text: '湖南', value: '湖南' }, { text: '广西', value: '广西' }, { text: '海南', value: '海南' }, { text: '重庆', value: '重庆' }, { text: '四川', value: '四川' }, { text: '贵州', value: '贵州' }, { text: '云南', value: '云南' }, { text: '西藏', value: '西藏' }, { text: '陕西', value: '陕西' }, { text: '甘肃', value: '甘肃' }, { text: '青海', value: '青海' }, { text: '宁夏', value: '宁夏' }, { text: '新疆', value: '新疆' }, { text: '香港', value: '香港' }, { text: '澳门', value: '澳门' }, { text: '台湾', value: '台湾' }
+]
+
+// 车产相关数据
+const module3CarData = reactive({
+  hasCar: '', // 是否有车产
+  carType: '', // 车辆类型
+  carPlateArea: '', // 车牌地区
+  carOwnMonths: '', // 名下月数
+  carPlate: '', // 车牌
+  carInvoice: '', // 发票金额（新车）
+  carEval: '', // 评估金额（二手车）
+  carMileage: '', // 公里数（二手车）
+  carStatus: '', // 车产状态
+  carMortgageAmount: '', // 按揭金额
+  carMortgageMonths: '', // 按揭月供
+  carMortgageOrg: '', // 按揭机构
+  carPledgeAmount: '', // 抵押金额
+  carPledgeMonths: '', // 抵押月供
+  carPledgeOrg: '', // 抵押机构
+})
+
+// 车牌地区picker弹窗
+const showCarPlateAreaPicker = ref(false)
+const handleCarPlateAreaClick = () => {
+  showCarPlateAreaPicker.value = true
+}
+const onCarPlateAreaConfirm = (val: any) => {
+  module3CarData.carPlateArea = val.selectedOptions[0].text
+  showCarPlateAreaPicker.value = false
+}
+
 // 模块4的数据
 const module4Data = reactive({
   // 这里将添加具体的表单数据
@@ -1330,6 +1625,221 @@ const onHouseAreaConfirm = (val: any) => {
     module3Data.houses[currentHouseAreaIndex.value].area = val.selectedOptions[0].text
   }
   showHouseAreaPicker.value = false
+}
+
+// 金融资产类型选项
+const assetTypeOptions = [
+  { text: '股票', value: '股票' },
+  { text: '基金', value: '基金' },
+  { text: '理财', value: '理财' },
+  { text: '定存', value: '定存' },
+  { text: '保险', value: '保险' }
+]
+
+// 金融资产相关数据
+const module3AssetData = reactive({
+  hasAsset: '', // 是否有金融资产
+  assetCount: '', // 金融资产份数
+  assets: [] as any[], // 金融资产信息数组
+})
+
+watch(() => module3AssetData.assetCount, (val) => {
+  let n = parseInt(val) || 0
+  if (n > 4) n = 4
+  if (n > 0) {
+    while (module3AssetData.assets.length < n) {
+      module3AssetData.assets.push({
+        type: '',
+        typePickerShow: false,
+        months: '',
+        amount: ''
+      })
+    }
+    if (module3AssetData.assets.length > n) {
+      module3AssetData.assets.splice(n)
+    }
+  } else {
+    module3AssetData.assets = []
+  }
+})
+
+// 金融资产类型picker弹窗
+const showAssetTypePicker = ref(false)
+const currentAssetIndex = ref(-1)
+const handleAssetTypeClick = (idx: number) => {
+  currentAssetIndex.value = idx
+  showAssetTypePicker.value = true
+}
+const onAssetTypeConfirm = (val: any) => {
+  if (currentAssetIndex.value !== -1) {
+    module3AssetData.assets[currentAssetIndex.value].type = val.selectedOptions[0].text
+  }
+  showAssetTypePicker.value = false
+}
+
+// 在 module3Data 中添加
+const module3FlowData = reactive({
+  hasFlow: '', // 是否有有效流水
+  flowCount: '', // 流水份数
+  flows: [] as any[], // 流水信息数组
+})
+
+// 流水类型选项
+const flowTypeOptions = [
+  { text: '个人微信', value: '个人微信' },
+  { text: '个人支付宝', value: '个人支付宝' },
+  { text: '对公', value: '对公' },
+  { text: '个人银行卡', value: '个人银行卡' }
+]
+
+// 对公流水特点选项
+const publicFlowFeatureOptions = [
+  { text: '进账大', value: '进账大' },
+  { text: '结息大', value: '结息大' },
+  { text: '扣税记录', value: '扣税记录' },
+  { text: '代发工资记录', value: '代发工资记录' }
+]
+
+// 个人微信/支付宝流水特点选项
+const personalFlowFeatureOptions = [
+  { text: '进账大', value: '进账大' },
+  { text: '消费记录', value: '消费记录' }
+]
+
+// 个人银行卡流水特点选项
+const bankCardFlowFeatureOptions = [
+  { text: '进账大', value: '进账大' },
+  { text: '结息大', value: '结息大' },
+  { text: '代发工资', value: '代发工资' },
+  { text: '固定转账', value: '固定转账' },
+  { text: '分红', value: '分红' }
+]
+
+watch(() => module3FlowData.flowCount, (val) => {
+  let n = parseInt(val) || 0
+  if (n > 2) n = 2 // 限制最多2份
+  if (n > 0) {
+    while (module3FlowData.flows.length < n) {
+      module3FlowData.flows.push({
+        type: '',
+        features: [] as string[],
+        salaryAmount: '', // 代发工资金额
+        avgIncome6Months: '', // 近6个月月均进账
+        avgIncome12Months: '', // 近12个月月均进账
+        interest: ['', '', '', ''], // 近一年结息
+      })
+    }
+    if (module3FlowData.flows.length > n) {
+      module3FlowData.flows.splice(n)
+    }
+  } else {
+    module3FlowData.flows = []
+  }
+})
+
+// 添加自动填入功能
+const autoFillData = () => {
+  // 模块1数据自动填入
+  module1Data.queryRecords = [
+    {
+      date: '2024-03-15',
+      org: '中国银行-信用卡审批',
+      loanType: '装修贷',
+      progress: '已批-已放款',
+      rejectReason: ''
+    },
+    {
+      date: '2024-02-28',
+      org: '建设银行-贷款审批',
+      loanType: '车贷',
+      progress: '已拒',
+      rejectReason: '收入不足'
+    }
+  ]
+
+  module1Data.unpaidLoans = [
+    {
+      date: '2023-06-01',
+      org: '工商银行',
+      amount: '50万',
+      progress: '已还12期',
+      loanType: '装修贷'
+    }
+  ]
+
+  // 模块2数据自动填入
+  module2Data.workType = '优质单位上班族'
+  module2Data.canInvestigate = '是'
+  module2Data.investigateLocations = ['单位']
+  
+  module2Data.hasSocialSecurity = '是'
+  module2Data.socialSecurityPayers = ['单位']
+  module2Data.socialSecurityArea = '深圳'
+  module2Data.socialSecurityCompany = '深圳市科技有限公司'
+  module2Data.socialSecurityTotalMonths = '36'
+  module2Data.socialSecurityCurrentMonths = '24'
+  module2Data.medicalBase = '15000'
+  module2Data.pensionBase = '15000'
+  
+  module2Data.hasProvidentFund = '是'
+  module2Data.providentFundPayer = '单位'
+  module2Data.providentFundArea = '深圳'
+  module2Data.providentFundTotalMonths = '36'
+  module2Data.providentFundCurrentMonths = '24'
+  module2Data.providentFundBase = '15000'
+  
+  module2Data.hasTax = '是'
+  module2Data.taxPayer = '单位'
+  module2Data.taxArea = '深圳'
+  module2Data.taxTotalMonths = '36'
+  module2Data.taxCurrentMonths = '24'
+  module2Data.taxBase = '15000'
+
+  // 模块3数据自动填入
+  module3Data.education = '本科'
+  module3Data.educationCheck = '可查'
+  module3Data.educationFullTime = '是'
+  
+  module3Data.hasHouse = '是'
+  module3Data.houseCount = '1'
+  module3Data.houses = [{
+    area: '深圳',
+    type: '商品房·住宅',
+    ownMonths: '36',
+    size: '89',
+    shareType: '单独所有',
+    evalPrice: '500',
+    status: '按揭',
+    mortgageAmount: '300',
+    mortgageOrg: '建设银行',
+    mortgageMonths: '360',
+    mortgageSecond: '否'
+  }]
+
+  // 车产数据自动填入
+  module3CarData.hasCar = '是'
+  module3CarData.carType = '一手车'
+  module3CarData.carPlateArea = '深圳'
+  module3CarData.carOwnMonths = '24'
+  module3CarData.carPlate = '粤B12345'
+  module3CarData.carInvoice = '25'
+  module3CarData.carStatus = '全款'
+
+  // 金融资产数据自动填入
+  module3AssetData.hasAsset = '是'
+  module3AssetData.assetCount = '2'
+  module3AssetData.assets = [
+    {
+      type: '股票',
+      months: '24',
+      amount: '50'
+    },
+    {
+      type: '基金',
+      months: '12',
+      amount: '30'
+    }
+  ]
 }
 </script>
 
@@ -1583,6 +2093,32 @@ const onHouseAreaConfirm = (val: any) => {
   
   .van-picker__confirm {
     color: #1976d2;
+  }
+}
+
+.flow-block {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.interest-fields {
+  .interest-title {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  .interest-inputs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 }
 </style>
