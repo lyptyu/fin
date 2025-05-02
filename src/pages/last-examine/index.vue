@@ -157,15 +157,33 @@ const showIncomeTaxAreaPicker = ref(false)
 function onAreaConfirm(type: 'socialSecurity' | 'providentFund' | 'incomeTax', { selectedOptions }) {
   const area = selectedOptions[0]?.label || ''
   if (type === 'socialSecurity') {
-    workData.value.socialSecurity.area = area
+    workData.value = {
+      ...workData.value,
+      socialSecurity: {
+        ...workData.value.socialSecurity,
+        area
+      }
+    }
     showAreaPicker.value = false
   }
   else if (type === 'providentFund') {
-    workData.value.providentFund.area = area
+    workData.value = {
+      ...workData.value,
+      providentFund: {
+        ...workData.value.providentFund,
+        area
+      }
+    }
     showProvidentFundAreaPicker.value = false
   }
   else if (type === 'incomeTax') {
-    workData.value.incomeTax.area = area
+    workData.value = {
+      ...workData.value,
+      incomeTax: {
+        ...workData.value.incomeTax,
+        area
+      }
+    }
     showIncomeTaxAreaPicker.value = false
   }
 }
@@ -233,10 +251,10 @@ const mockUnsettledRecords = [
 
 // 社保公积金个税地区选项
 const areaOptions = [
-  { value: 'guangzhou', label: '广州' },
-  { value: 'shenzhen', label: '深圳' },
-  { value: 'foshan', label: '佛山' },
-  { value: 'dongguan', label: '东莞' },
+  { value: 'guangzhou', text: '广州' },
+  { value: 'shenzhen', text: '深圳' },
+  { value: 'foshan', text: '佛山' },
+  { value: 'dongguan', text: '东莞' },
 ]
 
 // 缴费主体选项
@@ -453,6 +471,29 @@ function onSubmit() {
 
 <template>
   <div class="last-examine">
+    <!-- 地区选择器弹窗 -->
+    <van-popup v-model:show="showAreaPicker" position="bottom">
+      <van-picker
+        :columns="areaOptions"
+        @confirm="(value) => onAreaConfirm('socialSecurity', value)"
+        @cancel="showAreaPicker = false"
+      />
+    </van-popup>
+    <van-popup v-model:show="showProvidentFundAreaPicker" position="bottom">
+      <van-picker
+        :columns="areaOptions"
+        @confirm="(value) => onAreaConfirm('providentFund', value)"
+        @cancel="showProvidentFundAreaPicker = false"
+      />
+    </van-popup>
+    <van-popup v-model:show="showIncomeTaxAreaPicker" position="bottom">
+      <van-picker
+        :columns="areaOptions"
+        @confirm="(value) => onAreaConfirm('incomeTax', value)"
+        @cancel="showIncomeTaxAreaPicker = false"
+      />
+    </van-popup>
+    
     <van-collapse v-model="activeNames">
       <!-- 征信细节补充 -->
       <van-collapse-item title="本人征信细节补充" name="1">
@@ -651,6 +692,7 @@ function onSubmit() {
               <div class="form-label">
                 <span style="color:red">*</span>社保地区
               </div>
+              area{{workData.socialSecurity.area}}
               <van-field
                 v-model="workData.socialSecurity.area"
                 readonly
@@ -720,7 +762,7 @@ function onSubmit() {
               />
               <van-field
                 v-model="workData.socialSecurity.unitRemark"
-                :label="workData.socialSecurity.paymentSubject === 'company' ? '社保补充（敏感行业等情况）' : '社保补充（断缴补缴等情况）'"
+                :label="workData.socialSecurity.paymentSubject === 'company' ? '社保补充' : '社保补充'"
                 :placeholder="workData.socialSecurity.paymentSubject === 'company' ? '是否敏感行业(律师|公检法|租车等)' : '断缴补缴等情况'"
               />
             </div>
