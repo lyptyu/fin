@@ -1,1513 +1,1588 @@
-<script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { showToast } from 'vant'
-
-// 暂存数据到localStorage
-function saveToLocalStorage(key: string, data: any) {
-  localStorage.setItem(`last-examine-${key}`, JSON.stringify(data))
-  showToast('暂存成功')
-}
-
-// 从localStorage加载数据
-function loadFromLocalStorage(key: string) {
-  const data = localStorage.getItem(`last-examine-${key}`)
-  return data ? JSON.parse(data) : null
-}
-
-// 暂存各模块数据
-function saveCreditData() {
-  saveToLocalStorage('credit', formData.value)
-}
-
-function saveWorkData() {
-  saveToLocalStorage('work', workData.value)
-}
-
-function saveBonusData() {
-  saveToLocalStorage('bonus', bonusData.value)
-}
-
-function saveSpecialData() {
-  saveToLocalStorage('special', specialData.value)
-}
-
-// 从localStorage加载初始数据
-const savedCreditData = loadFromLocalStorage('credit')
-const savedWorkData = loadFromLocalStorage('work')
-const savedBonusData = loadFromLocalStorage('bonus')
-const savedSpecialData = loadFromLocalStorage('special')
-
-// 特殊情况数据
-const specialData = ref(savedSpecialData || {
-  language: '', // 语言能力
-  writing: '', // 写字能力
-  physical: '', // 身体状况
-})
-
-// Mock数据
-const mockQueryRecords = [
-  { time: '2025-04-01', institution: '机构A', reason: '信用卡审批' },
-  { time: '2025-04-28', institution: '机构B', reason: '信用卡审批' },
-]
-
-// 贷款类型选项
-const loanTypes = ['装修贷', '车贷', '信贷', '其它']
-
-// 审批状态选项
-const approvalStatuses = [
-  { value: 'approved_unpaid', label: '已批-未放款' },
-  { value: 'approved_paid', label: '已批-已放款' },
-  { value: 'rejected', label: '已拒' },
-]
-
-// 工作属性数据
-const workData = ref(savedWorkData || {
-  workType: '', // 工作性质
-  canInspect: false, // 是否可考察
-  inspectLocations: [], // 可考察地点
-  // 社保信息
-  hasSocialSecurity: false, // 是否有社保
-  socialSecurity: {
-    paymentSubject: '', // 缴费主体：个人/单位
-    area: '', // 社保地区
-    totalMonths: '', // 连续缴社保合计月数
-    currentUnitMonths: '', // 当前单位月数
-    medicalBase: '', // 近半年平均医疗基数
-    pensionBase: '', // 近半年平均养老基数
-    unitName: '', // 社保单位全称（仅单位缴费时需填写）
-    unitRemark: '', // 社保补充说明
-  },
-  // 公积金信息
-  hasProvidentFund: false, // 是否有公积金
-  providentFund: {
-    area: '', // 公积金地区
-    totalMonths: '', // 连续缴公积金合计月数
-    currentUnitMonths: '', // 当前单位月数
-    averageBase: '', // 近半年平均公积金基数
-    sameAsSocialSecurity: true, // 是否同社保单位
-    unitRemark: '', // 公积金补充说明
-  },
-  // 个税信息
-  hasIncomeTax: false, // 是否有个税
-  incomeTax: {
-    area: '', // 个税地区
-    totalMonths: '', // 连续缴个税合计月数
-    currentUnitMonths: '', // 当前单位月数
-    averageSalary: '', // 近半年平均个税税前工资
-    sameAsSocialSecurity: true, // 是否同社保单位
-    unitRemark: '', // 个税补充说明
-  },
-  // 企业信息
-  hasEnterprise: false, // 是否有企业
-  enterprise: {
-    name: '', // 企业全称
-    businessInfo: [], // 工商信息：法人、股东、监事
-    legalPersonMonths: '', // 法人名下月数
-    shareholderMonths: '', // 股东名下月数
-    shareholderPercentage: '', // 股东占股比例
-    registeredCapital: '', // 注册资金
-    registeredMonths: '', // 注册月数
-    hasAbnormalOperation: false, // 是否经营异常
-    hasEntity: false, // 是否实体
-    industry: '', // 经营行业
-    scale: {
-      employees: '', // 企业规模-人数
-      area: '', // 企业规模-面积
-    },
-  },
-})
-
-// 根据工作性质获取可选的考察地点
-const availableInspectLocations = computed(() => {
-  if (!workData.value.canInspect)
-    return []
-  if (workData.value.workType === 'business') {
-    return [
-      { value: 'home', label: '家里' },
-      { value: 'business', label: '企业' },
-    ]
-  }
-  else if (workData.value.workType === 'normal' || workData.value.workType === 'premium') {
-    return [
-      { value: 'home', label: '家里' },
-      { value: 'company', label: '单位' },
-    ]
-  }
-  return []
-})
-
-// 监听工作性质变化，重置考察地点
-watch(() => workData.value.workType, () => {
-  workData.value.inspectLocations = []
-})
-
-// 监听是否可考察变化
-watch(() => workData.value.canInspect, (newValue) => {
-  if (!newValue) {
-    workData.value.inspectLocations = []
-  }
-})
-
-// 地区选择器的显示控制
-const showAreaPicker = ref(false)
-const showProvidentFundAreaPicker = ref(false)
-const showIncomeTaxAreaPicker = ref(false)
-
-// 处理地区选择
-function onAreaConfirm(type: 'socialSecurity' | 'providentFund' | 'incomeTax', { selectedOptions }) {
-  console.log('selectedOptions', selectedOptions)
-  const area = selectedOptions[0]?.text || ''
-  if (type === 'socialSecurity') {
-    workData.value = {
-      ...workData.value,
-      socialSecurity: {
-        ...workData.value.socialSecurity,
-        area
-      }
-    }
-    showAreaPicker.value = false
-  }
-  else if (type === 'providentFund') {
-    workData.value = {
-      ...workData.value,
-      providentFund: {
-        ...workData.value.providentFund,
-        area
-      }
-    }
-    showProvidentFundAreaPicker.value = false
-  }
-  else if (type === 'incomeTax') {
-    workData.value = {
-      ...workData.value,
-      incomeTax: {
-        ...workData.value.incomeTax,
-        area
-      }
-    }
-    showIncomeTaxAreaPicker.value = false
-  }
-}
-
-// 监听社保缴费主体变化
-watch(() => workData.value.socialSecurity.paymentSubject, (newValue) => {
-  if (newValue === 'personal') {
-    workData.value.socialSecurity.unitName = ''
-  }
-})
-
-// 监听社保状态变化
-watch(() => workData.value.hasSocialSecurity, (newValue) => {
-  if (!newValue) {
-    workData.value.hasProvidentFund = false
-    workData.value.hasIncomeTax = false
-  }
-})
-
-// 加分选项数据
-const bonusData = ref(savedBonusData || {
-  // 学历情况
-  education: {
-    level: '', // 学历等级
-    verifiable: false, // 是否学信网可查
-    fullTime: false, // 是否全日制
-  },
-  // 房产情况
-  house: {
-    hasHouse: false, // 是否有房产
-    houseFiles: [], // 房产明细文件
-  },
-  // 车产情况
-  car: {
-    hasCar: false, // 是否有车产
-    carFiles: [], // 车产明细文件
-  },
-  // 金融资产情况
-  financial: {
-    hasFinancial: false, // 是否有金融资产
-    financialFiles: [], // 金融资产明细文件
-  },
-  // 流水情况
-  bankFlow: {
-    hasFlow: false, // 是否有有效流水
-    flowFiles: [], // 流水明细文件，最多2份
-  },
-})
-
-// 学历等级选项
-const educationLevels = [
-  '从未上过学',
-  '小学',
-  '初中',
-  '高中',
-  '大专',
-  '本科',
-  '硕士',
-  '博士',
-]
-
-const mockUnsettledRecords = [
-  { time: '2023-01-01', institution: '机构A', amount: '30万', repaidAmount: '6万' },
-]
-
-// 社保公积金个税地区选项
-const areaOptions = [
-  { value: 'guangzhou', text: '广州' },
-  { value: 'shenzhen', text: '深圳' },
-  { value: 'foshan', text: '佛山' },
-  { value: 'dongguan', text: '东莞' },
-]
-
-// 缴费主体选项
-const paymentSubjectOptions = [
-  { value: 'personal', label: '个人' },
-  { value: 'company', label: '单位' },
-]
-
-const bankList = [
-  { id: 'boc', name: '中行' },
-  { id: 'abc', name: '农行' },
-  { id: 'icbc', name: '工行' },
-  { id: 'ccb', name: '建行' },
-  { id: 'psbc', name: '邮储' },
-  { id: 'gdb', name: '广发' },
-  { id: 'cmb', name: '招行' },
-  { id: 'ceb', name: '光大' },
-  { id: 'citic', name: '中信' },
-]
-
-// 表单数据
-const formData = ref(savedCreditData || {
-  queryDetails: mockQueryRecords.map(record => ({
-    ...record,
-    loanType: '', // 目标贷款类型
-    approvalStatus: '', // 审批状态
-    rejectReason: '', // 拒绝原因（当状态为已拒时）
-  })),
-  unsettledDetails: mockUnsettledRecords.map(record => ({
-    ...record,
-    loanType: '', // 贷款类别
-  })),
-  greylistBanks: bankList.map(bank => ({
-    id: bank.id,
-    name: bank.name,
-    checked: false,
-    reason: '', // 黑灰名单原因
-  })),
-  rejectedBanks: bankList.map(bank => ({
-    id: bank.id,
-    name: bank.name,
-    checked: false,
-    rejectInfo: '', // 被拒时间及原因
-  })),
-})
-
-// 展开面板的控制
-const activeNames = ref(['1'])
-
-// 表单提交
-function onSubmit() {
-  // 验证必填项
-  const hasEmptyRequired = formData.value.queryDetails.some(item => !item.supplement)
-    || formData.value.unsettledDetails.some(item => !item.supplement)
-
-  // 验证工作属性必填项
-  if (!workData.value.workType) {
-    showToast('请选择工作性质')
-    return
-  }
-
-  if (workData.value.canInspect && workData.value.inspectLocations.length === 0) {
-    showToast('请选择可考察地点')
-    return
-  }
-
-  // 验证社保相关必填项
-  if (workData.value.hasSocialSecurity) {
-    const { socialSecurity } = workData.value
-    if (!socialSecurity.totalMonths || !socialSecurity.currentUnitMonths
-      || !socialSecurity.medicalBase || !socialSecurity.pensionBase
-      || !socialSecurity.unitName) {
-      showToast('请完善社保信息')
-      return
-    }
-    // 验证数字输入
-    if (!/^\d+$/.test(socialSecurity.totalMonths) || !/^\d+$/.test(socialSecurity.currentUnitMonths)
-      || !/^\d+$/.test(socialSecurity.medicalBase) || !/^\d+$/.test(socialSecurity.pensionBase)) {
-      showToast('社保相关数值必须为整数')
-      return
-    }
-  }
-
-  // 验证公积金相关必填项
-  if (workData.value.hasProvidentFund) {
-    const { providentFund } = workData.value
-    if (!providentFund.totalMonths || !providentFund.currentUnitMonths
-      || !providentFund.averageBase) {
-      showToast('请完善公积金信息')
-      return
-    }
-    // 验证数字输入
-    if (!/^\d+$/.test(providentFund.totalMonths) || !/^\d+$/.test(providentFund.currentUnitMonths)
-      || !/^\d+$/.test(providentFund.averageBase)) {
-      showToast('公积金相关数值必须为整数')
-      return
-    }
-  }
-
-  // 验证个税相关必填项
-  if (workData.value.hasIncomeTax) {
-    const { incomeTax } = workData.value
-    if (!incomeTax.totalMonths || !incomeTax.currentUnitMonths
-      || !incomeTax.averageSalary) {
-      showToast('请完善个税信息')
-      return
-    }
-    // 验证数字输入
-    if (!/^\d+$/.test(incomeTax.totalMonths) || !/^\d+$/.test(incomeTax.currentUnitMonths)
-      || !/^\d+$/.test(incomeTax.averageSalary)) {
-      showToast('个税相关数值必须为整数')
-      return
-    }
-  }
-
-  // 验证企业相关必填项
-  if (workData.value.hasEnterprise) {
-    const { enterprise } = workData.value
-    if (!enterprise.name || enterprise.businessInfo.length === 0) {
-      showToast('请完善企业基本信息')
-      return
-    }
-
-    // 验证法人相关信息
-    if (enterprise.businessInfo.includes('法人') && !enterprise.legalPersonMonths) {
-      showToast('请填写法人名下月数')
-      return
-    }
-
-    // 验证股东相关信息
-    if (enterprise.businessInfo.includes('股东')) {
-      if (!enterprise.shareholderMonths || !enterprise.shareholderPercentage) {
-        showToast('请完善股东信息')
-        return
-      }
-      // 验证股东占比
-      const percentage = Number(enterprise.shareholderPercentage)
-      if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
-        showToast('股东占比必须为1-100之间的数字')
-        return
-      }
-    }
-
-    // 验证注册信息
-    if (!enterprise.registeredCapital || !enterprise.registeredMonths) {
-      showToast('请完善企业注册信息')
-      return
-    }
-
-    // 验证实体信息
-    if (enterprise.hasEntity) {
-      if (!enterprise.industry || !enterprise.scale.employees || !enterprise.scale.area) {
-        showToast('请完善企业实体信息')
-        return
-      }
-      // 验证数字输入
-      if (!/^\d+$/.test(enterprise.scale.employees) || !/^\d+$/.test(enterprise.scale.area)) {
-        showToast('企业规模相关数值必须为整数')
-        return
-      }
-    }
-  }
-
-  // 验证加分选项必填项
-  if (!bonusData.value.education.level) {
-    showToast('请选择学历等级')
-    return
-  }
-
-  // 验证房产相关必填项
-  if (bonusData.value.house.hasHouse && bonusData.value.house.houseFiles.length === 0) {
-    showToast('请上传房产明细')
-    return
-  }
-
-  // 验证车产相关必填项
-  if (bonusData.value.car.hasCar && bonusData.value.car.carFiles.length === 0) {
-    showToast('请上传车产明细')
-    return
-  }
-
-  // 验证金融资产相关必填项
-  if (bonusData.value.financial.hasFinancial && bonusData.value.financial.financialFiles.length === 0) {
-    showToast('请上传金融资产明细')
-    return
-  }
-
-  // 验证流水相关必填项
-  if (bonusData.value.bankFlow.hasFlow && bonusData.value.bankFlow.flowFiles.length === 0) {
-    showToast('请上传流水明细')
-    return
-  }
-
-  // 验证特殊情况必填项
-  if (!specialData.value.language || !specialData.value.writing || !specialData.value.physical) {
-    showToast('请完善特殊情况信息')
-    return
-  }
-
-  if (hasEmptyRequired) {
-    showToast('请填写所有必填项')
-    return
-  }
-
-  console.log('结构化表单数据：', JSON.parse(JSON.stringify({
-    formData: formData.value,
-    workData: workData.value,
-    bonusData: bonusData.value,
-    specialData: specialData.value,
-  })), null, 2)
-  showToast('提交成功')
-}
-</script>
-
 <template>
   <div class="last-examine">
-    <!-- 地区选择器弹窗 -->
-    <van-popup v-model:show="showAreaPicker" position="bottom">
+    <van-nav-bar
+      title="征信补充信息"
+      left-arrow
+      @click-left="onClickLeft"
+      class="custom-nav"
+    >
+      <template #right>
+        <van-button 
+          type="primary" 
+          size="small" 
+          class="save-btn"
+          @click="saveModule1"
+        >
+          暂存
+        </van-button>
+      </template>
+    </van-nav-bar>
+    
+    <div class="content">
+      <!-- 模块1：本人征信及黑灰名单细节补充 -->
+      <van-cell-group inset class="module-group">
+        <van-cell title="本人征信及黑灰名单细节补充" class="module-title">
+          <template #icon>
+            <van-icon name="shield-o" class="module-icon" />
+          </template>
+        </van-cell>
+        <div class="module-content">
+          <!-- 01近半年查询记录 -->
+          <div class="section">
+            <div class="section-title">01近半年以下查询记录的原因及细节</div>
+            <div v-for="(record, index) in module1Data.queryRecords" :key="index" class="record-item">
+              <div class="record-header">
+                <span class="record-date">{{ record.date }}</span>
+                <span class="record-org">{{ record.org }}</span>
+              </div>
+              
+              <div class="radio-title">申请贷款类型：</div>
+              <van-radio-group v-model="record.loanType" direction="horizontal" class="radio-group">
+                <van-radio name="装修贷">装修贷</van-radio>
+                <van-radio name="车贷">车贷</van-radio>
+                <van-radio name="信贷">信贷</van-radio>
+                <van-radio name="其它">其它</van-radio>
+              </van-radio-group>
+
+              <div class="radio-title">后续进度：</div>
+              <van-radio-group v-model="record.progress" direction="horizontal" class="radio-group">
+                <van-radio name="已批-未放款">已批-未放款</van-radio>
+                <van-radio name="已批-已放款">已批-已放款</van-radio>
+                <van-radio name="已拒">已拒</van-radio>
+              </van-radio-group>
+
+              <van-field
+                v-if="record.progress === '已拒'"
+                v-model="record.rejectReason"
+                label="拒绝原因"
+                placeholder="请输入拒绝原因"
+                class="reject-reason"
+              />
+            </div>
+          </div>
+
+          <!-- 02近五年未结清 -->
+          <div class="section">
+            <div class="section-title">02近五年未结清的以下机构补充</div>
+            <div v-for="(loan, index) in module1Data.unpaidLoans" :key="index" class="loan-item">
+              <div class="loan-header">
+                <span class="loan-date">{{ loan.date }}</span>
+                <span class="loan-org">{{ loan.org }}</span>
+                <span class="loan-amount">{{ loan.amount }}</span>
+                <span class="loan-progress">{{ loan.progress }}</span>
+              </div>
+              
+              <van-radio-group v-model="loan.loanType" direction="horizontal" class="radio-group">
+                <van-radio name="装修贷">装修贷</van-radio>
+                <van-radio name="车贷">车贷</van-radio>
+                <van-radio name="信贷">信贷</van-radio>
+                <van-radio name="其它">其它</van-radio>
+              </van-radio-group>
+            </div>
+          </div>
+
+          <!-- 03历史黑灰名单 -->
+          <div class="section">
+            <div class="section-title">03历史(含5年外)以下机构黑灰名单情况</div>
+            <van-checkbox-group v-model="module1Data.blacklistOrgs" direction="horizontal" class="checkbox-group">
+              <van-checkbox name="中行">中行</van-checkbox>
+              <van-checkbox name="农行">农行</van-checkbox>
+              <van-checkbox name="工行">工行</van-checkbox>
+              <van-checkbox name="建行">建行</van-checkbox>
+              <van-checkbox name="邮储">邮储</van-checkbox>
+              <van-checkbox name="广发">广发</van-checkbox>
+              <van-checkbox name="招行">招行</van-checkbox>
+              <van-checkbox name="光大">光大</van-checkbox>
+              <van-checkbox name="中信">中信</van-checkbox>
+            </van-checkbox-group>
+
+            <div v-for="org in module1Data.blacklistOrgs" :key="org" class="blacklist-reason">
+              <van-field
+                v-model="module1Data.blacklistReasons[org]"
+                :label="org + '黑灰名单原因'"
+                placeholder="请输入黑灰名单原因"
+                :rules="[{ required: true, message: '请填写黑灰名单原因' }]"
+              />
+            </div>
+          </div>
+
+          <!-- 04历史被拒记录 -->
+          <div class="section">
+            <div class="section-title">04历史(含5年外)以下机构被拒记录情况</div>
+            <van-checkbox-group v-model="module1Data.rejectedOrgs" direction="horizontal" class="checkbox-group">
+              <van-checkbox name="中行">中行</van-checkbox>
+              <van-checkbox name="农行">农行</van-checkbox>
+              <van-checkbox name="工行">工行</van-checkbox>
+              <van-checkbox name="建行">建行</van-checkbox>
+              <van-checkbox name="邮储">邮储</van-checkbox>
+              <van-checkbox name="广发">广发</van-checkbox>
+              <van-checkbox name="招行">招行</van-checkbox>
+              <van-checkbox name="光大">光大</van-checkbox>
+              <van-checkbox name="中信">中信</van-checkbox>
+            </van-checkbox-group>
+
+            <div v-for="org in module1Data.rejectedOrgs" :key="org" class="reject-reason">
+              <van-field
+                v-model="module1Data.rejectReasons[org]"
+                :label="org + '被拒时间及原因'"
+                placeholder="请输入被拒时间及原因"
+                :rules="[{ required: true, message: '请填写被拒时间及原因' }]"
+              />
+            </div>
+          </div>
+        </div>
+      </van-cell-group>
+
+      <!-- 模块2：本人工作属性 -->
+      <van-cell-group inset class="module-group">
+        <van-cell title="本人工作属性" class="module-title">
+          <template #icon>
+            <van-icon name="work-o" class="module-icon" />
+          </template>
+        </van-cell>
+        <div class="module-content">
+          <!-- 01考察情况 -->
+          <div class="section">
+            <div class="section-title">01考察情况</div>
+            
+            <div class="form-item">
+              <div class="radio-title">工作性质：</div>
+              <van-radio-group v-model="module2Data.workType" direction="horizontal" class="radio-group">
+                <van-radio name="普通单位上班族">普通单位上班族</van-radio>
+                <van-radio name="优质单位上班族">优质单位上班族</van-radio>
+                <van-radio name="企业主">企业主</van-radio>
+              </van-radio-group>
+            </div>
+
+            <div class="form-item">
+              <div class="radio-title">是否可考察：</div>
+              <van-radio-group v-model="module2Data.canInvestigate" direction="horizontal" class="radio-group">
+                <van-radio name="否">否</van-radio>
+                <van-radio name="是">是</van-radio>
+              </van-radio-group>
+
+              <template v-if="module2Data.canInvestigate === '是'">
+                <div class="checkbox-title">考察地点：</div>
+                <van-checkbox-group 
+                  v-model="module2Data.investigateLocations" 
+                  direction="horizontal" 
+                  class="checkbox-group"
+                  :max="2"
+                >
+                  <van-checkbox name="家里">家里</van-checkbox>
+                  <van-checkbox 
+                    name="单位" 
+                    :disabled="module2Data.workType === '企业主'"
+                  >单位</van-checkbox>
+                  <van-checkbox 
+                    name="企业" 
+                    :disabled="module2Data.workType !== '企业主'"
+                  >企业</van-checkbox>
+                </van-checkbox-group>
+              </template>
+            </div>
+          </div>
+
+          <!-- 02社保公积金个税情况 -->
+          <div class="section">
+            <div class="section-title">02社保公积金个税情况</div>
+            
+            <div class="form-item">
+              <div class="radio-title">是否有社保：</div>
+              <van-radio-group v-model="module2Data.hasSocialSecurity" direction="horizontal" class="radio-group">
+                <van-radio name="否">否</van-radio>
+                <van-radio name="是">是</van-radio>
+              </van-radio-group>
+
+              <template v-if="module2Data.hasSocialSecurity === '是'">
+                <div class="checkbox-title">缴费主体：</div>
+                <van-checkbox-group 
+                  v-model="module2Data.socialSecurityPayers" 
+                  direction="horizontal" 
+                  class="checkbox-group"
+                >
+                  <van-checkbox name="个人">个人</van-checkbox>
+                  <van-checkbox name="单位">单位</van-checkbox>
+                </van-checkbox-group>
+
+                <template v-if="module2Data.socialSecurityPayers.includes('个人')">
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.socialSecurityArea"
+                      label="社保地区"
+                      placeholder="请选择社保地区"
+                      readonly
+                      is-link
+                      @click="showSocialSecurityAreaPicker = true"
+                    />
+                  </div>
+
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.socialSecurityTotalMonths"
+                      label="连续缴社保合计"
+                      type="number"
+                      placeholder="请输入月数"
+                    >
+                      <template #right-icon>个月</template>
+                    </van-field>
+                    <van-field
+                      v-model="module2Data.socialSecurityCurrentMonths"
+                      label="当前单位"
+                      type="number"
+                      placeholder="请输入月数"
+                    >
+                      <template #right-icon>个月</template>
+                    </van-field>
+                  </div>
+
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.medicalBase"
+                      label="近半年平均医疗基数"
+                      type="number"
+                      placeholder="请输入金额"
+                    >
+                      <template #right-icon>元</template>
+                    </van-field>
+                    <van-field
+                      v-model="module2Data.pensionBase"
+                      label="近半年平均养老基数"
+                      type="number"
+                      placeholder="请输入金额"
+                    >
+                      <template #right-icon>元</template>
+                    </van-field>
+                  </div>
+
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.socialSecurityNote"
+                      label="社保补充"
+                      type="textarea"
+                      placeholder="断缴补缴等情况"
+                      rows="2"
+                    />
+                  </div>
+                </template>
+
+                <template v-if="module2Data.socialSecurityPayers.includes('单位')">
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.socialSecurityCompany"
+                      label="社保单位全称"
+                      placeholder="请输入单位全称"
+                    />
+                  </div>
+
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.socialSecurityArea"
+                      label="社保地区"
+                      placeholder="请选择社保地区"
+                      readonly
+                      is-link
+                      @click="showSocialSecurityAreaPicker = true"
+                    />
+                  </div>
+
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.socialSecurityTotalMonths"
+                      label="连续缴社保合计"
+                      type="number"
+                      placeholder="请输入月数"
+                    >
+                      <template #right-icon>个月</template>
+                    </van-field>
+                    <van-field
+                      v-model="module2Data.socialSecurityCurrentMonths"
+                      label="当前单位"
+                      type="number"
+                      placeholder="请输入月数"
+                    >
+                      <template #right-icon>个月</template>
+                    </van-field>
+                  </div>
+
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.medicalBase"
+                      label="近半年平均医疗基数"
+                      type="number"
+                      placeholder="请输入金额"
+                    >
+                      <template #right-icon>元</template>
+                    </van-field>
+                    <van-field
+                      v-model="module2Data.pensionBase"
+                      label="近半年平均养老基数"
+                      type="number"
+                      placeholder="请输入金额"
+                    >
+                      <template #right-icon>元</template>
+                    </van-field>
+                  </div>
+
+                  <div class="form-item">
+                    <van-field
+                      v-model="module2Data.socialSecurityNote"
+                      label="社保补充"
+                      type="textarea"
+                      placeholder="是否敏感行业 (律师|公检法|租车等) 或 断缴补缴等情况"
+                      rows="2"
+                    />
+                  </div>
+                </template>
+              </template>
+            </div>
+
+            <!-- 公积金情况 -->
+            <div class="form-item">
+              <div class="radio-title">是否有公积金：</div>
+              <van-radio-group v-model="module2Data.hasProvidentFund" direction="horizontal" class="radio-group">
+                <van-radio name="否">否</van-radio>
+                <van-radio name="是">是</van-radio>
+              </van-radio-group>
+            </div>
+            <template v-if="module2Data.hasProvidentFund === '是'">
+              <div class="form-item">
+                <div class="radio-title">公积金明细</div>
+                <div class="checkbox-title">缴费主体：</div>
+                <van-radio-group v-model="module2Data.providentFundPayer" direction="horizontal" class="radio-group">
+                  <van-radio name="个人">个人</van-radio>
+                  <van-radio name="单位">单位</van-radio>
+                </van-radio-group>
+              </div>
+              <!-- 个人缴费 -->
+              <template v-if="module2Data.providentFundPayer === '个人'">
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.providentFundArea"
+                    label="公积金地区"
+                    placeholder="请选择公积金地区"
+                    readonly
+                    is-link
+                    @click="showProvidentFundAreaPicker = true"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.providentFundTotalMonths"
+                    label="连续缴公积金合计"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                  <van-field
+                    v-model="module2Data.providentFundCurrentMonths"
+                    label="当前单位"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.providentFundBase"
+                    label="近半年平均公积金基数"
+                    type="digit"
+                    placeholder="请输入金额"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>元</template>
+                  </van-field>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.providentFundNote"
+                    label="公积金补充"
+                    type="textarea"
+                    placeholder="是否断缴、补缴等情况"
+                    rows="2"
+                  />
+                </div>
+              </template>
+              <!-- 单位缴费 -->
+              <template v-if="module2Data.providentFundPayer === '单位'">
+                <div class="form-item">
+                  <div class="radio-title">公积金单位名称：</div>
+                  <van-radio-group v-model="module2Data.providentFundCompanyType" direction="horizontal" class="radio-group">
+                    <van-radio name="同社保单位">同社保单位</van-radio>
+                    <van-radio name="不同于社保单位">不同于社保单位</van-radio>
+                  </van-radio-group>
+                </div>
+                <div class="form-item" v-if="module2Data.providentFundCompanyType === '不同于社保单位'">
+                  <van-field
+                    v-model="module2Data.providentFundCompanyName"
+                    label="公积金单位名称"
+                    placeholder="请输入单位名称"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.providentFundArea"
+                    label="公积金地区"
+                    placeholder="请选择公积金地区"
+                    readonly
+                    is-link
+                    :disabled="module2Data.providentFundCompanyType === '同社保单位'"
+                    @click="handleProvidentFundAreaClick"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.providentFundTotalMonths"
+                    label="连续缴公积金合计"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                  <van-field
+                    v-model="module2Data.providentFundCurrentMonths"
+                    label="当前单位"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.providentFundBase"
+                    label="近半年平均公积金基数"
+                    type="digit"
+                    placeholder="请输入金额"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>元</template>
+                  </van-field>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.providentFundNote"
+                    label="公积金补充"
+                    type="textarea"
+                    placeholder="是否断缴、补缴等情况"
+                    rows="2"
+                  />
+                </div>
+              </template>
+            </template>
+
+            <!-- 个税情况 -->
+            <div class="form-item">
+              <div class="radio-title">是否有个税：</div>
+              <van-radio-group v-model="module2Data.hasTax" direction="horizontal" class="radio-group">
+                <van-radio name="否">否</van-radio>
+                <van-radio name="是">是</van-radio>
+              </van-radio-group>
+            </div>
+            <template v-if="module2Data.hasTax === '是'">
+              <div class="form-item">
+                <div class="radio-title">个税明细</div>
+                <div class="checkbox-title">缴费主体：</div>
+                <van-radio-group v-model="module2Data.taxPayer" direction="horizontal" class="radio-group">
+                  <van-radio name="个人">个人</van-radio>
+                  <van-radio name="单位">单位</van-radio>
+                </van-radio-group>
+              </div>
+              <!-- 个人缴费 -->
+              <template v-if="module2Data.taxPayer === '个人'">
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.taxArea"
+                    label="个税地区"
+                    placeholder="请选择个税地区"
+                    readonly
+                    is-link
+                    @click="showTaxAreaPicker = true"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.taxTotalMonths"
+                    label="连续缴个税合计"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                  <van-field
+                    v-model="module2Data.taxCurrentMonths"
+                    label="当前单位"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.taxBase"
+                    label="近半年平均个税税前工资"
+                    type="digit"
+                    placeholder="请输入金额"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>元</template>
+                  </van-field>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.taxNote"
+                    label="个税补充"
+                    type="textarea"
+                    placeholder="是否断缴、补缴等情况"
+                    rows="2"
+                  />
+                </div>
+              </template>
+              <!-- 单位缴费 -->
+              <template v-if="module2Data.taxPayer === '单位'">
+                <div class="form-item">
+                  <div class="radio-title">个税单位名称：</div>
+                  <van-radio-group v-model="module2Data.taxCompanyType" direction="horizontal" class="radio-group">
+                    <van-radio name="同社保单位">同社保单位</van-radio>
+                    <van-radio name="不同于社保单位">不同于社保单位</van-radio>
+                  </van-radio-group>
+                </div>
+                <div class="form-item" v-if="module2Data.taxCompanyType === '不同于社保单位'">
+                  <van-field
+                    v-model="module2Data.taxCompanyName"
+                    label="个税单位名称"
+                    placeholder="请输入单位名称"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.taxArea"
+                    label="个税地区"
+                    placeholder="请选择个税地区"
+                    readonly
+                    is-link
+                    :disabled="module2Data.taxCompanyType === '同社保单位'"
+                    @click="handleTaxAreaClick"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.taxTotalMonths"
+                    label="连续缴个税合计"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                  <van-field
+                    v-model="module2Data.taxCurrentMonths"
+                    label="当前单位"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>个月</template>
+                  </van-field>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.taxBase"
+                    label="近半年平均个税税前工资"
+                    type="digit"
+                    placeholder="请输入金额"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>元</template>
+                  </van-field>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.taxNote"
+                    label="个税补充"
+                    type="textarea"
+                    placeholder="是否断缴、补缴等情况"
+                    rows="2"
+                  />
+                </div>
+              </template>
+            </template>
+          </div>
+
+          <!-- 03企业信息，仅企业主显示 -->
+          <div class="section" v-if="module2Data.workType === '企业主'">
+            <div class="section-title">03企业信息</div>
+            <div class="form-item">
+              <van-field
+                v-model="module2Data.companyName"
+                label="企业名称"
+                placeholder="请输入企业名称"
+              />
+            </div>
+            <div class="form-item">
+              <van-field
+                v-model="module2Data.companyAge"
+                label="企业成立年限"
+                type="number"
+                placeholder="请输入年数"
+              >
+                <template #right-icon>年</template>
+              </van-field>
+            </div>
+            <div class="form-item">
+              <van-field
+                v-model="module2Data.companyIncome"
+                label="企业年流水"
+                type="number"
+                placeholder="请输入金额"
+              >
+                <template #right-icon>万元</template>
+              </van-field>
+            </div>
+            <div class="form-item">
+              <van-field
+                v-model="module2Data.companyStaff"
+                label="企业员工人数"
+                type="number"
+                placeholder="请输入人数"
+              >
+                <template #right-icon>人</template>
+              </van-field>
+            </div>
+            <div class="form-item">
+              <van-field
+                v-model="module2Data.companyNote"
+                label="企业补充说明"
+                type="textarea"
+                placeholder="如有特殊情况请补充"
+                rows="2"
+              />
+            </div>
+          </div>
+        </div>
+      </van-cell-group>
+
+      <!-- 模块3：本人加分选项 -->
+      <van-cell-group inset class="module-group">
+        <van-cell title="本人加分选项" class="module-title">
+          <template #icon>
+            <van-icon name="plus" class="module-icon" />
+          </template>
+        </van-cell>
+        <div class="module-content">
+          <!-- 01学历情况 -->
+          <div class="section">
+            <div class="section-title">01学历情况</div>
+            <div class="form-item">
+              <div class="radio-title">学历 <span style="color: #f56c6c">*</span></div>
+              <van-radio-group v-model="module3Data.education" direction="horizontal" class="radio-group">
+                <van-radio name="从未上过学">从未上过学</van-radio>
+                <van-radio name="小学">小学</van-radio>
+                <van-radio name="初中">初中</van-radio>
+                <van-radio name="高中">高中</van-radio>
+                <van-radio name="大专">大专</van-radio>
+                <van-radio name="本科">本科</van-radio>
+                <van-radio name="硕士">硕士</van-radio>
+                <van-radio name="博士">博士</van-radio>
+              </van-radio-group>
+            </div>
+            <!-- 选择大专及以上学历才显示 -->
+            <template v-if="['大专','本科','硕士','博士'].includes(module3Data.education)">
+              <div class="form-item">
+                <div class="radio-title">是否学信网可查</div>
+                <van-radio-group v-model="module3Data.educationCheck" direction="horizontal" class="radio-group">
+                  <van-radio name="不可查">不可查</van-radio>
+                  <van-radio name="可查">可查</van-radio>
+                </van-radio-group>
+              </div>
+              <!-- 选择可查才显示全日制 -->
+              <template v-if="module3Data.educationCheck === '可查'">
+                <div class="form-item">
+                  <div class="radio-title">是否全日制</div>
+                  <van-radio-group v-model="module3Data.educationFullTime" direction="horizontal" class="radio-group">
+                    <van-radio name="否">否</van-radio>
+                    <van-radio name="是">是</van-radio>
+                  </van-radio-group>
+                </div>
+              </template>
+            </template>
+          </div>
+
+          <!-- 02房产情况 -->
+          <div class="section">
+            <div class="section-title">02房产情况</div>
+            <div class="form-item">
+              <div class="radio-title">是否有房产</div>
+              <van-radio-group v-model="module3Data.hasHouse" direction="horizontal" class="radio-group">
+                <van-radio name="否">否</van-radio>
+                <van-radio name="是">是</van-radio>
+              </van-radio-group>
+            </div>
+            <template v-if="module3Data.hasHouse === '是'">
+              <div class="form-item">
+                <van-field
+                  v-model="module3Data.houseCount"
+                  label="合计"
+                  type="digit"
+                  placeholder="请输入房产套数"
+                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                >
+                  <template #right-icon>套</template>
+                </van-field>
+              </div>
+              <template v-for="(house, idx) in module3Data.houses" :key="idx">
+                <div class="house-block">
+                  <div class="section-title">第{{ idx + 1 }}套房产信息</div>
+                  <div class="form-item">
+                    <van-field
+                      v-model="house.area"
+                      label="房产地区"
+                      is-link
+                      readonly
+                      placeholder="请选择房产地区"
+                      @click="handleHouseAreaClick(idx)"
+                    />
+                  </div>
+                  <div class="form-item">
+                    <div class="radio-title">房产性质</div>
+                    <van-radio-group v-model="house.type" direction="horizontal" class="radio-group">
+                      <van-radio name="商品房·住宅">商品房·住宅</van-radio>
+                      <van-radio name="商品房·商业">商品房·商业</van-radio>
+                      <van-radio name="非商品房">非商品房</van-radio>
+                    </van-radio-group>
+                  </div>
+                  <template v-if="house.type">
+                    <div class="form-item">
+                      <van-field
+                        v-model="house.ownMonths"
+                        label="名下"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                      <van-field
+                        v-model="house.size"
+                        label="面积"
+                        type="digit"
+                        placeholder="请输入面积"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>㎡</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <div class="radio-title">共有情况</div>
+                      <van-radio-group v-model="house.shareType" direction="horizontal" class="radio-group">
+                        <van-radio name="单独所有">单独所有</van-radio>
+                        <van-radio name="共同共有">共同共有</van-radio>
+                      </van-radio-group>
+                    </div>
+                    <template v-if="house.shareType === '共同共有'">
+                      <div class="form-item">
+                        <van-field
+                          v-model="house.sharePercent"
+                          label="占比份额"
+                          type="digit"
+                          placeholder="请输入占比%"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        >
+                          <template #right-icon>%</template>
+                        </van-field>
+                        <van-field
+                          v-model="house.shareWith"
+                          label="与谁联名"
+                          is-link
+                          readonly
+                          placeholder="请选择联名人"
+                          @click="house.shareWithPickerShow = true"
+                        />
+                        <van-popup v-model:show="house.shareWithPickerShow" position="bottom">
+                          <van-picker
+                            :columns="houseShareOptions"
+                            @confirm="val => { house.shareWith = val.selectedOptions[0].text; house.shareWithPickerShow = false }"
+                            @cancel="house.shareWithPickerShow = false"
+                            show-toolbar
+                            title="选择联名人"
+                          />
+                        </van-popup>
+                      </div>
+                    </template>
+                    <div class="form-item">
+                      <van-field
+                        v-model="house.evalPrice"
+                        label="评估"
+                        type="digit"
+                        placeholder="请输入评估价"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>万</template>
+                      </van-field>
+                      <div class="radio-title">状态</div>
+                      <van-radio-group v-model="house.status" direction="horizontal" class="radio-group">
+                        <van-radio name="全款">全款</van-radio>
+                        <van-radio name="按揭">按揭</van-radio>
+                        <van-radio name="抵押">抵押</van-radio>
+                      </van-radio-group>
+                    </div>
+                    <!-- 按揭扩展 -->
+                    <template v-if="house.status === '按揭'">
+                      <div class="form-item">
+                        <van-field
+                          v-model="house.mortgageAmount"
+                          label="按揭金额"
+                          type="digit"
+                          placeholder="请输入金额"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        >
+                          <template #right-icon>万</template>
+                        </van-field>
+                        <van-field
+                          v-model="house.mortgageOrg"
+                          label="按揭机构名称"
+                          placeholder="请输入机构名称"
+                        />
+                        <van-field
+                          v-model="house.mortgageMonths"
+                          label="供"
+                          type="digit"
+                          placeholder="请输入月数"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        >
+                          <template #right-icon>个月</template>
+                        </van-field>
+                      </div>
+                      <div class="form-item">
+                        <div class="radio-title">是否有二押</div>
+                        <van-radio-group v-model="house.mortgageSecond" direction="horizontal" class="radio-group">
+                          <van-radio name="否">否</van-radio>
+                          <van-radio name="是">是</van-radio>
+                        </van-radio-group>
+                      </div>
+                      <template v-if="house.mortgageSecond === '是'">
+                        <div class="form-item">
+                          <van-field
+                            v-model="house.mortgageSecondAmount"
+                            label="二押金额"
+                            type="digit"
+                            placeholder="请输入金额"
+                            :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          >
+                            <template #right-icon>万</template>
+                          </van-field>
+                          <van-field
+                            v-model="house.mortgageSecondType"
+                            label="机构类型"
+                            is-link
+                            readonly
+                            placeholder="请选择机构类型"
+                            @click="house.mortgageSecondTypePickerShow = true"
+                          />
+                          <van-popup v-model:show="house.mortgageSecondTypePickerShow" position="bottom">
+                            <van-picker
+                              :columns="houseSecondTypeOptions"
+                              @confirm="val => { house.mortgageSecondType = val.selectedOptions[0].text; house.mortgageSecondTypePickerShow = false }"
+                              @cancel="house.mortgageSecondTypePickerShow = false"
+                              show-toolbar
+                              title="选择机构类型"
+                            />
+                          </van-popup>
+                          <van-field
+                            v-model="house.mortgageSecondOrg"
+                            label="机构名称"
+                            placeholder="请输入机构名称"
+                          />
+                        </div>
+                      </template>
+                    </template>
+                    <!-- 抵押扩展 -->
+                    <template v-if="house.status === '抵押'">
+                      <div class="form-item">
+                        <van-field
+                          v-model="house.pledgeAmount"
+                          label="抵押金额"
+                          type="digit"
+                          placeholder="请输入金额"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        >
+                          <template #right-icon>万</template>
+                        </van-field>
+                        <van-field
+                          v-model="house.pledgeOrg"
+                          label="抵押机构名称"
+                          placeholder="请输入机构名称"
+                        />
+                        <van-field
+                          v-model="house.pledgeMonths"
+                          label="供"
+                          type="digit"
+                          placeholder="请输入月数"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        >
+                          <template #right-icon>个月</template>
+                        </van-field>
+                      </div>
+                      <div class="form-item">
+                        <div class="radio-title">是否有二押</div>
+                        <van-radio-group v-model="house.pledgeSecond" direction="horizontal" class="radio-group">
+                          <van-radio name="否">否</van-radio>
+                          <van-radio name="是">是</van-radio>
+                        </van-radio-group>
+                      </div>
+                      <template v-if="house.pledgeSecond === '是'">
+                        <div class="form-item">
+                          <van-field
+                            v-model="house.pledgeSecondAmount"
+                            label="二押金额"
+                            type="digit"
+                            placeholder="请输入金额"
+                            :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          >
+                            <template #right-icon>万</template>
+                          </van-field>
+                          <van-field
+                            v-model="house.pledgeSecondType"
+                            label="机构类型"
+                            is-link
+                            readonly
+                            placeholder="请选择机构类型"
+                            @click="house.pledgeSecondTypePickerShow = true"
+                          />
+                          <van-popup v-model:show="house.pledgeSecondTypePickerShow" position="bottom">
+                            <van-picker
+                              :columns="houseSecondTypeOptions"
+                              @confirm="val => { house.pledgeSecondType = val.selectedOptions[0].text; house.pledgeSecondTypePickerShow = false }"
+                              @cancel="house.pledgeSecondTypePickerShow = false"
+                              show-toolbar
+                              title="选择机构类型"
+                            />
+                          </van-popup>
+                          <van-field
+                            v-model="house.pledgeSecondOrg"
+                            label="机构名称"
+                            placeholder="请输入机构名称"
+                          />
+                        </div>
+                      </template>
+                    </template>
+                  </template>
+                </div>
+              </template>
+            </template>
+          </div>
+        </div>
+      </van-cell-group>
+
+      <!-- 模块4：本人特殊情况补充 -->
+      <van-cell-group inset class="module-group">
+        <van-cell title="本人特殊情况补充" class="module-title">
+          <template #icon>
+            <van-icon name="info-o" class="module-icon" />
+          </template>
+        </van-cell>
+        <div class="module-content">
+          <!-- 这里将添加具体的表单项 -->
+        </div>
+      </van-cell-group>
+
+      <!-- 提交按钮 -->
+      <div class="submit-section">
+        <van-button type="primary" block class="submit-btn" @click="submitAll">
+          提交全部信息
+        </van-button>
+      </div>
+    </div>
+
+    <!-- 将选择器弹出层移到最外层 -->
+    <van-popup v-model:show="showSocialSecurityAreaPicker" position="bottom">
       <van-picker
         :columns="areaOptions"
-        @confirm="(value) => onAreaConfirm('socialSecurity', value)"
-        @cancel="showAreaPicker = false"
+        @confirm="onSocialSecurityAreaConfirm"
+        @cancel="showSocialSecurityAreaPicker = false"
+        show-toolbar
+        title="选择社保地区"
       />
     </van-popup>
+
+    <!-- 公积金地区选择器弹窗 -->
     <van-popup v-model:show="showProvidentFundAreaPicker" position="bottom">
       <van-picker
-        :columns="areaOptions"
-        @confirm="(value) => onAreaConfirm('providentFund', value)"
+        :columns="providentFundAreaOptions"
+        @confirm="onProvidentFundAreaConfirm"
         @cancel="showProvidentFundAreaPicker = false"
+        show-toolbar
+        title="选择公积金地区"
       />
     </van-popup>
-    <van-popup v-model:show="showIncomeTaxAreaPicker" position="bottom">
+
+    <!-- 个税地区选择器弹窗 -->
+    <van-popup v-model:show="showTaxAreaPicker" position="bottom">
       <van-picker
-        :columns="areaOptions"
-        @confirm="(value) => onAreaConfirm('incomeTax', value)"
-        @cancel="showIncomeTaxAreaPicker = false"
+        :columns="taxAreaOptions"
+        @confirm="onTaxAreaConfirm"
+        @cancel="showTaxAreaPicker = false"
+        show-toolbar
+        title="选择个税地区"
       />
     </van-popup>
-    
-    <van-collapse v-model="activeNames">
-      <!-- 征信细节补充 -->
-      <van-collapse-item title="本人征信细节补充" name="1">
-        <template #value>
-          <van-button size="small" type="primary" @click.stop="saveCreditData">
-            暂存
-          </van-button>
-        </template>
-        <div class="section-content">
-          <!-- 近半年查询原因 -->
-          <div class="sub-section">
-            <h3>01）近半年以下查询原因及细节</h3>
-            <div v-for="(item, index) in formData.queryDetails" :key="index" class="record-item">
-              <div class="record-info">
-                {{ item.time }} - {{ item.institution }} - {{ item.reason }}
-              </div>
-              <div class="form-item">
-                <div class="form-label">
-                  <span style="color:red">*</span>申请贷款类型
-                </div>
-                <van-radio-group v-model="item.loanType" direction="horizontal">
-                  <van-radio v-for="type in loanTypes" :key="type" :name="type">
-                    {{ type }}
-                  </van-radio>
-                </van-radio-group>
-              </div>
-              <div class="form-item">
-                <div class="form-label">
-                  <span style="color:red">*</span>后续状态
-                </div>
-                <van-radio-group v-model="item.approvalStatus" direction="horizontal">
-                  <van-radio v-for="status in approvalStatuses" :key="status.value" :name="status.value">
-                    {{ status.label }}
-                  </van-radio>
-                </van-radio-group>
-                <van-field
-                  v-if="item.approvalStatus === 'rejected'"
-                  v-model="item.rejectReason"
-                  label="拒绝原因"
-                  placeholder="请输入拒绝原因"
-                />
-              </div>
-            </div>
-          </div>
 
-          <!-- 近五年未结清 -->
-          <div class="sub-section">
-            <h3>02）近五年未结清的以下机构的补充</h3>
-            <div v-for="(item, index) in formData.unsettledDetails" :key="index" class="record-item">
-              <div class="record-info">
-                {{ item.time }} - {{ item.institution }} - 总金额：{{ item.amount }} - 已还：{{ item.repaidAmount }}
-              </div>
-              <div class="form-item">
-                <div class="form-label">
-                  <span style="color:red">*</span>贷款类别
-                </div>
-                <van-radio-group v-model="item.loanType" direction="horizontal">
-                  <van-radio v-for="type in loanTypes" :key="type" :name="type">
-                    {{ type }}
-                  </van-radio>
-                </van-radio-group>
-              </div>
-            </div>
-          </div>
-
-          <!-- 灰名单情况 -->
-          <div class="sub-section">
-            <h3>03）历史(含五年外)以下机构灰名单情况</h3>
-            <div class="bank-list">
-              <div class="bank-checkboxes">
-                <van-checkbox
-                  v-for="(bank, index) in formData.greylistBanks"
-                  :key="index"
-                  v-model="bank.checked"
-                  class="bank-checkbox"
-                >
-                  {{ bank.name }}
-                </van-checkbox>
-              </div>
-              <div v-for="bank in formData.greylistBanks.filter(b => b.checked)" :key="bank.id" class="bank-reason">
-                <div class="form-label">
-                  {{ bank.name }}黑灰名单原因：
-                </div>
-                <van-field v-model="bank.reason" placeholder="示例：2026年06月，储蓄卡洗钱记录" />
-              </div>
-            </div>
-          </div>
-
-          <!-- 被拒情况 -->
-          <div class="sub-section">
-            <h3>04）历史(含五年外)以下机构被拒情况</h3>
-            <div class="bank-list">
-              <div class="bank-checkboxes">
-                <van-checkbox
-                  v-for="(bank, index) in formData.rejectedBanks"
-                  :key="index"
-                  v-model="bank.checked"
-                  class="bank-checkbox"
-                >
-                  {{ bank.name }}
-                </van-checkbox>
-              </div>
-              <div v-for="bank in formData.rejectedBanks.filter(b => b.checked)" :key="bank.id" class="bank-reason">
-                <div class="form-label">
-                  {{ bank.name }}被拒时间及原因：
-                </div>
-                <van-field v-model="bank.rejectInfo" placeholder="示例：2026年06月，虚假资料" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </van-collapse-item>
-
-      <!-- 工作属性 -->
-      <van-collapse-item title="本人工作属性" name="2">
-        <template #value>
-          <van-button size="small" type="primary" @click.stop="saveWorkData">
-            暂存
-          </van-button>
-        </template>
-        <div class="section-content">
-          <!-- 考察情况 -->
-          <div class="sub-section">
-            <h3>01）考察情况</h3>
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>工作性质
-              </div>
-              <van-radio-group v-model="workData.workType" direction="horizontal">
-                <van-radio name="normal">
-                  普通单位上班族
-                </van-radio>
-                <van-radio name="premium">
-                  优质单位上班族
-                </van-radio>
-                <van-radio name="business">
-                  企业主
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否可考察
-              </div>
-              <van-radio-group v-model="workData.canInspect" direction="horizontal">
-                <van-radio :name="false">
-                  否
-                </van-radio>
-                <van-radio :name="true">
-                  是
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="workData.canInspect" class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>可考察地点
-              </div>
-              <van-checkbox-group v-model="workData.inspectLocations" direction="horizontal">
-                <van-checkbox
-                  v-for="location in availableInspectLocations"
-                  :key="location.value"
-                  :name="location.value"
-                >
-                  {{ location.label }}
-                </van-checkbox>
-              </van-checkbox-group>
-            </div>
-          </div>
-
-          <!-- 社保情况 -->
-          <div class="sub-section">
-            <h3>02）社保/公积金/个税情况</h3>
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否有社保
-              </div>
-              <van-radio-group v-model="workData.hasSocialSecurity" direction="horizontal">
-                <van-radio :name="false">
-                  否
-                </van-radio>
-                <van-radio :name="true">
-                  是
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="workData.hasSocialSecurity" class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>缴费主体
-              </div>
-              <van-radio-group v-model="workData.socialSecurity.paymentSubject" direction="horizontal">
-                <van-radio v-for="option in paymentSubjectOptions" :key="option.value" :name="option.value">
-                  {{ option.label }}
-                </van-radio>
-              </van-radio-group>
-
-              <div class="form-label">
-                <span style="color:red">*</span>社保地区
-              </div>
-      
-              <van-field
-                v-model="workData.socialSecurity.area"
-                readonly
-                clickable
-                name="社保地区"
-                placeholder="请选择社保地区"
-                :rules="[{ required: true, message: '请选择社保地区' }]"
-                @click="showAreaPicker = true"
-              />
-              <van-popup v-model:show="showAreaPicker" position="bottom">
-                <van-picker
-                  :columns="areaOptions"
-                  @confirm="onAreaConfirm('socialSecurity', $event)"
-                  @cancel="showAreaPicker = false"
-                />
-              </van-popup>
-
-              <van-field
-                v-model="workData.socialSecurity.totalMonths"
-                label="连续缴社保合计"
-                type="digit"
-                placeholder="请输入月数"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>个月</span>
-                </template>
-              </van-field>
-              <van-field
-                v-model="workData.socialSecurity.currentUnitMonths"
-                label="当前单位"
-                type="digit"
-                placeholder="请输入月数"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>个月</span>
-                </template>
-              </van-field>
-              <van-field
-                v-model="workData.socialSecurity.medicalBase"
-                label="近半年平均医疗基数"
-                type="digit"
-                placeholder="请输入金额"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>元</span>
-                </template>
-              </van-field>
-              <van-field
-                v-model="workData.socialSecurity.pensionBase"
-                label="近半年平均养老基数"
-                type="digit"
-                placeholder="请输入金额"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>元</span>
-                </template>
-              </van-field>
-              <van-field
-                v-if="workData.socialSecurity.paymentSubject === 'company'"
-                v-model="workData.socialSecurity.unitName"
-                label="社保单位全称"
-                placeholder="请输入单位名称"
-              />
-              <van-field
-                v-model="workData.socialSecurity.unitRemark"
-                :label="workData.socialSecurity.paymentSubject === 'company' ? '社保补充' : '社保补充'"
-                :placeholder="workData.socialSecurity.paymentSubject === 'company' ? '是否敏感行业(律师|公检法|租车等)' : '断缴补缴等情况'"
-              />
-            </div>
-          </div>
-
-          <!-- 公积金情况 -->
-          <div class="sub-section" v-if="workData.hasSocialSecurity">
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否有公积金
-              </div>
-              <van-radio-group v-model="workData.hasProvidentFund" direction="horizontal">
-                <van-radio :name="false">
-                  否
-                </van-radio>
-                <van-radio :name="true">
-                  是
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="workData.hasProvidentFund" class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>公积金地区
-              </div>
-              <van-field
-                v-model="workData.providentFund.area"
-                readonly
-                clickable
-                name="公积金地区"
-                placeholder="请选择公积金地区"
-                :rules="[{ required: true, message: '请选择公积金地区' }]"
-                @click="showProvidentFundAreaPicker = true"
-              />
-              <van-popup v-model:show="showProvidentFundAreaPicker" position="bottom">
-                <van-picker
-                  :columns="areaOptions"
-                  @confirm="onAreaConfirm('providentFund', $event)"
-                  @cancel="showProvidentFundAreaPicker = false"
-                />
-              </van-popup>
-
-              <van-field
-                v-model="workData.providentFund.totalMonths"
-                label="连续缴公积金合计"
-                type="digit"
-                placeholder="请输入月数"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>个月</span>
-                </template>
-              </van-field>
-              <van-field
-                v-model="workData.providentFund.currentUnitMonths"
-                label="当前单位"
-                type="digit"
-                placeholder="请输入月数"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>个月</span>
-                </template>
-              </van-field>
-              <van-field
-                v-model="workData.providentFund.averageBase"
-                label="近半年平均公积金基数"
-                type="digit"
-                placeholder="请输入金额"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>元</span>
-                </template>
-              </van-field>
-              <div v-if="workData.socialSecurity.paymentSubject === 'company'" class="form-item">
-                <div class="form-label">
-                  公积金单位名称
-                </div>
-                <van-radio-group v-model="workData.providentFund.sameAsSocialSecurity" direction="horizontal">
-                  <van-radio :name="true">
-                    同社保单位
-                  </van-radio>
-                  <van-radio :name="false">
-                    不同于社保单位
-                  </van-radio>
-                </van-radio-group>
-              </div>
-              <van-field
-                v-model="workData.providentFund.unitRemark"
-                label="公积金补充"
-                placeholder="是否断缴等情况"
-              />
-            </div>
-          </div>
-
-          <!-- 个税情况 -->
-          <div class="sub-section" v-if="workData.hasSocialSecurity">
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否有个税
-              </div>
-              <van-radio-group v-model="workData.hasIncomeTax" direction="horizontal">
-                <van-radio :name="false">
-                  否
-                </van-radio>
-                <van-radio :name="true">
-                  是
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="workData.hasIncomeTax" class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>个税地区
-              </div>
-              <van-field
-                v-model="workData.incomeTax.area"
-                readonly
-                clickable
-                name="个税地区"
-                placeholder="请选择个税地区"
-                :rules="[{ required: true, message: '请选择个税地区' }]"
-                @click="showIncomeTaxAreaPicker = true"
-              />
-              <van-popup v-model:show="showIncomeTaxAreaPicker" position="bottom">
-                <van-picker
-                  :columns="areaOptions"
-                  @confirm="onAreaConfirm('incomeTax', $event)"
-                  @cancel="showIncomeTaxAreaPicker = false"
-                />
-              </van-popup>
-
-              <van-field
-                v-model="workData.incomeTax.totalMonths"
-                label="连续缴个税合计"
-                type="digit"
-                placeholder="请输入月数"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>个月</span>
-                </template>
-              </van-field>
-              <van-field
-                v-model="workData.incomeTax.currentUnitMonths"
-                label="当前单位"
-                type="digit"
-                placeholder="请输入月数"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>个月</span>
-                </template>
-              </van-field>
-              <van-field
-                v-model="workData.incomeTax.averageSalary"
-                label="近半年平均个税税前工资"
-                type="digit"
-                placeholder="请输入金额"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>元</span>
-                </template>
-              </van-field>
-              <div v-if="workData.socialSecurity.paymentSubject === 'company'" class="form-item">
-                <div class="form-label">
-                  个税单位名称
-                </div>
-                <van-radio-group v-model="workData.incomeTax.sameAsSocialSecurity" direction="horizontal">
-                  <van-radio :name="true">
-                    同社保单位
-                  </van-radio>
-                  <van-radio :name="false">
-                    不同于社保单位
-                  </van-radio>
-                </van-radio-group>
-              </div>
-              <van-field
-                v-model="workData.incomeTax.unitRemark"
-                label="个税补充"
-                placeholder="是否断缴等情况"
-              />
-            </div>
-          </div>
-
-          <!-- 企业情况 -->
-          <div class="sub-section">
-            <h3>03）企业情况</h3>
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否有企业
-              </div>
-              <van-radio-group v-model="workData.hasEnterprise" direction="horizontal">
-                <van-radio :name="false">
-                  否
-                </van-radio>
-                <van-radio :name="true">
-                  是
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="workData.hasEnterprise" class="form-item">
-              <van-field
-                v-model="workData.enterprise.name"
-                label="企业全称"
-                placeholder="请输入企业全称"
-              />
-              <div class="form-item">
-                <div class="form-label">
-                  <span style="color:red">*</span>工商信息
-                </div>
-                <van-checkbox-group v-model="workData.enterprise.businessInfo" direction="horizontal">
-                  <van-checkbox name="法人">
-                    法人
-                  </van-checkbox>
-                  <van-checkbox name="股东">
-                    股东
-                  </van-checkbox>
-                  <van-checkbox name="监事">
-                    监事
-                  </van-checkbox>
-                </van-checkbox-group>
-              </div>
-              <template v-if="workData.enterprise.businessInfo.includes('法人')">
-                <van-field
-                  v-model="workData.enterprise.legalPersonMonths"
-                  label="法人名下"
-                  type="digit"
-                  placeholder="请输入月数"
-                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                >
-                  <template #button>
-                    <span>个月</span>
-                  </template>
-                </van-field>
-              </template>
-              <template v-if="workData.enterprise.businessInfo.includes('股东')">
-                <van-field
-                  v-model="workData.enterprise.shareholderMonths"
-                  label="股东名下"
-                  type="digit"
-                  placeholder="请输入月数"
-                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                >
-                  <template #button>
-                    <span>个月</span>
-                  </template>
-                </van-field>
-                <van-field
-                  v-model="workData.enterprise.shareholderPercentage"
-                  label="占股"
-                  type="digit"
-                  placeholder="请输入占股比例"
-                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                >
-                  <template #button>
-                    <span>%</span>
-                  </template>
-                </van-field>
-              </template>
-              <van-field
-                v-model="workData.enterprise.registeredCapital"
-                label="注册资金"
-                type="digit"
-                placeholder="请输入金额"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>万</span>
-                </template>
-              </van-field>
-              <van-field
-                v-model="workData.enterprise.registeredMonths"
-                label="注册"
-                type="digit"
-                placeholder="请输入月数"
-                :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-              >
-                <template #button>
-                  <span>个月</span>
-                </template>
-              </van-field>
-              <div class="form-item">
-                <div class="form-label">
-                  工商是否经营异常
-                </div>
-                <van-radio-group v-model="workData.enterprise.hasAbnormalOperation" direction="horizontal">
-                  <van-radio :name="false">
-                    否
-                  </van-radio>
-                  <van-radio :name="true">
-                    是
-                  </van-radio>
-                </van-radio-group>
-              </div>
-              <div class="form-item">
-                <div class="form-label">
-                  <span style="color:red">*</span>是否实体
-                </div>
-                <van-radio-group v-model="workData.enterprise.hasEntity" direction="horizontal">
-                  <van-radio :name="false">
-                    否
-                  </van-radio>
-                  <van-radio :name="true">
-                    是
-                  </van-radio>
-                </van-radio-group>
-              </div>
-              <template v-if="workData.enterprise.hasEntity">
-                <van-field
-                  v-model="workData.enterprise.industry"
-                  label="经营行业"
-                  placeholder="请输入经营行业"
-                />
-                <van-field
-                  v-model="workData.enterprise.scale.employees"
-                  label="企业规模-人数"
-                  type="digit"
-                  placeholder="请输入人数"
-                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                >
-                  <template #button>
-                    <span>人</span>
-                  </template>
-                </van-field>
-                <van-field
-                  v-model="workData.enterprise.scale.area"
-                  label="企业规模-面积"
-                  type="digit"
-                  placeholder="请输入面积"
-                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                >
-                  <template #button>
-                    <span>㎡</span>
-                  </template>
-                </van-field>
-              </template>
-            </div>
-          </div>
-        </div>
-      </van-collapse-item>
-
-      <!-- 加分选项 -->
-      <van-collapse-item title="本人加分选项" name="3">
-        <template #value>
-          <van-button size="small" type="primary" @click.stop="saveBonusData">
-            暂存
-          </van-button>
-        </template>
-        <div class="section-content">
-          <!-- 学历情况 -->
-          <div class="sub-section">
-            <h3><span style="color:red">*</span>01）学历情况</h3>
-            <div class="form-item">
-              <van-radio-group v-model="bonusData.education.level" direction="horizontal">
-                <van-radio v-for="level in educationLevels" :key="level" :name="level">
-                  {{ level }}
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="['大专', '本科', '硕士', '博士'].includes(bonusData.education.level)" class="form-item">
-              <div class="form-label">
-                是否学信网可查
-              </div>
-              <van-radio-group v-model="bonusData.education.verifiable" direction="horizontal">
-                <van-radio :name="true">
-                  是
-                </van-radio>
-                <van-radio :name="false">
-                  否
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="bonusData.education.verifiable" class="form-item">
-              <div class="form-label">
-                是否全日制
-              </div>
-              <van-radio-group v-model="bonusData.education.fullTime" direction="horizontal">
-                <van-radio :name="true">
-                  是
-                </van-radio>
-                <van-radio :name="false">
-                  否
-                </van-radio>
-              </van-radio-group>
-            </div>
-          </div>
-
-          <!-- 房产情况 -->
-          <div class="sub-section">
-            <h3>02）房产情况</h3>
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否有房产
-              </div>
-              <van-radio-group v-model="bonusData.house.hasHouse" direction="horizontal">
-                <van-radio :name="true">
-                  是
-                </van-radio>
-                <van-radio :name="false">
-                  否
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="bonusData.house.hasHouse" class="upload-section">
-              <van-uploader v-model="bonusData.house.houseFiles" multiple upload-text="添加房产明细(有则必需添加)" />
-            </div>
-          </div>
-
-          <!-- 车产情况 -->
-          <div class="sub-section">
-            <h3>03）车产情况</h3>
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否有车产
-              </div>
-              <van-radio-group v-model="bonusData.car.hasCar" direction="horizontal">
-                <van-radio :name="true">
-                  是
-                </van-radio>
-                <van-radio :name="false">
-                  否
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="bonusData.car.hasCar" class="upload-section">
-              <van-uploader
-                v-model="bonusData.car.carFiles" :max-count="1"
-                upload-text="添加车产明细(有则必需添加)"
-              />
-              <div class="upload-tip">
-                只上传一量，优先级别：广东省内牌＞广东省外牌
-              </div>
-            </div>
-          </div>
-
-          <!-- 金融资产情况 -->
-          <div class="sub-section">
-            <h3>04）金融资产情况</h3>
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否有金融资产
-              </div>
-              <van-radio-group v-model="bonusData.financial.hasFinancial" direction="horizontal">
-                <van-radio :name="true">
-                  是
-                </van-radio>
-                <van-radio :name="false">
-                  否
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="bonusData.financial.hasFinancial" class="upload-section">
-              <van-uploader
-                v-model="bonusData.financial.financialFiles" :max-count="1"
-                upload-text="添加金融资产明细(有则必需添加)"
-              />
-            </div>
-          </div>
-
-          <!-- 流水情况 -->
-          <div class="sub-section">
-            <h3>05）流水情况</h3>
-            <div class="form-item">
-              <div class="form-label">
-                <span style="color:red">*</span>是否有有效流水
-              </div>
-              <van-radio-group v-model="bonusData.bankFlow.hasFlow" direction="horizontal">
-                <van-radio :name="true">
-                  有
-                </van-radio>
-                <van-radio :name="false">
-                  无
-                </van-radio>
-              </van-radio-group>
-            </div>
-            <div v-if="bonusData.bankFlow.hasFlow" class="upload-section">
-              <van-uploader
-                v-model="bonusData.bankFlow.flowFiles" :max-count="2"
-                upload-text="添加流水明细(有则必需添加)"
-              />
-            </div>
-          </div>
-        </div>
-      </van-collapse-item>
-
-      <!-- 特殊情况（预留） -->
-      <van-collapse-item title="本人特殊情况补充" name="4">
-        <template #value>
-          <van-button size="small" type="primary" @click.stop="saveSpecialData">
-            暂存
-          </van-button>
-        </template>
-        <div class="section-content">
-          <!-- 语言能力 -->
-          <div class="sub-section">
-            <h3><span style="color:red">*</span>01）普通话/粤语（必填）</h3>
-            <div class="form-item">
-              <van-radio-group v-model="specialData.language" direction="horizontal">
-                <van-radio name="both">
-                  普通话和粤语都会
-                </van-radio>
-                <van-radio name="mandarin">
-                  只会普通话
-                </van-radio>
-                <van-radio name="cantonese">
-                  只会粤语
-                </van-radio>
-                <van-radio name="none">
-                  普通话和粤语都不会
-                </van-radio>
-              </van-radio-group>
-            </div>
-          </div>
-
-          <!-- 写字能力 -->
-          <div class="sub-section">
-            <h3><span style="color:red">*</span>02）写字能力（必填）</h3>
-            <div class="form-item">
-              <van-radio-group v-model="specialData.writing" direction="horizontal">
-                <van-radio name="normal">
-                  写字正常
-                </van-radio>
-                <van-radio name="slow">
-                  写字很慢
-                </van-radio>
-                <van-radio name="unable">
-                  不会写字
-                </van-radio>
-              </van-radio-group>
-            </div>
-          </div>
-
-          <!-- 身体状况 -->
-          <div class="sub-section">
-            <h3><span style="color:red">*</span>03）身体缺陷（必填）</h3>
-            <div class="form-item">
-              <van-radio-group v-model="specialData.physical" direction="horizontal">
-                <van-radio name="normal">
-                  身体正常
-                </van-radio>
-                <van-radio name="disabled">
-                  身体有明显残疾
-                </van-radio>
-              </van-radio-group>
-            </div>
-          </div>
-        </div>
-      </van-collapse-item>
-    </van-collapse>
-
-    <div class="submit-btn">
-      <van-button type="primary" round block @click="onSubmit">
-        提交
-      </van-button>
-    </div>
+    <!-- 房产地区选择器弹窗 -->
+    <van-popup v-model:show="showHouseAreaPicker" position="bottom">
+      <van-picker
+        :columns="houseAreaOptions"
+        @confirm="onHouseAreaConfirm"
+        @cancel="showHouseAreaPicker = false"
+        show-toolbar
+        title="选择房产地区"
+      />
+    </van-popup>
   </div>
 </template>
 
-<style scoped>
-.reject-info-row {
-  display: flex;
-  gap: 10px;
+<script setup lang="ts">
+import { ref, reactive, watch } from 'vue'
+import { showToast, showSuccessToast, showFailToast } from 'vant'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// 模块1的数据
+const module1Data = reactive({
+  // 近半年查询记录
+  queryRecords: [
+    {
+      date: '2025-04-01',
+      org: '机构A-信用卡审批',
+      loanType: '装修贷',
+      progress: '已批-已放款',
+      rejectReason: ''
+    },
+    {
+      date: '2025-04-28',
+      org: '机构B-信用卡审批',
+      loanType: '车贷',
+      progress: '已拒',
+      rejectReason: ''
+    }
+  ],
+  // 近五年未结清
+  unpaidLoans: [
+    {
+      date: '2023-01-01',
+      org: '机构A',
+      amount: '30万',
+      progress: '已还6N',
+      loanType: ''
+    }
+  ],
+  // 黑灰名单机构
+  blacklistOrgs: [],
+  blacklistReasons: {},
+  // 被拒记录机构
+  rejectedOrgs: [],
+  rejectReasons: {}
+})
+
+// 模块2的数据
+const module2Data = reactive({
+  // 考察情况
+  workType: '',
+  canInvestigate: '',
+  investigateLocations: [] as string[],
+  
+  // 社保情况
+  hasSocialSecurity: '',
+  socialSecurityPayers: [] as string[],
+  socialSecurityArea: '',
+  socialSecurityCompany: '',
+  socialSecurityTotalMonths: '',
+  socialSecurityCurrentMonths: '',
+  medicalBase: '',
+  pensionBase: '',
+  socialSecurityNote: '',
+  
+  // 公积金情况
+  hasProvidentFund: '',
+  providentFundPayer: '',
+  providentFundArea: '',
+  providentFundCompany: '',
+  providentFundTotalMonths: '',
+  providentFundCurrentMonths: '',
+  providentFundBase: '',
+  providentFundNote: '',
+  providentFundCompanyType: '',
+  providentFundCompanyName: '',
+  
+  // 个税情况
+  hasTax: '',
+  taxPayer: '',
+  taxArea: '',
+  taxCompany: '',
+  taxTotalMonths: '',
+  taxCurrentMonths: '',
+  taxBase: '',
+  taxNote: '',
+  taxCompanyType: '',
+  taxCompanyName: '',
+})
+
+// 修改社保地区选择相关代码
+const showSocialSecurityAreaPicker = ref(false)
+const areaOptions = ref([
+  { text: '北京', value: '北京' },
+  { text: '上海', value: '上海' },
+  { text: '广州', value: '广州' },
+  { text: '深圳', value: '深圳' }
+]) // 这里应该从后端获取
+
+const onSocialSecurityAreaConfirm = (params: {
+  selectedValues: string[],
+  selectedOptions: Array<{ text: string; value: string }>,
+  selectedIndexes: number[]
+}) => {
+  console.log(params)
+  module2Data.socialSecurityArea = params.selectedOptions[0]?.text || ''
+  showSocialSecurityAreaPicker.value = false
 }
 
-.reject-info-row .reject-time {
-  width: 140px;
-  flex-shrink: 0;
+// 公积金地区选择相关代码
+const showProvidentFundAreaPicker = ref(false)
+const providentFundAreaOptions = ref([
+  { text: '北京', value: '北京' },
+  { text: '上海', value: '上海' },
+  { text: '广州', value: '广州' },
+  { text: '深圳', value: '深圳' }
+]) // 这里应该从后端获取
+
+const onProvidentFundAreaConfirm = (params: {
+  selectedValues: string[],
+  selectedOptions: Array<{ text: string; value: string }>,
+  selectedIndexes: number[]
+}) => {
+  module2Data.providentFundArea = params.selectedOptions[0]?.text || ''
+  showProvidentFundAreaPicker.value = false
 }
 
-.reject-info-row .reject-reason {
-  flex: 1;
-}
-</style>
+// 个税地区选择相关代码
+const showTaxAreaPicker = ref(false)
+const taxAreaOptions = ref([
+  { text: '北京', value: '北京' },
+  { text: '上海', value: '上海' },
+  { text: '广州', value: '广州' },
+  { text: '深圳', value: '深圳' }
+]) // 这里应该从后端获取
 
-<style scoped>
-.last-examine {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #6e8efb, #a777e3);
-  padding: 16px;
-}
-
-.form-item {
-  margin: 12px 0;
-}
-
-.form-label {
-  margin-bottom: 8px;
-  font-weight: 500;
+const onTaxAreaConfirm = (params: {
+  selectedValues: string[],
+  selectedOptions: Array<{ text: string; value: string }>,
+  selectedIndexes: number[]
+}) => {
+  module2Data.taxArea = params.selectedOptions[0]?.text || ''
+  showTaxAreaPicker.value = false
 }
 
-.bank-checkboxes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+// 表单校验辅助
+function isSocialSecurityFilled() {
+  // 判断社保相关字段是否填写完整
+  return (
+    module2Data.hasSocialSecurity === '是' &&
+    ((module2Data.socialSecurityPayers.includes('个人') && module2Data.socialSecurityArea) ||
+     (module2Data.socialSecurityPayers.includes('单位') && module2Data.socialSecurityCompany && module2Data.socialSecurityArea))
+  )
 }
 
-.bank-checkbox {
-  min-width: 80px;
+// module3Data 房产相关字段
+const houseAreaOptions = [
+  { text: '深圳', value: '深圳' }, { text: '广州', value: '广州' }, { text: '珠海', value: '珠海' }, { text: '汕头', value: '汕头' }, { text: '佛山', value: '佛山' }, { text: '韶关', value: '韶关' }, { text: '湛江', value: '湛江' }, { text: '肇庆', value: '肇庆' }, { text: '江门', value: '江门' }, { text: '茂名', value: '茂名' }, { text: '惠州', value: '惠州' }, { text: '梅州', value: '梅州' }, { text: '汕尾', value: '汕尾' }, { text: '河源', value: '河源' }, { text: '阳江', value: '阳江' }, { text: '清远', value: '清远' }, { text: '东莞', value: '东莞' }, { text: '中山', value: '中山' }, { text: '潮州', value: '潮州' }, { text: '揭阳', value: '揭阳' }, { text: '云浮', value: '云浮' }
+]
+const houseStatusOptions = ['全款', '按揭', '抵押']
+const houseShareOptions = [
+  { text: '多人', value: '多人' },
+  { text: '配偶', value: '配偶' },
+  { text: '父亲', value: '父亲' },
+  { text: '母亲', value: '母亲' },
+  { text: '儿子', value: '儿子' },
+  { text: '女儿', value: '女儿' },
+  { text: '其他', value: '其他' }
+]
+const houseSecondTypeOptions = [
+  { text: '银行', value: '银行' },
+  { text: '小额', value: '小额' },
+  { text: '私人', value: '私人' }
+]
+
+const module3Data = reactive({
+  // 学历相关
+  education: '',
+  educationCheck: '',
+  educationFullTime: '',
+  // 房产相关
+  hasHouse: '', // 是否有房产
+  houseCount: '', // 房产套数
+  houses: [] as any[], // 房产信息数组
+})
+
+watch(() => module3Data.houseCount, (val) => {
+  const n = parseInt(val) || 0
+  if (n > 0) {
+    while (module3Data.houses.length < n) {
+      module3Data.houses.push({
+        area: '',
+        areaPickerShow: false,
+        type: '',
+        ownMonths: '',
+        size: '',
+        shareType: '',
+        sharePercent: '',
+        shareWith: '',
+        shareWithPickerShow: false,
+        evalPrice: '',
+        status: '',
+        mortgageAmount: '',
+        mortgageOrg: '',
+        mortgageMonths: '',
+        mortgageSecond: '',
+        mortgageSecondAmount: '',
+        mortgageSecondType: '',
+        mortgageSecondTypePickerShow: false,
+        mortgageSecondOrg: '',
+        pledgeAmount: '',
+        pledgeOrg: '',
+        pledgeMonths: '',
+        pledgeSecond: '',
+        pledgeSecondAmount: '',
+        pledgeSecondType: '',
+        pledgeSecondTypePickerShow: false,
+        pledgeSecondOrg: '',
+      })
+    }
+    if (module3Data.houses.length > n) {
+      module3Data.houses.splice(n)
+    }
+  } else {
+    module3Data.houses = []
+  }
+})
+
+// 模块4的数据
+const module4Data = reactive({
+  // 这里将添加具体的表单数据
+})
+
+// 返回上一页
+const onClickLeft = () => {
+  router.back()
 }
 
-.bank-reason {
-  margin: 3px 0;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 8px;
-}
-
-:deep(.van-radio-group) {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-:deep(.van-radio) {
-  margin-right: 0;
-}
-
-:deep(.van-collapse) {
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-:deep(.van-collapse-item__title) {
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-  align-items: center;
-}
-
-:deep(.van-collapse-item__content) {
-  background: rgba(255, 255, 255, 0.8);
-  padding: 16px;
-}
-
-:deep(.van-field) {
-  width: 100%;
-  padding: 8px 12px;
-}
-
-:deep(.van-field__control) {
-  font-size: 14px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.section-content {
-  padding: 8px;
-}
-
-.sub-section {
-  margin-bottom: 24px;
-}
-
-.sub-section h3 {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 16px;
-}
-
-.record-item {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.record-info {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 8px;
-}
-
-.bank-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-}
-
-.bank-item {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  padding: 12px;
-}
-
-.placeholder-text {
-  color: #999;
-  text-align: center;
-  padding: 20px;
-}
-
-.form-item {
-  margin-bottom: 16px;
-}
-
-.form-label {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 8px;
-}
-
-.upload-section {
-  margin-top: 12px;
-
-  :deep(.van-uploader) {
-    margin-bottom: 12px;
+// 临时保存各个模块
+const saveModule1 = async () => {
+  try {
+    // TODO: 调用API保存模块1数据
+    showSuccessToast('保存成功')
+  } catch (error) {
+    showFailToast('保存失败')
   }
 }
 
-.submit-btn {
-  margin-top: 24px;
+// 提交所有模块
+const submitAll = async () => {
+  try {
+    // TODO: 调用API提交所有数据
+    showSuccessToast('提交成功')
+  } catch (error) {
+    showFailToast('提交失败')
+  }
+}
+
+// 公积金地区点击处理
+const handleProvidentFundAreaClick = () => {
+  if (!(module2Data.providentFundPayer === '单位' && module2Data.providentFundCompanyType === '同社保单位')) {
+    showProvidentFundAreaPicker.value = true
+  }
+}
+
+// 个税地区点击处理
+const handleTaxAreaClick = () => {
+  if (!(module2Data.taxPayer === '单位' && module2Data.taxCompanyType === '同社保单位')) {
+    showTaxAreaPicker.value = true
+  }
+}
+
+// 房产地区选择相关代码
+const showHouseAreaPicker = ref(false)
+const currentHouseAreaIndex = ref(-1)
+const handleHouseAreaClick = (idx: number) => {
+  currentHouseAreaIndex.value = idx
+  showHouseAreaPicker.value = true
+}
+const onHouseAreaConfirm = (val: any) => {
+  if (currentHouseAreaIndex.value !== -1) {
+    module3Data.houses[currentHouseAreaIndex.value].area = val.selectedOptions[0].text
+  }
+  showHouseAreaPicker.value = false
+}
+</script>
+
+<style lang="less" scoped>
+.last-examine {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f0f2f5 0%, #ffffff 100%);
+}
+
+.custom-nav {
+  background: linear-gradient(90deg, #1976d2 0%, #2196f3 100%);
+  
+  :deep(.van-nav-bar__title) {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  :deep(.van-icon) {
+    color: #fff;
+  }
+}
+
+.save-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  font-size: 14px;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 16px;
+  
+  &:active {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.content {
+  padding: 16px;
+}
+
+.module-group {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.module-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  padding: 16px;
+  background: linear-gradient(90deg, #f8f9fa 0%, #ffffff 100%);
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.module-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  color: #1976d2;
+}
+
+.module-content {
+  padding: 20px 16px;
+  background: #fff;
+}
+
+.submit-section {
+  margin-top: 32px;
   padding: 0 16px;
 }
 
-:deep(.van-field) {
-  background: transparent;
+.submit-btn {
+  height: 44px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 22px;
+  background: linear-gradient(90deg, #1976d2 0%, #2196f3 100%);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
-:deep(.van-checkbox__label) {
-  color: #333;
+// 添加动画效果
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-:deep(.van-radio-group) {
-  width: 100%;
+.module-group {
+  animation: fadeIn 0.5s ease-out forwards;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+}
+
+.section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  padding-left: 8px;
+  border-left: 3px solid #1976d2;
+}
+
+.record-item, .loan-item {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.record-header, .loan-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+.record-date, .loan-date {
+  margin-right: 12px;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.record-org, .loan-org {
+  margin-right: 12px;
+}
+
+.loan-amount {
+  margin-right: 12px;
+  color: #f56c6c;
+}
+
+.loan-progress {
+  color: #67c23a;
+}
+
+.radio-group, .checkbox-group {
+  margin: 12px 0;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.upload-tip {
-  font-size: 12px;
+.reject-reason, .blacklist-reason {
+  margin-top: 12px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+:deep(.van-radio__label), :deep(.van-checkbox__label) {
+  color: #333;
+}
+
+:deep(.van-field) {
+  padding: 8px 0;
+}
+
+:deep(.van-field__label) {
   color: #666;
-  margin-top: 8px;
-  padding-left: 12px;
-  border-left: 2px solid #4caf50;
-  background-color: rgba(76, 175, 80, 0.1);
+  width: 100%;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+:deep(.van-field__control) {
+  color: #333;
+  min-height: 36px;
   padding: 8px 12px;
+  background: #f5f7fa;
   border-radius: 4px;
+}
+
+:deep(.van-field__placeholder) {
+  color: #999;
+}
+
+.radio-title {
+  font-size: 14px;
+  color: #666;
+  margin: 12px 0 8px;
+  font-weight: 500;
+}
+
+.form-item {
+  margin-bottom: 16px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.checkbox-title {
+  font-size: 14px;
+  color: #666;
+  margin: 12px 0 8px;
+  font-weight: 500;
+}
+
+// 添加弹出层样式
+:deep(.van-popup) {
+  border-radius: 16px 16px 0 0;
+}
+
+:deep(.van-picker) {
+  .van-picker__toolbar {
+    height: 44px;
+    line-height: 44px;
+  }
+  
+  .van-picker__title {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .van-picker__confirm {
+    color: #1976d2;
+  }
 }
 </style>
