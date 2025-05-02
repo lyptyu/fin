@@ -155,7 +155,8 @@ const showIncomeTaxAreaPicker = ref(false)
 
 // 处理地区选择
 function onAreaConfirm(type: 'socialSecurity' | 'providentFund' | 'incomeTax', { selectedOptions }) {
-  const area = selectedOptions[0]?.label || ''
+  console.log('selectedOptions', selectedOptions)
+  const area = selectedOptions[0]?.text || ''
   if (type === 'socialSecurity') {
     workData.value = {
       ...workData.value,
@@ -692,7 +693,7 @@ function onSubmit() {
               <div class="form-label">
                 <span style="color:red">*</span>社保地区
               </div>
-              area{{workData.socialSecurity.area}}
+      
               <van-field
                 v-model="workData.socialSecurity.area"
                 readonly
