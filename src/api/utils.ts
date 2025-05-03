@@ -2,6 +2,7 @@
 
 // 上传征信报告
 export function uploadCreditReport(data: FormData) {
+  console.log('data', data)
   return Promise.resolve({ code: 0, message: '上传成功' })
 }
 

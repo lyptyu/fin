@@ -1287,7 +1287,7 @@
                       <div class="interest-title">近一年结息</div>
                       <div class="interest-inputs">
                         <van-field
-                          v-for="(interest, i) in flow.interest"
+                          v-for="(_, i) in flow.interest"
                           :key="i"
                           v-model="flow.interest[i]"
                           type="digit"
@@ -1378,7 +1378,7 @@
                       <div class="interest-title">近一年结息</div>
                       <div class="interest-inputs">
                         <van-field
-                          v-for="(interest, i) in flow.interest"
+                          v-for="(_, i) in flow.interest"
                           :key="i"
                           v-model="flow.interest[i]"
                           type="digit"
@@ -1538,8 +1538,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from 'vue'
-import { showToast, showSuccessToast, showFailToast } from 'vant'
+import { ref, reactive, watch } from 'vue'
+import { showSuccessToast, showFailToast } from 'vant'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -1686,21 +1686,10 @@ const onTaxAreaConfirm = (params: {
   showTaxAreaPicker.value = false
 }
 
-// 表单校验辅助
-function isSocialSecurityFilled() {
-  // 判断社保相关字段是否填写完整
-  return (
-    module2Data.hasSocialSecurity === '是' &&
-    ((module2Data.socialSecurityPayers.includes('个人') && module2Data.socialSecurityArea) ||
-     (module2Data.socialSecurityPayers.includes('单位') && module2Data.socialSecurityCompany && module2Data.socialSecurityArea))
-  )
-}
-
 // module3Data 房产相关字段
 const houseAreaOptions = [
   { text: '深圳', value: '深圳' }, { text: '广州', value: '广州' }, { text: '珠海', value: '珠海' }, { text: '汕头', value: '汕头' }, { text: '佛山', value: '佛山' }, { text: '韶关', value: '韶关' }, { text: '湛江', value: '湛江' }, { text: '肇庆', value: '肇庆' }, { text: '江门', value: '江门' }, { text: '茂名', value: '茂名' }, { text: '惠州', value: '惠州' }, { text: '梅州', value: '梅州' }, { text: '汕尾', value: '汕尾' }, { text: '河源', value: '河源' }, { text: '阳江', value: '阳江' }, { text: '清远', value: '清远' }, { text: '东莞', value: '东莞' }, { text: '中山', value: '中山' }, { text: '潮州', value: '潮州' }, { text: '揭阳', value: '揭阳' }, { text: '云浮', value: '云浮' }
 ]
-const houseStatusOptions = ['全款', '按揭', '抵押']
 const houseShareOptions = [
   { text: '多人', value: '多人' },
   { text: '配偶', value: '配偶' },
@@ -1921,37 +1910,6 @@ const module3FlowData = reactive({
   flows: [] as any[], // 流水信息数组
 })
 
-// 流水类型选项
-const flowTypeOptions = [
-  { text: '个人微信', value: '个人微信' },
-  { text: '个人支付宝', value: '个人支付宝' },
-  { text: '对公', value: '对公' },
-  { text: '个人银行卡', value: '个人银行卡' }
-]
-
-// 对公流水特点选项
-const publicFlowFeatureOptions = [
-  { text: '进账大', value: '进账大' },
-  { text: '结息大', value: '结息大' },
-  { text: '扣税记录', value: '扣税记录' },
-  { text: '代发工资记录', value: '代发工资记录' }
-]
-
-// 个人微信/支付宝流水特点选项
-const personalFlowFeatureOptions = [
-  { text: '进账大', value: '进账大' },
-  { text: '消费记录', value: '消费记录' }
-]
-
-// 个人银行卡流水特点选项
-const bankCardFlowFeatureOptions = [
-  { text: '进账大', value: '进账大' },
-  { text: '结息大', value: '结息大' },
-  { text: '代发工资', value: '代发工资' },
-  { text: '固定转账', value: '固定转账' },
-  { text: '分红', value: '分红' }
-]
-
 watch(() => module3FlowData.flowCount, (val) => {
   let n = parseInt(val) || 0
   if (n > 2) n = 2 // 限制最多2份
@@ -1973,137 +1931,6 @@ watch(() => module3FlowData.flowCount, (val) => {
     module3FlowData.flows = []
   }
 })
-
-// 添加自动填入功能
-const autoFillData = () => {
-  // 模块1数据自动填入
-  module1Data.queryRecords = [
-    {
-      date: '2024-03-15',
-      org: '中国银行-信用卡审批',
-      loanType: '装修贷',
-      progress: '已批-已放款',
-      rejectReason: ''
-    },
-    {
-      date: '2024-02-28',
-      org: '建设银行-贷款审批',
-      loanType: '车贷',
-      progress: '已拒',
-      rejectReason: '收入不足'
-    }
-  ]
-
-  module1Data.unpaidLoans = [
-    {
-      date: '2023-06-01',
-      org: '工商银行',
-      amount: '50万',
-      progress: '已还12期',
-      loanType: '装修贷'
-    }
-  ]
-
-  // 模块2数据自动填入
-  module2Data.workType = '优质单位上班族'
-  module2Data.canInvestigate = '是'
-  module2Data.investigateLocations = ['单位']
-  
-  module2Data.hasSocialSecurity = '是'
-  module2Data.socialSecurityPayers = ['单位']
-  module2Data.socialSecurityArea = '深圳'
-  module2Data.socialSecurityCompany = '深圳市科技有限公司'
-  module2Data.socialSecurityTotalMonths = '36'
-  module2Data.socialSecurityCurrentMonths = '24'
-  module2Data.medicalBase = '15000'
-  module2Data.pensionBase = '15000'
-  
-  module2Data.hasProvidentFund = '是'
-  module2Data.providentFundPayer = '单位'
-  module2Data.providentFundArea = '深圳'
-  module2Data.providentFundTotalMonths = '36'
-  module2Data.providentFundCurrentMonths = '24'
-  module2Data.providentFundBase = '15000'
-  
-  module2Data.hasTax = '是'
-  module2Data.taxPayer = '单位'
-  module2Data.taxArea = '深圳'
-  module2Data.taxTotalMonths = '36'
-  module2Data.taxCurrentMonths = '24'
-  module2Data.taxBase = '15000'
-
-  // 模块3数据自动填入
-  module3Data.education = '本科'
-  module3Data.educationCheck = '可查'
-  module3Data.educationFullTime = '是'
-  
-  module3Data.hasHouse = '是'
-  module3Data.houseCount = '1'
-  module3Data.houses = [{
-    area: '深圳',
-    type: '商品房·住宅',
-    ownMonths: '36',
-    size: '89',
-    shareType: '单独所有',
-    evalPrice: '500',
-    status: '按揭',
-    mortgageAmount: '300',
-    mortgageOrg: '建设银行',
-    mortgageMonths: '360',
-    mortgageSecond: '否'
-  }]
-
-  // 车产数据自动填入
-  module3CarData.hasCar = '是'
-  module3CarData.carType = '一手车'
-  module3CarData.carPlateArea = '深圳'
-  module3CarData.carOwnMonths = '24'
-  module3CarData.carPlate = '粤B12345'
-  module3CarData.carInvoice = '25'
-  module3CarData.carStatus = '全款'
-
-  // 金融资产数据自动填入
-  module3AssetData.hasAsset = '是'
-  module3AssetData.assetCount = '2'
-  module3AssetData.assets = [
-    {
-      type: '股票',
-      months: '24',
-      amount: '50'
-    },
-    {
-      type: '基金',
-      months: '12',
-      amount: '30'
-    }
-  ]
-
-  // 模块4数据自动填入
-  module4Data.language = '普通话和粤语都会'
-  module4Data.writing = '写字正常'
-  module4Data.physical = '身体正常'
-
-  // 流水情况数据自动填入
-  module3FlowData.hasFlow = '是'
-  module3FlowData.flowCount = '2'
-  module3FlowData.flows = [
-    {
-      type: '对公',
-      features: ['进账大', '结息大', '代发工资记录'],
-      avgIncome6Months: '50',
-      avgIncome12Months: '45',
-      interest: ['1200', '1500', '1300', '1400']
-    },
-    {
-      type: '个人银行卡',
-      features: ['进账大', '结息大', '代发工资', '固定转账'],
-      salaryAmount: '3',
-      avgIncome6Months: '5',
-      avgIncome12Months: '4.5',
-      interest: ['500', '600', '550', '580']
-    }
-  ]
-}
 </script>
 
 <style lang="less" scoped>
