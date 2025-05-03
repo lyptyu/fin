@@ -334,288 +334,288 @@
                     />
                   </div>
                 </template>
-              </template>
-            </div>
 
-            <!-- 公积金情况 -->
-            <div class="form-item">
-              <div class="radio-title">是否有公积金：</div>
-              <van-radio-group v-model="module2Data.hasProvidentFund" direction="horizontal" class="radio-group">
-                <van-radio name="否">否</van-radio>
-                <van-radio name="是">是</van-radio>
-              </van-radio-group>
-            </div>
-            <template v-if="module2Data.hasProvidentFund === '是'">
-              <div class="form-item">
-                <div class="radio-title">公积金明细</div>
-                <div class="checkbox-title">缴费主体：</div>
-                <van-radio-group v-model="module2Data.providentFundPayer" direction="horizontal" class="radio-group">
-                  <van-radio name="个人">个人</van-radio>
-                  <van-radio name="单位">单位</van-radio>
-                </van-radio-group>
-              </div>
-              <!-- 个人缴费 -->
-              <template v-if="module2Data.providentFundPayer === '个人'">
+                <!-- 公积金情况 -->
                 <div class="form-item">
-                  <van-field
-                    v-model="module2Data.providentFundArea"
-                    label="公积金地区"
-                    placeholder="请选择公积金地区"
-                    readonly
-                    is-link
-                    @click="showProvidentFundAreaPicker = true"
-                  />
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.providentFundTotalMonths"
-                    label="连续缴公积金合计"
-                    type="digit"
-                    placeholder="请输入月数"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>个月</template>
-                  </van-field>
-                  <van-field
-                    v-model="module2Data.providentFundCurrentMonths"
-                    label="当前单位"
-                    type="digit"
-                    placeholder="请输入月数"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>个月</template>
-                  </van-field>
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.providentFundBase"
-                    label="近半年平均公积金基数"
-                    type="digit"
-                    placeholder="请输入金额"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>元</template>
-                  </van-field>
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.providentFundNote"
-                    label="公积金补充"
-                    type="textarea"
-                    placeholder="是否断缴、补缴等情况"
-                    rows="2"
-                  />
-                </div>
-              </template>
-              <!-- 单位缴费 -->
-              <template v-if="module2Data.providentFundPayer === '单位'">
-                <div class="form-item">
-                  <div class="radio-title">公积金单位名称：</div>
-                  <van-radio-group v-model="module2Data.providentFundCompanyType" direction="horizontal" class="radio-group">
-                    <van-radio name="同社保单位">同社保单位</van-radio>
-                    <van-radio name="不同于社保单位">不同于社保单位</van-radio>
+                  <div class="radio-title">是否有公积金：</div>
+                  <van-radio-group v-model="module2Data.hasProvidentFund" direction="horizontal" class="radio-group">
+                    <van-radio name="否">否</van-radio>
+                    <van-radio name="是">是</van-radio>
                   </van-radio-group>
                 </div>
-                <div class="form-item" v-if="module2Data.providentFundCompanyType === '不同于社保单位'">
-                  <van-field
-                    v-model="module2Data.providentFundCompanyName"
-                    label="公积金单位名称"
-                    placeholder="请输入单位名称"
-                  />
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.providentFundArea"
-                    label="公积金地区"
-                    placeholder="请选择公积金地区"
-                    readonly
-                    is-link
-                    :disabled="module2Data.providentFundCompanyType === '同社保单位'"
-                    @click="handleProvidentFundAreaClick"
-                  />
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.providentFundTotalMonths"
-                    label="连续缴公积金合计"
-                    type="digit"
-                    placeholder="请输入月数"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>个月</template>
-                  </van-field>
-                  <van-field
-                    v-model="module2Data.providentFundCurrentMonths"
-                    label="当前单位"
-                    type="digit"
-                    placeholder="请输入月数"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>个月</template>
-                  </van-field>
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.providentFundBase"
-                    label="近半年平均公积金基数"
-                    type="digit"
-                    placeholder="请输入金额"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>元</template>
-                  </van-field>
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.providentFundNote"
-                    label="公积金补充"
-                    type="textarea"
-                    placeholder="是否断缴、补缴等情况"
-                    rows="2"
-                  />
-                </div>
-              </template>
-            </template>
+                <template v-if="module2Data.hasProvidentFund === '是'">
+                  <div class="form-item">
+                    <div class="radio-title">公积金明细</div>
+                    <div class="checkbox-title">缴费主体：</div>
+                    <van-radio-group v-model="module2Data.providentFundPayer" direction="horizontal" class="radio-group">
+                      <van-radio name="个人">个人</van-radio>
+                      <van-radio name="单位">单位</van-radio>
+                    </van-radio-group>
+                  </div>
+                  <!-- 个人缴费 -->
+                  <template v-if="module2Data.providentFundPayer === '个人'">
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.providentFundArea"
+                        label="公积金地区"
+                        placeholder="请选择公积金地区"
+                        readonly
+                        is-link
+                        @click="showProvidentFundAreaPicker = true"
+                      />
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.providentFundTotalMonths"
+                        label="连续缴公积金合计"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                      <van-field
+                        v-model="module2Data.providentFundCurrentMonths"
+                        label="当前单位"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.providentFundBase"
+                        label="近半年平均公积金基数"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>元</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.providentFundNote"
+                        label="公积金补充"
+                        type="textarea"
+                        placeholder="是否断缴、补缴等情况"
+                        rows="2"
+                      />
+                    </div>
+                  </template>
+                  <!-- 单位缴费 -->
+                  <template v-if="module2Data.providentFundPayer === '单位'">
+                    <div class="form-item">
+                      <div class="radio-title">公积金单位名称：</div>
+                      <van-radio-group v-model="module2Data.providentFundCompanyType" direction="horizontal" class="radio-group">
+                        <van-radio name="同社保单位">同社保单位</van-radio>
+                        <van-radio name="不同于社保单位">不同于社保单位</van-radio>
+                      </van-radio-group>
+                    </div>
+                    <div class="form-item" v-if="module2Data.providentFundCompanyType === '不同于社保单位'">
+                      <van-field
+                        v-model="module2Data.providentFundCompanyName"
+                        label="公积金单位名称"
+                        placeholder="请输入单位名称"
+                      />
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.providentFundArea"
+                        label="公积金地区"
+                        placeholder="请选择公积金地区"
+                        readonly
+                        is-link
+                        :disabled="module2Data.providentFundCompanyType === '同社保单位'"
+                        @click="handleProvidentFundAreaClick"
+                      />
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.providentFundTotalMonths"
+                        label="连续缴公积金合计"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                      <van-field
+                        v-model="module2Data.providentFundCurrentMonths"
+                        label="当前单位"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.providentFundBase"
+                        label="近半年平均公积金基数"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>元</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.providentFundNote"
+                        label="公积金补充"
+                        type="textarea"
+                        placeholder="是否断缴、补缴等情况"
+                        rows="2"
+                      />
+                    </div>
+                  </template>
+                </template>
 
-            <!-- 个税情况 -->
-            <div class="form-item">
-              <div class="radio-title">是否有个税：</div>
-              <van-radio-group v-model="module2Data.hasTax" direction="horizontal" class="radio-group">
-                <van-radio name="否">否</van-radio>
-                <van-radio name="是">是</van-radio>
-              </van-radio-group>
-            </div>
-            <template v-if="module2Data.hasTax === '是'">
-              <div class="form-item">
-                <div class="radio-title">个税明细</div>
-                <div class="checkbox-title">缴费主体：</div>
-                <van-radio-group v-model="module2Data.taxPayer" direction="horizontal" class="radio-group">
-                  <van-radio name="个人">个人</van-radio>
-                  <van-radio name="单位">单位</van-radio>
-                </van-radio-group>
-              </div>
-              <!-- 个人缴费 -->
-              <template v-if="module2Data.taxPayer === '个人'">
+                <!-- 个税情况 -->
                 <div class="form-item">
-                  <van-field
-                    v-model="module2Data.taxArea"
-                    label="个税地区"
-                    placeholder="请选择个税地区"
-                    readonly
-                    is-link
-                    @click="showTaxAreaPicker = true"
-                  />
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.taxTotalMonths"
-                    label="连续缴个税合计"
-                    type="digit"
-                    placeholder="请输入月数"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>个月</template>
-                  </van-field>
-                  <van-field
-                    v-model="module2Data.taxCurrentMonths"
-                    label="当前单位"
-                    type="digit"
-                    placeholder="请输入月数"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>个月</template>
-                  </van-field>
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.taxBase"
-                    label="近半年平均个税税前工资"
-                    type="digit"
-                    placeholder="请输入金额"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>元</template>
-                  </van-field>
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.taxNote"
-                    label="个税补充"
-                    type="textarea"
-                    placeholder="是否断缴、补缴等情况"
-                    rows="2"
-                  />
-                </div>
-              </template>
-              <!-- 单位缴费 -->
-              <template v-if="module2Data.taxPayer === '单位'">
-                <div class="form-item">
-                  <div class="radio-title">个税单位名称：</div>
-                  <van-radio-group v-model="module2Data.taxCompanyType" direction="horizontal" class="radio-group">
-                    <van-radio name="同社保单位">同社保单位</van-radio>
-                    <van-radio name="不同于社保单位">不同于社保单位</van-radio>
+                  <div class="radio-title">是否有个税：</div>
+                  <van-radio-group v-model="module2Data.hasTax" direction="horizontal" class="radio-group">
+                    <van-radio name="否">否</van-radio>
+                    <van-radio name="是">是</van-radio>
                   </van-radio-group>
                 </div>
-                <div class="form-item" v-if="module2Data.taxCompanyType === '不同于社保单位'">
-                  <van-field
-                    v-model="module2Data.taxCompanyName"
-                    label="个税单位名称"
-                    placeholder="请输入单位名称"
-                  />
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.taxArea"
-                    label="个税地区"
-                    placeholder="请选择个税地区"
-                    readonly
-                    is-link
-                    :disabled="module2Data.taxCompanyType === '同社保单位'"
-                    @click="handleTaxAreaClick"
-                  />
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.taxTotalMonths"
-                    label="连续缴个税合计"
-                    type="digit"
-                    placeholder="请输入月数"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>个月</template>
-                  </van-field>
-                  <van-field
-                    v-model="module2Data.taxCurrentMonths"
-                    label="当前单位"
-                    type="digit"
-                    placeholder="请输入月数"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>个月</template>
-                  </van-field>
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.taxBase"
-                    label="近半年平均个税税前工资"
-                    type="digit"
-                    placeholder="请输入金额"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                  >
-                    <template #right-icon>元</template>
-                  </van-field>
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="module2Data.taxNote"
-                    label="个税补充"
-                    type="textarea"
-                    placeholder="是否断缴、补缴等情况"
-                    rows="2"
-                  />
-                </div>
+                <template v-if="module2Data.hasTax === '是'">
+                  <div class="form-item">
+                    <div class="radio-title">个税明细</div>
+                    <div class="checkbox-title">缴费主体：</div>
+                    <van-radio-group v-model="module2Data.taxPayer" direction="horizontal" class="radio-group">
+                      <van-radio name="个人">个人</van-radio>
+                      <van-radio name="单位">单位</van-radio>
+                    </van-radio-group>
+                  </div>
+                  <!-- 个人缴费 -->
+                  <template v-if="module2Data.taxPayer === '个人'">
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.taxArea"
+                        label="个税地区"
+                        placeholder="请选择个税地区"
+                        readonly
+                        is-link
+                        @click="showTaxAreaPicker = true"
+                      />
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.taxTotalMonths"
+                        label="连续缴个税合计"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                      <van-field
+                        v-model="module2Data.taxCurrentMonths"
+                        label="当前单位"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.taxBase"
+                        label="近半年平均个税税前工资"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>元</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.taxNote"
+                        label="个税补充"
+                        type="textarea"
+                        placeholder="是否断缴、补缴等情况"
+                        rows="2"
+                      />
+                    </div>
+                  </template>
+                  <!-- 单位缴费 -->
+                  <template v-if="module2Data.taxPayer === '单位'">
+                    <div class="form-item">
+                      <div class="radio-title">个税单位名称：</div>
+                      <van-radio-group v-model="module2Data.taxCompanyType" direction="horizontal" class="radio-group">
+                        <van-radio name="同社保单位">同社保单位</van-radio>
+                        <van-radio name="不同于社保单位">不同于社保单位</van-radio>
+                      </van-radio-group>
+                    </div>
+                    <div class="form-item" v-if="module2Data.taxCompanyType === '不同于社保单位'">
+                      <van-field
+                        v-model="module2Data.taxCompanyName"
+                        label="个税单位名称"
+                        placeholder="请输入单位名称"
+                      />
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.taxArea"
+                        label="个税地区"
+                        placeholder="请选择个税地区"
+                        readonly
+                        is-link
+                        :disabled="module2Data.taxCompanyType === '同社保单位'"
+                        @click="handleTaxAreaClick"
+                      />
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.taxTotalMonths"
+                        label="连续缴个税合计"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                      <van-field
+                        v-model="module2Data.taxCurrentMonths"
+                        label="当前单位"
+                        type="digit"
+                        placeholder="请输入月数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>个月</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.taxBase"
+                        label="近半年平均个税税前工资"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>元</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="module2Data.taxNote"
+                        label="个税补充"
+                        type="textarea"
+                        placeholder="是否断缴、补缴等情况"
+                        rows="2"
+                      />
+                    </div>
+                  </template>
+                </template>
               </template>
-            </template>
+            </div>
           </div>
 
           <!-- 03企业信息，仅企业主显示 -->
@@ -1212,6 +1212,188 @@
               </template>
             </template>
           </div>
+
+          <!-- 05流水情况 -->
+          <div class="section">
+            <div class="section-title">05流水情况</div>
+            <div class="form-item">
+              <div class="radio-title">是否有有效流水（限填2份）</div>
+              <van-radio-group v-model="module3FlowData.hasFlow" direction="horizontal" class="radio-group">
+                <van-radio name="否">否</van-radio>
+                <van-radio name="是">是</van-radio>
+              </van-radio-group>
+            </div>
+
+            <template v-if="module3FlowData.hasFlow === '是'">
+              <div class="form-item">
+                <van-field
+                  v-model="module3FlowData.flowCount"
+                  label="合计"
+                  type="digit"
+                  placeholder="请输入流水份数（最多2份）"
+                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  maxlength="1"
+                >
+                  <template #right-icon>份</template>
+                </van-field>
+              </div>
+
+              <template v-for="(flow, idx) in module3FlowData.flows" :key="idx">
+                <div class="flow-block">
+                  <div class="section-title">第{{ idx + 1 }}份流水</div>
+                  
+                  <div class="form-item">
+                    <div class="radio-title">流水类别</div>
+                    <van-radio-group v-model="flow.type" direction="horizontal" class="radio-group">
+                      <van-radio name="个人微信">个人微信</van-radio>
+                      <van-radio name="个人支付宝">个人支付宝</van-radio>
+                      <van-radio name="对公">对公</van-radio>
+                      <van-radio name="个人银行卡">个人银行卡</van-radio>
+                    </van-radio-group>
+                  </div>
+
+                  <!-- 对公流水特点 -->
+                  <template v-if="flow.type === '对公'">
+                    <div class="form-item">
+                      <div class="checkbox-title">流水特点描述：</div>
+                      <van-checkbox-group v-model="flow.features" direction="horizontal" class="checkbox-group">
+                        <van-checkbox name="进账大">进账大</van-checkbox>
+                        <van-checkbox name="结息大">结息大</van-checkbox>
+                        <van-checkbox name="扣税记录">扣税记录</van-checkbox>
+                        <van-checkbox name="代发工资记录">代发工资记录</van-checkbox>
+                      </van-checkbox-group>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="flow.avgIncome6Months"
+                        label="近6个月月均进账"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>万</template>
+                      </van-field>
+                      <van-field
+                        v-model="flow.avgIncome12Months"
+                        label="近12个月月均进账"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>万</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <div class="interest-title">近一年结息</div>
+                      <div class="interest-inputs">
+                        <van-field
+                          v-for="(interest, i) in flow.interest"
+                          :key="i"
+                          v-model="flow.interest[i]"
+                          type="digit"
+                          placeholder="请输入金额"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        >
+                          <template #right-icon>元</template>
+                        </van-field>
+                      </div>
+                    </div>
+                  </template>
+
+                  <!-- 个人微信/支付宝流水特点 -->
+                  <template v-if="['个人微信', '个人支付宝'].includes(flow.type)">
+                    <div class="form-item">
+                      <div class="checkbox-title">流水特点描述：</div>
+                      <van-checkbox-group v-model="flow.features" direction="horizontal" class="checkbox-group">
+                        <van-checkbox name="进账大">进账大</van-checkbox>
+                        <van-checkbox name="消费记录">消费记录</van-checkbox>
+                      </van-checkbox-group>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="flow.avgIncome6Months"
+                        label="近6个月月均进账"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>万</template>
+                      </van-field>
+                      <van-field
+                        v-model="flow.avgIncome12Months"
+                        label="近12个月月均进账"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>万</template>
+                      </van-field>
+                    </div>
+                  </template>
+
+                  <!-- 个人银行卡流水特点 -->
+                  <template v-if="flow.type === '个人银行卡'">
+                    <div class="form-item">
+                      <div class="checkbox-title">流水特点描述：</div>
+                      <van-checkbox-group v-model="flow.features" direction="horizontal" class="checkbox-group">
+                        <van-checkbox name="进账大">进账大</van-checkbox>
+                        <van-checkbox name="结息大">结息大</van-checkbox>
+                        <van-checkbox name="代发工资">代发工资</van-checkbox>
+                        <van-checkbox name="固定转账">固定转账</van-checkbox>
+                        <van-checkbox name="分红">分红</van-checkbox>
+                      </van-checkbox-group>
+                    </div>
+                    <div class="form-item" v-if="flow.features.includes('代发工资')">
+                      <van-field
+                        v-model="flow.salaryAmount"
+                        label="代发工资金额"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>万</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <van-field
+                        v-model="flow.avgIncome6Months"
+                        label="近6个月月均进账"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>万</template>
+                      </van-field>
+                      <van-field
+                        v-model="flow.avgIncome12Months"
+                        label="近12个月月均进账"
+                        type="digit"
+                        placeholder="请输入金额"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>万</template>
+                      </van-field>
+                    </div>
+                    <div class="form-item">
+                      <div class="interest-title">近一年结息</div>
+                      <div class="interest-inputs">
+                        <van-field
+                          v-for="(interest, i) in flow.interest"
+                          :key="i"
+                          v-model="flow.interest[i]"
+                          type="digit"
+                          placeholder="请输入金额"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        >
+                          <template #right-icon>元</template>
+                        </van-field>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </template>
+            </template>
+          </div>
         </div>
       </van-cell-group>
 
@@ -1223,7 +1405,59 @@
           </template>
         </van-cell>
         <div class="module-content">
-          <!-- 这里将添加具体的表单项 -->
+          <!-- 01普通话/粤语 -->
+          <div class="section">
+            <div class="section-title">01普通话/粤语</div>
+            <div class="form-item">
+              <div class="radio-title">语言能力 <span style="color: #f56c6c">*</span></div>
+              <van-radio-group 
+                v-model="module4Data.language" 
+                direction="horizontal" 
+                class="radio-group"
+                :rules="[{ required: true, message: '请选择语言能力' }]"
+              >
+                <van-radio name="普通话和粤语都会">普通话和粤语都会</van-radio>
+                <van-radio name="只会普通话">只会普通话</van-radio>
+                <van-radio name="只会粤语">只会粤语</van-radio>
+                <van-radio name="普通话和粤语都不会">普通话和粤语都不会</van-radio>
+              </van-radio-group>
+            </div>
+          </div>
+
+          <!-- 02写字能力 -->
+          <div class="section">
+            <div class="section-title">02写字能力</div>
+            <div class="form-item">
+              <div class="radio-title">写字能力 <span style="color: #f56c6c">*</span></div>
+              <van-radio-group 
+                v-model="module4Data.writing" 
+                direction="horizontal" 
+                class="radio-group"
+                :rules="[{ required: true, message: '请选择写字能力' }]"
+              >
+                <van-radio name="写字正常">写字正常</van-radio>
+                <van-radio name="写字很慢">写字很慢</van-radio>
+                <van-radio name="不会写字">不会写字</van-radio>
+              </van-radio-group>
+            </div>
+          </div>
+
+          <!-- 03身体缺陷 -->
+          <div class="section">
+            <div class="section-title">03身体缺陷</div>
+            <div class="form-item">
+              <div class="radio-title">身体状况 <span style="color: #f56c6c">*</span></div>
+              <van-radio-group 
+                v-model="module4Data.physical" 
+                direction="horizontal" 
+                class="radio-group"
+                :rules="[{ required: true, message: '请选择身体状况' }]"
+              >
+                <van-radio name="身体正常">身体正常</van-radio>
+                <van-radio name="身体有明显残疾">身体有明显残疾</van-radio>
+              </van-radio-group>
+            </div>
+          </div>
         </div>
       </van-cell-group>
 
@@ -1572,6 +1806,9 @@ const onCarPlateAreaConfirm = (val: any) => {
 // 模块4的数据
 const module4Data = reactive({
   // 这里将添加具体的表单数据
+  language: '',
+  writing: '',
+  physical: ''
 })
 
 // 返回上一页
@@ -1838,6 +2075,32 @@ const autoFillData = () => {
       type: '基金',
       months: '12',
       amount: '30'
+    }
+  ]
+
+  // 模块4数据自动填入
+  module4Data.language = '普通话和粤语都会'
+  module4Data.writing = '写字正常'
+  module4Data.physical = '身体正常'
+
+  // 流水情况数据自动填入
+  module3FlowData.hasFlow = '是'
+  module3FlowData.flowCount = '2'
+  module3FlowData.flows = [
+    {
+      type: '对公',
+      features: ['进账大', '结息大', '代发工资记录'],
+      avgIncome6Months: '50',
+      avgIncome12Months: '45',
+      interest: ['1200', '1500', '1300', '1400']
+    },
+    {
+      type: '个人银行卡',
+      features: ['进账大', '结息大', '代发工资', '固定转账'],
+      salaryAmount: '3',
+      avgIncome6Months: '5',
+      avgIncome12Months: '4.5',
+      interest: ['500', '600', '550', '580']
     }
   ]
 }
