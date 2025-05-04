@@ -56,7 +56,7 @@
                 v-model="record.rejectReason"
                 label="拒绝原因"
                 placeholder="请输入拒绝原因"
-                class="reject-reason required-field"
+                class="reject-reason required-field star-before"
                 :rules="[{ required: true, message: '请输入拒绝原因' }]"
               />
             </div>
@@ -146,8 +146,8 @@
           <div class="section">
             <div class="section-title">01考察情况</div>
             
-            <div class="form-item">
-              <div class="radio-title">工作性质：</div>
+            <div class="form-item required">
+              <div class="radio-title">工作类型：</div>
               <van-radio-group v-model="module2Data.workType" direction="horizontal" class="radio-group">
                 <van-radio name="普通单位上班族">普通单位上班族</van-radio>
                 <van-radio name="优质单位上班族">优质单位上班族</van-radio>
@@ -155,7 +155,7 @@
               </van-radio-group>
             </div>
 
-            <div class="form-item">
+            <div class="form-item required">
               <div class="radio-title">是否可考察：</div>
               <van-radio-group v-model="module2Data.canInvestigate" direction="horizontal" class="radio-group">
                 <van-radio name="否">否</van-radio>
@@ -188,7 +188,7 @@
           <div class="section">
             <div class="section-title">02社保公积金个税情况</div>
             
-            <div class="form-item">
+            <div class="form-item required">
               <div class="radio-title">是否有社保：</div>
               <van-radio-group v-model="module2Data.hasSocialSecurity" direction="horizontal" class="radio-group">
                 <van-radio name="否">否</van-radio>
@@ -196,7 +196,7 @@
               </van-radio-group>
 
               <template v-if="module2Data.hasSocialSecurity === '是'">
-                <div class="radio-title">缴费主体：</div>
+                <div class="radio-title required">缴费主体：</div>
                 <van-radio-group 
                   v-model="module2Data.socialSecurityPayer" 
                   direction="horizontal" 
@@ -1815,6 +1815,16 @@ const onAssetTypeConfirm = (val: any) => {
   showAssetTypePicker.value = false
 }
 
+// 与谁联名选项
+const houseShareWithColumns = [
+  { text: '父母', value: '父母' },
+  { text: '子女', value: '子女' },
+  { text: '配偶', value: '配偶' },
+  { text: '兄弟姐妹', value: '兄弟姐妹' },
+  { text: '朋友', value: '朋友' },
+  { text: '其他', value: '其他' }
+]
+
 // 在 module3Data 中添加
 const module3FlowData = reactive({
   hasFlow: '', // 是否有有效流水
@@ -2061,6 +2071,17 @@ watch(() => module3FlowData.flowCount, (val) => {
   color: #666;
   margin: 12px 0 8px;
   font-weight: 500;
+  position: relative;
+}
+
+.required .radio-title::before,
+.required .checkbox-title::before {
+  content: '*';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ee0a24;
 }
 
 .form-item {
@@ -2128,11 +2149,26 @@ watch(() => module3FlowData.flowCount, (val) => {
 }
 
 .required-field :deep(.van-field__label)::before {
+  content: '';
+}
+
+.required-field :deep(.van-field__label)::after {
+  content: '*';
+  color: #ee0a24;
+  margin-left: 4px;
+}
+
+/* 在标签前面添加红星 */
+.required-field.star-before :deep(.van-field__label)::before {
   content: '*';
   position: absolute;
   left: -8px;
   top: 50%;
   transform: translateY(-50%);
   color: #ee0a24;
+}
+
+.required-field.star-before :deep(.van-field__label)::after {
+  content: '';
 }
 </style>
