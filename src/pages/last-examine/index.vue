@@ -806,17 +806,8 @@
                           is-link
                           readonly
                           placeholder="请选择联名人"
-                          @click="house.shareWithPickerShow = true"
+                          @click="handleHouseShareWithClick(idx)"
                         />
-                        <van-popup v-model:show="house.shareWithPickerShow" position="bottom">
-                          <van-picker
-                            :columns="houseShareOptions"
-                            @confirm="val => { house.shareWith = val.selectedOptions[0].text; house.shareWithPickerShow = false }"
-                            @cancel="house.shareWithPickerShow = false"
-                            show-toolbar
-                            title="选择联名人"
-                          />
-                        </van-popup>
                       </div>
                     </template>
                     <div class="form-item">
@@ -1514,6 +1505,17 @@
       />
     </van-popup>
 
+    <!-- 房产共有人选择器弹窗 -->
+    <van-popup v-model:show="showHouseShareWithPicker" position="bottom">
+      <van-picker
+        :columns="houseShareOptions"
+        @confirm="onHouseShareWithConfirm"
+        @cancel="showHouseShareWithPicker = false"
+        show-toolbar
+        title="选择共有人"
+      />
+    </van-popup>
+
     <!-- 车牌地区选择器弹窗放最外层 -->
     <van-popup v-model:show="showCarPlateAreaPicker" position="bottom">
       <van-picker
@@ -1791,6 +1793,20 @@ const handleCarPlateAreaClick = () => {
 const onCarPlateAreaConfirm = (val: any) => {
   module3CarData.carPlateArea = val.selectedOptions[0].text
   showCarPlateAreaPicker.value = false
+}
+
+// 房产共有人picker弹窗
+const showHouseShareWithPicker = ref(false)
+const currentHouseShareWithIndex = ref(-1)
+const handleHouseShareWithClick = (idx: number) => {
+  currentHouseShareWithIndex.value = idx
+  showHouseShareWithPicker.value = true
+}
+const onHouseShareWithConfirm = (val: any) => {
+  if (currentHouseShareWithIndex.value !== -1) {
+    module3Data.houses[currentHouseShareWithIndex.value].shareWith = val.selectedOptions[0].text
+  }
+  showHouseShareWithPicker.value = false
 }
 
 // 模块4的数据
