@@ -56,7 +56,8 @@
                 v-model="record.rejectReason"
                 label="拒绝原因"
                 placeholder="请输入拒绝原因"
-                class="reject-reason"
+                class="reject-reason required-field"
+                :rules="[{ required: true, message: '请输入拒绝原因' }]"
               />
             </div>
           </div>
@@ -2210,5 +2211,17 @@ watch(() => module3FlowData.flowCount, (val) => {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
+}
+.required-field :deep(.van-field__label) {
+  position: relative;
+}
+
+.required-field :deep(.van-field__label)::before {
+  content: '*';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ee0a24;
 }
 </style>
