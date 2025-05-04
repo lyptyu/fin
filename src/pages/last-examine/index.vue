@@ -196,17 +196,17 @@
               </van-radio-group>
 
               <template v-if="module2Data.hasSocialSecurity === '是'">
-                <div class="checkbox-title">缴费主体：</div>
-                <van-checkbox-group 
-                  v-model="module2Data.socialSecurityPayers" 
+                <div class="radio-title">缴费主体：</div>
+                <van-radio-group 
+                  v-model="module2Data.socialSecurityPayer" 
                   direction="horizontal" 
-                  class="checkbox-group"
+                  class="radio-group"
                 >
-                  <van-checkbox name="个人">个人</van-checkbox>
-                  <van-checkbox name="单位">单位</van-checkbox>
-                </van-checkbox-group>
+                  <van-radio name="个人">个人</van-radio>
+                  <van-radio name="单位">单位</van-radio>
+                </van-radio-group>
 
-                <template v-if="module2Data.socialSecurityPayers.includes('个人')">
+                <template v-if="module2Data.socialSecurityPayer === '个人'">
                   <div class="form-item">
                     <van-field
                       v-model="module2Data.socialSecurityArea"
@@ -267,7 +267,7 @@
                   </div>
                 </template>
 
-                <template v-if="module2Data.socialSecurityPayers.includes('单位')">
+                <template v-if="module2Data.socialSecurityPayer === '单位'">
                   <div class="form-item">
                     <van-field
                       v-model="module2Data.socialSecurityCompany"
@@ -336,78 +336,16 @@
                   </div>
                 </template>
 
-                <!-- 公积金情况 -->
-                <div class="form-item">
-                  <div class="radio-title">是否有公积金：</div>
-                  <van-radio-group v-model="module2Data.hasProvidentFund" direction="horizontal" class="radio-group">
-                    <van-radio name="否">否</van-radio>
-                    <van-radio name="是">是</van-radio>
-                  </van-radio-group>
-                </div>
-                <template v-if="module2Data.hasProvidentFund === '是'">
+                <!-- 公积金情况 - 只在社保选择单位且填写了单位全称后显示 -->
+                <template v-if="module2Data.socialSecurityPayer === '单位' && module2Data.socialSecurityCompany">
                   <div class="form-item">
-                    <div class="radio-title">公积金明细</div>
-                    <div class="checkbox-title">缴费主体：</div>
-                    <van-radio-group v-model="module2Data.providentFundPayer" direction="horizontal" class="radio-group">
-                      <van-radio name="个人">个人</van-radio>
-                      <van-radio name="单位">单位</van-radio>
+                    <div class="radio-title">是否有公积金：</div>
+                    <van-radio-group v-model="module2Data.hasProvidentFund" direction="horizontal" class="radio-group">
+                      <van-radio name="否">否</van-radio>
+                      <van-radio name="是">是</van-radio>
                     </van-radio-group>
                   </div>
-                  <!-- 个人缴费 -->
-                  <template v-if="module2Data.providentFundPayer === '个人'">
-                    <div class="form-item">
-                      <van-field
-                        v-model="module2Data.providentFundArea"
-                        label="公积金地区"
-                        placeholder="请选择公积金地区"
-                        readonly
-                        is-link
-                        @click="showProvidentFundAreaPicker = true"
-                      />
-                    </div>
-                    <div class="form-item">
-                      <van-field
-                        v-model="module2Data.providentFundTotalMonths"
-                        label="连续缴公积金合计"
-                        type="digit"
-                        placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                      >
-                        <template #right-icon>个月</template>
-                      </van-field>
-                      <van-field
-                        v-model="module2Data.providentFundCurrentMonths"
-                        label="当前单位"
-                        type="digit"
-                        placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                      >
-                        <template #right-icon>个月</template>
-                      </van-field>
-                    </div>
-                    <div class="form-item">
-                      <van-field
-                        v-model="module2Data.providentFundBase"
-                        label="近半年平均公积金基数"
-                        type="digit"
-                        placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                      >
-                        <template #right-icon>元</template>
-                      </van-field>
-                    </div>
-                    <div class="form-item">
-                      <van-field
-                        v-model="module2Data.providentFundNote"
-                        label="公积金补充"
-                        type="textarea"
-                        placeholder="是否断缴、补缴等情况"
-                        rows="2"
-                      />
-                    </div>
-                  </template>
-                  <!-- 单位缴费 -->
-                  <template v-if="module2Data.providentFundPayer === '单位'">
+                  <template v-if="module2Data.hasProvidentFund === '是'">
                     <div class="form-item">
                       <div class="radio-title">公积金单位名称：</div>
                       <van-radio-group v-model="module2Data.providentFundCompanyType" direction="horizontal" class="radio-group">
@@ -476,78 +414,16 @@
                   </template>
                 </template>
 
-                <!-- 个税情况 -->
-                <div class="form-item">
-                  <div class="radio-title">是否有个税：</div>
-                  <van-radio-group v-model="module2Data.hasTax" direction="horizontal" class="radio-group">
-                    <van-radio name="否">否</van-radio>
-                    <van-radio name="是">是</van-radio>
-                  </van-radio-group>
-                </div>
-                <template v-if="module2Data.hasTax === '是'">
+                <!-- 个税情况 - 只在社保选择单位且填写了单位全称后显示 -->
+                <template v-if="module2Data.socialSecurityPayer === '单位' && module2Data.socialSecurityCompany">
                   <div class="form-item">
-                    <div class="radio-title">个税明细</div>
-                    <div class="checkbox-title">缴费主体：</div>
-                    <van-radio-group v-model="module2Data.taxPayer" direction="horizontal" class="radio-group">
-                      <van-radio name="个人">个人</van-radio>
-                      <van-radio name="单位">单位</van-radio>
+                    <div class="radio-title">是否有个税：</div>
+                    <van-radio-group v-model="module2Data.hasTax" direction="horizontal" class="radio-group">
+                      <van-radio name="否">否</van-radio>
+                      <van-radio name="是">是</van-radio>
                     </van-radio-group>
                   </div>
-                  <!-- 个人缴费 -->
-                  <template v-if="module2Data.taxPayer === '个人'">
-                    <div class="form-item">
-                      <van-field
-                        v-model="module2Data.taxArea"
-                        label="个税地区"
-                        placeholder="请选择个税地区"
-                        readonly
-                        is-link
-                        @click="showTaxAreaPicker = true"
-                      />
-                    </div>
-                    <div class="form-item">
-                      <van-field
-                        v-model="module2Data.taxTotalMonths"
-                        label="连续缴个税合计"
-                        type="digit"
-                        placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                      >
-                        <template #right-icon>个月</template>
-                      </van-field>
-                      <van-field
-                        v-model="module2Data.taxCurrentMonths"
-                        label="当前单位"
-                        type="digit"
-                        placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                      >
-                        <template #right-icon>个月</template>
-                      </van-field>
-                    </div>
-                    <div class="form-item">
-                      <van-field
-                        v-model="module2Data.taxBase"
-                        label="近半年平均个税税前工资"
-                        type="digit"
-                        placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
-                      >
-                        <template #right-icon>元</template>
-                      </van-field>
-                    </div>
-                    <div class="form-item">
-                      <van-field
-                        v-model="module2Data.taxNote"
-                        label="个税补充"
-                        type="textarea"
-                        placeholder="是否断缴、补缴等情况"
-                        rows="2"
-                      />
-                    </div>
-                  </template>
-                  <!-- 单位缴费 -->
-                  <template v-if="module2Data.taxPayer === '单位'">
+                  <template v-if="module2Data.hasTax === '是'">
                     <div class="form-item">
                       <div class="radio-title">个税单位名称：</div>
                       <van-radio-group v-model="module2Data.taxCompanyType" direction="horizontal" class="radio-group">
@@ -1508,14 +1384,13 @@
     <!-- 房产共有人选择器弹窗 -->
     <van-popup v-model:show="showHouseShareWithPicker" position="bottom">
       <van-picker
-        :columns="houseShareOptions"
+        :columns="houseShareWithColumns"
         @confirm="onHouseShareWithConfirm"
         @cancel="showHouseShareWithPicker = false"
         show-toolbar
-        title="选择共有人"
+        title="选择联名人"
       />
     </van-popup>
-
     <!-- 车牌地区选择器弹窗放最外层 -->
     <van-popup v-model:show="showCarPlateAreaPicker" position="bottom">
       <van-picker
@@ -1524,6 +1399,28 @@
         @cancel="showCarPlateAreaPicker = false"
         show-toolbar
         title="选择车牌地区"
+      />
+    </van-popup>
+
+    <!-- 公积金地区选择器弹窗 -->
+    <van-popup v-model:show="showProvidentFundAreaPicker" position="bottom">
+      <van-area
+        :area-list="areaList"
+        @confirm="onProvidentFundAreaConfirm"
+        @cancel="showProvidentFundAreaPicker = false"
+        show-toolbar
+        title="选择公积金地区"
+      />
+    </van-popup>
+
+    <!-- 个税地区选择器弹窗 -->
+    <van-popup v-model:show="showTaxAreaPicker" position="bottom">
+      <van-area
+        :area-list="areaList"
+        @confirm="onTaxAreaConfirm"
+        @cancel="showTaxAreaPicker = false"
+        show-toolbar
+        title="选择个税地区"
       />
     </van-popup>
 
@@ -1593,7 +1490,7 @@ const module2Data = reactive({
   
   // 社保情况
   hasSocialSecurity: '',
-  socialSecurityPayers: [] as string[],
+  socialSecurityPayer: '',
   socialSecurityArea: '',
   socialSecurityCompany: '',
   socialSecurityTotalMonths: '',
@@ -1604,7 +1501,6 @@ const module2Data = reactive({
   
   // 公积金情况
   hasProvidentFund: '',
-  providentFundPayer: '',
   providentFundArea: '',
   providentFundCompany: '',
   providentFundTotalMonths: '',
@@ -1616,7 +1512,6 @@ const module2Data = reactive({
   
   // 个税情况
   hasTax: '',
-  taxPayer: '',
   taxArea: '',
   taxCompany: '',
   taxTotalMonths: '',
@@ -1844,14 +1739,14 @@ const submitAll = async () => {
 
 // 公积金地区点击处理
 const handleProvidentFundAreaClick = () => {
-  if (!(module2Data.providentFundPayer === '单位' && module2Data.providentFundCompanyType === '同社保单位')) {
+  if (module2Data.providentFundCompanyType !== '同社保单位') {
     showProvidentFundAreaPicker.value = true
   }
 }
 
 // 个税地区点击处理
 const handleTaxAreaClick = () => {
-  if (!(module2Data.taxPayer === '单位' && module2Data.taxCompanyType === '同社保单位')) {
+  if (module2Data.taxCompanyType !== '同社保单位') {
     showTaxAreaPicker.value = true
   }
 }
