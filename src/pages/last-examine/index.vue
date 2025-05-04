@@ -57,12 +57,7 @@
                 label="拒绝原因"
                 placeholder="请输入拒绝原因"
                 class="reject-reason"
-                :rules="[{ required: true, message: '请填写拒绝原因' }]"
-              >
-                <template #label>
-                  <span><span style="color: #f56c6c">*</span>拒绝原因</span>
-                </template>
-              </van-field>
+              />
             </div>
           </div>
 
@@ -151,7 +146,7 @@
             <div class="section-title">01考察情况</div>
             
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>工作性质：</div>
+              <div class="radio-title">工作性质：</div>
               <van-radio-group v-model="module2Data.workType" direction="horizontal" class="radio-group">
                 <van-radio name="普通单位上班族">普通单位上班族</van-radio>
                 <van-radio name="优质单位上班族">优质单位上班族</van-radio>
@@ -160,7 +155,7 @@
             </div>
 
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>是否可考察：</div>
+              <div class="radio-title">是否可考察：</div>
               <van-radio-group v-model="module2Data.canInvestigate" direction="horizontal" class="radio-group">
                 <van-radio name="否">否</van-radio>
                 <van-radio name="是">是</van-radio>
@@ -193,7 +188,7 @@
             <div class="section-title">02社保公积金个税情况</div>
             
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>是否有社保：</div>
+              <div class="radio-title">是否有社保：</div>
               <van-radio-group v-model="module2Data.hasSocialSecurity" direction="horizontal" class="radio-group">
                 <van-radio name="否">否</van-radio>
                 <van-radio name="是">是</van-radio>
@@ -342,18 +337,23 @@
 
                 <!-- 公积金情况 -->
                 <div class="form-item">
-                  <div class="radio-title"><span style="color: #f56c6c">*</span>是否有公积金：</div>
+                  <div class="radio-title">是否有公积金：</div>
                   <van-radio-group v-model="module2Data.hasProvidentFund" direction="horizontal" class="radio-group">
                     <van-radio name="否">否</van-radio>
                     <van-radio name="是">是</van-radio>
                   </van-radio-group>
                 </div>
                 <template v-if="module2Data.hasProvidentFund === '是'">
-                  <div class="form-item m0! p0!">
-                    <div class="radio-title">公积金明细：</div>
+                  <div class="form-item">
+                    <div class="radio-title">公积金明细</div>
+                    <div class="checkbox-title">缴费主体：</div>
+                    <van-radio-group v-model="module2Data.providentFundPayer" direction="horizontal" class="radio-group">
+                      <van-radio name="个人">个人</van-radio>
+                      <van-radio name="单位">单位</van-radio>
+                    </van-radio-group>
                   </div>
                   <!-- 个人缴费 -->
-                  <template v-if="module2Data.socialSecurityPayers.includes('个人')">
+                  <template v-if="module2Data.providentFundPayer === '个人'">
                     <div class="form-item">
                       <van-field
                         v-model="module2Data.providentFundArea"
@@ -406,7 +406,7 @@
                     </div>
                   </template>
                   <!-- 单位缴费 -->
-                  <template v-if="module2Data.socialSecurityPayers.includes('单位')">
+                  <template v-if="module2Data.providentFundPayer === '单位'">
                     <div class="form-item">
                       <div class="radio-title">公积金单位名称：</div>
                       <van-radio-group v-model="module2Data.providentFundCompanyType" direction="horizontal" class="radio-group">
@@ -477,7 +477,7 @@
 
                 <!-- 个税情况 -->
                 <div class="form-item">
-                  <div class="radio-title"><span style="color: #f56c6c">*</span>是否有个税：</div>
+                  <div class="radio-title">是否有个税：</div>
                   <van-radio-group v-model="module2Data.hasTax" direction="horizontal" class="radio-group">
                     <van-radio name="否">否</van-radio>
                     <van-radio name="是">是</van-radio>
@@ -683,7 +683,7 @@
           <div class="section">
             <div class="section-title">01学历情况</div>
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>学历</div>
+              <div class="radio-title">学历 <span style="color: #f56c6c">*</span></div>
               <van-radio-group v-model="module3Data.education" direction="horizontal" class="radio-group">
                 <van-radio name="从未上过学">从未上过学</van-radio>
                 <van-radio name="小学">小学</van-radio>
@@ -721,7 +721,7 @@
           <div class="section">
             <div class="section-title">02房产情况</div>
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>是否有房产</div>
+              <div class="radio-title">是否有房产</div>
               <van-radio-group v-model="module3Data.hasHouse" direction="horizontal" class="radio-group">
                 <van-radio name="否">否</van-radio>
                 <van-radio name="是">是</van-radio>
@@ -985,7 +985,7 @@
           <div class="section">
             <div class="section-title">03车产情况</div>
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>是否有车产：</div>
+              <div class="radio-title">是否有车产</div>
               <van-radio-group v-model="module3CarData.hasCar" direction="horizontal" class="radio-group">
                 <van-radio name="否">否</van-radio>
                 <van-radio name="是">是</van-radio>
@@ -1156,7 +1156,7 @@
           <div class="section">
             <div class="section-title">04金融资产情况</div>
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>是否有金融资产：</div>
+              <div class="radio-title">是否有金融资产（限填4份）</div>
               <van-radio-group v-model="module3AssetData.hasAsset" direction="horizontal" class="radio-group">
                 <van-radio name="否">否</van-radio>
                 <van-radio name="是">是</van-radio>
@@ -1217,7 +1217,7 @@
           <div class="section">
             <div class="section-title">05流水情况</div>
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>是否有有效流水：</div>
+              <div class="radio-title">是否有有效流水（限填2份）</div>
               <van-radio-group v-model="module3FlowData.hasFlow" direction="horizontal" class="radio-group">
                 <van-radio name="否">否</van-radio>
                 <van-radio name="是">是</van-radio>
@@ -1409,7 +1409,7 @@
           <div class="section">
             <div class="section-title">01普通话/粤语</div>
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>语言能力</div>
+              <div class="radio-title">语言能力 <span style="color: #f56c6c">*</span></div>
               <van-radio-group 
                 v-model="module4Data.language" 
                 direction="horizontal" 
@@ -1428,7 +1428,7 @@
           <div class="section">
             <div class="section-title">02写字能力</div>
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>写字能力</div>
+              <div class="radio-title">写字能力 <span style="color: #f56c6c">*</span></div>
               <van-radio-group 
                 v-model="module4Data.writing" 
                 direction="horizontal" 
@@ -1446,7 +1446,7 @@
           <div class="section">
             <div class="section-title">03身体缺陷</div>
             <div class="form-item">
-              <div class="radio-title"><span style="color: #f56c6c">*</span>身体状况</div>
+              <div class="radio-title">身体状况 <span style="color: #f56c6c">*</span></div>
               <van-radio-group 
                 v-model="module4Data.physical" 
                 direction="horizontal" 
