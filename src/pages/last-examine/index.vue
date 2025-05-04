@@ -1405,8 +1405,8 @@
 
     <!-- 公积金地区选择器弹窗 -->
     <van-popup v-model:show="showProvidentFundAreaPicker" position="bottom">
-      <van-area
-        :area-list="areaList"
+      <van-picker
+        :columns="providentFundAreaOptions"
         @confirm="onProvidentFundAreaConfirm"
         @cancel="showProvidentFundAreaPicker = false"
         show-toolbar
@@ -1416,8 +1416,8 @@
 
     <!-- 个税地区选择器弹窗 -->
     <van-popup v-model:show="showTaxAreaPicker" position="bottom">
-      <van-area
-        :area-list="areaList"
+      <van-picker
+        :columns="taxAreaOptions"
         @confirm="onTaxAreaConfirm"
         @cancel="showTaxAreaPicker = false"
         show-toolbar
@@ -1589,15 +1589,7 @@ const onTaxAreaConfirm = (params: {
 const houseAreaOptions = [
   { text: '深圳', value: '深圳' }, { text: '广州', value: '广州' }, { text: '珠海', value: '珠海' }, { text: '汕头', value: '汕头' }, { text: '佛山', value: '佛山' }, { text: '韶关', value: '韶关' }, { text: '湛江', value: '湛江' }, { text: '肇庆', value: '肇庆' }, { text: '江门', value: '江门' }, { text: '茂名', value: '茂名' }, { text: '惠州', value: '惠州' }, { text: '梅州', value: '梅州' }, { text: '汕尾', value: '汕尾' }, { text: '河源', value: '河源' }, { text: '阳江', value: '阳江' }, { text: '清远', value: '清远' }, { text: '东莞', value: '东莞' }, { text: '中山', value: '中山' }, { text: '潮州', value: '潮州' }, { text: '揭阳', value: '揭阳' }, { text: '云浮', value: '云浮' }
 ]
-const houseShareOptions = [
-  { text: '多人', value: '多人' },
-  { text: '配偶', value: '配偶' },
-  { text: '父亲', value: '父亲' },
-  { text: '母亲', value: '母亲' },
-  { text: '儿子', value: '儿子' },
-  { text: '女儿', value: '女儿' },
-  { text: '其他', value: '其他' }
-]
+// 使用 houseShareWithColumns 替代 houseShareOptions
 const houseSecondTypeOptions = [
   { text: '银行', value: '银行' },
   { text: '小额', value: '小额' },
@@ -1730,12 +1722,74 @@ const saveModule1 = async () => {
 
 // 提交所有模块
 const submitAll = async () => {
+  // 检查必填项
+  const missingFields = validateRequiredFields()
+  
+  if (missingFields.length > 0) {
+    // 有未填写的必填项
+    showFailToast(`请填写必填项: ${missingFields.join(', ')}`)
+    return
+  }
+  
   try {
+    // 所有必填项已填写，打印JSON结果
+    const formData = {
+      module1Data,
+      module2Data,
+      module3Data,
+      module3CarData,
+      module3AssetData,
+      module3FlowData,
+      module4Data
+    }
+    
+    console.log('Form data JSON:', JSON.stringify(formData, null, 2))
     // TODO: 调用API提交所有数据
     showSuccessToast('提交成功')
   } catch (error) {
     showFailToast('提交失败')
   }
+}
+
+// 验证必填项
+const validateRequiredFields = () => {
+  const missingFields = []
+  
+  // 模块 1 必填项验证
+  // 检查近半年查询记录中的必填项
+  module1Data.queryRecords.forEach((record, index) => {
+    if (!record.loanType) {
+      missingFields.push(`近半年查询记录${index + 1} - 申请贷款类型`)
+    }
+    if (!record.progress) {
+      missingFields.push(`近半年查询记录${index + 1} - 后续进度`)
+    }
+    if (record.progress === '已拒' && !record.rejectReason) {
+      missingFields.push(`近半年查询记录${index + 1} - 拒绝原因`)
+    }
+  })
+  
+  // 模块 2 必填项验证
+  if (!module2Data.workType) {
+    missingFields.push('工作类型')
+  }
+  if (!module2Data.canInvestigate) {
+    missingFields.push('是否可考察')
+  }
+  if (!module2Data.hasSocialSecurity) {
+    missingFields.push('是否有社保')
+  }
+  if (module2Data.hasSocialSecurity === '是' && !module2Data.socialSecurityPayer) {
+    missingFields.push('社保缴费主体')
+  }
+  if (module2Data.socialSecurityPayer === '单位' && !module2Data.socialSecurityCompany) {
+    missingFields.push('社保单位全称')
+  }
+  
+  // 模块 3 必填项验证
+  // 这里可以根据需要添加更多的验证
+  
+  return missingFields
 }
 
 // 公积金地区点击处理
