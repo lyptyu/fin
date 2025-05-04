@@ -51,14 +51,16 @@
                 <van-radio name="已拒">已拒</van-radio>
               </van-radio-group>
 
-              <van-field
-                v-if="record.progress === '已拒'"
-                v-model="record.rejectReason"
-                label="拒绝原因"
-                placeholder="请输入拒绝原因"
-                class="reject-reason required-field star-before"
-                :rules="[{ required: true, message: '请输入拒绝原因' }]"
-              />
+              <div class="form-item required">
+                <div class="radio-title">拒绝原因：</div>
+                <van-field
+                  v-if="record.progress === '已拒'"
+                  v-model="record.rejectReason"
+                  placeholder="请输入拒绝原因"
+                  class="reject-reason"
+                  :rules="[{ required: true, message: '请输入拒绝原因' }]"
+                />
+              </div>
             </div>
           </div>
 
