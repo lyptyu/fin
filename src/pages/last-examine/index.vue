@@ -378,16 +378,16 @@
                         label="连续缴公积金合计"
                         type="digit"
                         placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>个月</template>
                       </van-field>
                       <van-field
                         v-model="module2Data.providentFundCurrentMonths"
                         label="当前单位"
-                        type="digit"
+                        type="number"
                         placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>个月</template>
                       </van-field>
@@ -396,9 +396,9 @@
                       <van-field
                         v-model="module2Data.providentFundBase"
                         label="近半年平均公积金基数"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>元</template>
                       </van-field>
@@ -454,18 +454,18 @@
                       <van-field
                         v-model="module2Data.taxTotalMonths"
                         label="连续缴个税合计"
-                        type="digit"
+                        type="number"
                         placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>个月</template>
                       </van-field>
                       <van-field
                         v-model="module2Data.taxCurrentMonths"
                         label="当前单位"
-                        type="digit"
+                        type="number"
                         placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>个月</template>
                       </van-field>
@@ -474,9 +474,9 @@
                       <van-field
                         v-model="module2Data.taxBase"
                         label="近半年平均个税税前工资"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>元</template>
                       </van-field>
@@ -643,18 +643,18 @@
                       <van-field
                         v-model="house.ownMonths"
                         label="名下"
-                        type="digit"
+                        type="number"
                         placeholder="请输入月数"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>个月</template>
                       </van-field>
                       <van-field
                         v-model="house.size"
                         label="面积"
-                        type="digit"
+                        type="number"
                         placeholder="请输入面积"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>㎡</template>
                       </van-field>
@@ -671,9 +671,9 @@
                         <van-field
                           v-model="house.sharePercent"
                           label="占比份额"
-                          type="digit"
+                          type="number"
                           placeholder="请输入占比%"
-                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                         >
                           <template #right-icon>%</template>
                         </van-field>
@@ -693,7 +693,7 @@
                         label="评估"
                         type="digit"
                         placeholder="请输入评估价"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                       >
                         <template #right-icon>万</template>
                       </van-field>
@@ -710,9 +710,9 @@
                         <van-field
                           v-model="house.mortgageAmount"
                           label="按揭金额"
-                          type="digit"
+                          type="number"
                           placeholder="请输入金额"
-                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                         >
                           <template #right-icon>万</template>
                         </van-field>
@@ -724,9 +724,9 @@
                         <van-field
                           v-model="house.mortgageMonths"
                           label="供"
-                          type="digit"
+                          type="number"
                           placeholder="请输入月数"
-                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                         >
                           <template #right-icon>个月</template>
                         </van-field>
@@ -743,9 +743,9 @@
                           <van-field
                             v-model="house.mortgageSecondAmount"
                             label="二押金额"
-                            type="digit"
+                            type="number"
                             placeholder="请输入金额"
-                            :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                            :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                           >
                             <template #right-icon>万</template>
                           </van-field>
@@ -771,9 +771,9 @@
                         <van-field
                           v-model="house.pledgeAmount"
                           label="抵押金额"
-                          type="digit"
+                          type="number"
                           placeholder="请输入金额"
-                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                         >
                           <template #right-icon>万</template>
                         </van-field>
@@ -785,9 +785,9 @@
                         <van-field
                           v-model="house.pledgeMonths"
                           label="供"
-                          type="digit"
+                          type="number"
                           placeholder="请输入月数"
-                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                         >
                           <template #right-icon>个月</template>
                         </van-field>
@@ -804,9 +804,9 @@
                           <van-field
                             v-model="house.pledgeSecondAmount"
                             label="二押金额"
-                            type="digit"
+                            type="number"
                             placeholder="请输入金额"
-                            :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                            :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
                           >
                             <template #right-icon>万</template>
                           </van-field>
@@ -1127,18 +1127,20 @@
                       <van-field
                         v-model="flow.avgIncome6Months"
                         label="近6个月月均进账"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                        @blur="formatAvgIncome(flow, 'avgIncome6Months')"
                       >
                         <template #right-icon>万</template>
                       </van-field>
                       <van-field
                         v-model="flow.avgIncome12Months"
                         label="近12个月月均进账"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                        @blur="formatAvgIncome(flow, 'avgIncome12Months')"
                       >
                         <template #right-icon>万</template>
                       </van-field>
@@ -1150,9 +1152,10 @@
                           v-for="(_, i) in flow.interest"
                           :key="i"
                           v-model="flow.interest[i]"
-                          type="digit"
+                          type="number"
                           placeholder="请输入金额"
-                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                          @blur="formatInterest(flow, i)"
                         >
                           <template #right-icon>元</template>
                         </van-field>
@@ -1173,18 +1176,20 @@
                       <van-field
                         v-model="flow.avgIncome6Months"
                         label="近6个月月均进账"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                        @blur="formatAvgIncome(flow, 'avgIncome6Months')"
                       >
                         <template #right-icon>万</template>
                       </van-field>
                       <van-field
                         v-model="flow.avgIncome12Months"
                         label="近12个月月均进账"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                        @blur="formatAvgIncome(flow, 'avgIncome12Months')"
                       >
                         <template #right-icon>万</template>
                       </van-field>
@@ -1207,9 +1212,10 @@
                       <van-field
                         v-model="flow.salaryAmount"
                         label="代发工资金额"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                        @blur="formatSalaryAmount(flow)"
                       >
                         <template #right-icon>万</template>
                       </van-field>
@@ -1218,18 +1224,20 @@
                       <van-field
                         v-model="flow.avgIncome6Months"
                         label="近6个月月均进账"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                        @blur="formatAvgIncome(flow, 'avgIncome6Months')"
                       >
                         <template #right-icon>万</template>
                       </van-field>
                       <van-field
                         v-model="flow.avgIncome12Months"
                         label="近12个月月均进账"
-                        type="digit"
+                        type="number"
                         placeholder="请输入金额"
-                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                        @blur="formatAvgIncome(flow, 'avgIncome12Months')"
                       >
                         <template #right-icon>万</template>
                       </van-field>
@@ -1241,9 +1249,10 @@
                           v-for="(_, i) in flow.interest"
                           :key="i"
                           v-model="flow.interest[i]"
-                          type="digit"
+                          type="number"
                           placeholder="请输入金额"
-                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                          @blur="formatInterest(flow, i)"
                         >
                           <template #right-icon>元</template>
                         </van-field>
@@ -1926,6 +1935,36 @@ watch(() => module3FlowData.flowCount, (val) => {
     module3FlowData.flows = []
   }
 })
+
+// 格式化代发工资金额，保留两位小数
+const formatSalaryAmount = (flow: any) => {
+  if (flow.salaryAmount && flow.salaryAmount !== '') {
+    const numVal = parseFloat(flow.salaryAmount)
+    if (!isNaN(numVal)) {
+      flow.salaryAmount = numVal.toFixed(2)
+    }
+  }
+}
+
+// 格式化月均进账，保留一位小数
+const formatAvgIncome = (flow: any, field: 'avgIncome6Months' | 'avgIncome12Months') => {
+  if (flow[field] && flow[field] !== '') {
+    const numVal = parseFloat(flow[field])
+    if (!isNaN(numVal)) {
+      flow[field] = numVal.toFixed(1)
+    }
+  }
+}
+
+// 格式化结息，保留一位小数
+const formatInterest = (flow: any, index: number) => {
+  if (flow.interest[index] && flow.interest[index] !== '') {
+    const numVal = parseFloat(flow.interest[index])
+    if (!isNaN(numVal)) {
+      flow.interest[index] = numVal.toFixed(1)
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
