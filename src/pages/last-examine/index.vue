@@ -755,17 +755,8 @@
                             is-link
                             readonly
                             placeholder="请选择机构类型"
-                            @click="house.mortgageSecondTypePickerShow = true"
+                            @click="showHouseSecondTypePicker(house)"
                           />
-                          <van-popup v-model:show="house.mortgageSecondTypePickerShow" position="bottom">
-                            <van-picker
-                              :columns="houseSecondTypeOptions"
-                              @confirm="val => { house.mortgageSecondType = val.selectedOptions[0].text; house.mortgageSecondTypePickerShow = false }"
-                              @cancel="house.mortgageSecondTypePickerShow = false"
-                              show-toolbar
-                              title="选择机构类型"
-                            />
-                          </van-popup>
                           <van-field
                             v-model="house.mortgageSecondOrg"
                             label="机构名称"
@@ -1339,6 +1330,16 @@
     </div>
 
     <!-- 将选择器弹出层移到最外层 -->
+    <van-popup v-model:show="showHouseSecondTypePickerVisible" position="bottom">
+      <van-picker
+        :columns="houseSecondTypeOptions"
+        @confirm="onHouseSecondTypeConfirm"
+        @cancel="showHouseSecondTypePickerVisible = false"
+        show-toolbar
+        title="选择机构类型"
+      />
+    </van-popup>
+    
     <van-popup v-model:show="showSocialSecurityAreaPicker" position="bottom">
       <van-picker
         :columns="areaOptions"
@@ -1820,6 +1821,22 @@ const onHouseAreaConfirm = (val: any) => {
   showHouseAreaPicker.value = false
 }
 
+// 房产二押机构类型选择相关代码
+const showHouseSecondTypePickerVisible = ref(false)
+const currentHouseForSecondType = ref<any>(null)
+
+function showHouseSecondTypePicker(house: any) {
+  currentHouseForSecondType.value = house
+  showHouseSecondTypePickerVisible.value = true
+}
+
+function onHouseSecondTypeConfirm(val: any) {
+  if (currentHouseForSecondType.value) {
+    currentHouseForSecondType.value.mortgageSecondType = val.selectedOptions[0].text
+    showHouseSecondTypePickerVisible.value = false
+  }
+}
+
 // 金融资产类型选项
 const assetTypeOptions = [
   { text: '股票', value: '股票' },
@@ -1877,6 +1894,7 @@ const houseShareWithColumns = [
   { text: '配偶', value: '配偶' },
   { text: '兄弟姐妹', value: '兄弟姐妹' },
   { text: '朋友', value: '朋友' },
+  { text: '多人', value: '多人' },
   { text: '其他', value: '其他' }
 ]
 
