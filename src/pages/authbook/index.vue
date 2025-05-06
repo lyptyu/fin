@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, ref } from 'vue'
 import Vue3Signature from 'vue3-signature'
+import { fileUpload } from '@/api/utils'
 
 const showPad = ref(false)
 const signatureImg = ref('')
@@ -30,6 +31,26 @@ function saveSign() {
   signatureImg.value = signatureRef.value.save()
   showPad.value = false
 }
+
+function dataURLtoFile(dataurl, filename = 'signature.png') {
+  const arr = dataurl.split(',')
+  const mime = arr[0].match(/:(.*?);/)[1]
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new File([u8arr], filename, { type: mime })
+}
+
+async function submitAuthbook() {
+  // 将 base64 签名图片转为 File
+  const file = dataURLtoFile(signatureImg.value, 'signature.png')
+  const res = await fileUpload({ file })
+  showToast('提交成功！')
+}
+
 
 function openPad() {
   showPad.value = true
@@ -67,6 +88,9 @@ if (typeof window !== 'undefined') {
           <span v-else class="sign-placeholder">点击此处签字</span>
         </div>
         <p>出具日期：20　　年　　月　　日</p>
+        <button class="submit-btn" :disabled="!signatureImg" @click="submitAuthbook">
+          提交
+        </button>
       </div>
     </div>
     <!-- 签名弹窗 -->
@@ -191,6 +215,25 @@ if (typeof window !== 'undefined') {
 }
 .signature-modal-actions button:first-child {
   background: #aaa;
+}
+
+.submit-btn {
+  margin-top: 28px;
+  width: 100%;
+  max-width: 320px;
+  padding: 12px 0;
+  background: #3477f5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.submit-btn:disabled {
+  background: #b4c7f7;
+  cursor: not-allowed;
 }
 
 /* 强制签名弹窗canvas宽高生效 */
