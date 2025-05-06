@@ -1,10 +1,26 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import Vue3Signature from 'vue3-signature'
 
 const showPad = ref(false)
 const signatureImg = ref('')
 const signatureRef = ref(null)
+
+// 响应式签名板宽高，移动端适配
+function getPadWidth() {
+  if (window.innerWidth < 600)
+    return window.innerWidth * 0.92
+  if (window.innerWidth < 900)
+    return window.innerWidth * 0.7
+  return 540
+}
+function getPadHeight() {
+  if (window.innerWidth < 600)
+    return 320
+  return 260
+}
+const signaturePadWidth = computed(() => getPadWidth())
+const signaturePadHeight = computed(() => getPadHeight())
 
 function clearSign() {
   signatureRef.value.clear()
@@ -13,6 +29,22 @@ function clearSign() {
 function saveSign() {
   signatureImg.value = signatureRef.value.save()
   showPad.value = false
+}
+
+function openPad() {
+  showPad.value = true
+  nextTick(() => {
+    // vue3-signature 没有resize方法，用clear触发重绘
+    signatureRef.value.clear()
+  })
+}
+
+// 监听窗口变化，动态调整签名板大小
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', () => {
+    signaturePadWidth.value = getPadWidth()
+    signaturePadHeight.value = getPadHeight()
+  })
 }
 </script>
 
@@ -30,7 +62,7 @@ function saveSign() {
         </ol>
         <p>本人在此声明已充分理解上述授权条款含义，如贵方自愿再上诉同收集、保存等本人数据或信息本人产生不利影响，以及该数据或信息在未获提供给第三方的情况下当利用时风险，但本人仍同意上述授权。</p>
         <p>授权人（签字）：</p>
-        <div class="signature-area" @click="showPad = true">
+        <div class="signature-area" @click="openPad">
           <img v-if="signatureImg" :src="signatureImg" alt="签名" style="max-width: 200px; max-height: 80px;">
           <span v-else class="sign-placeholder">点击此处签字</span>
         </div>
@@ -43,8 +75,8 @@ function saveSign() {
       <div class="signature-modal-content">
         <Vue3Signature
           ref="signatureRef"
-          :width="400"
-          :height="160"
+          :width="signaturePadWidth"
+          :height="signaturePadHeight"
           pen-color="#000"
           background-color="#fff"
         />
@@ -67,7 +99,6 @@ function saveSign() {
   <style scoped>
   .authbook {
   max-width: 700px;
-  margin: 40px auto;
   padding: 24px;
   background: #fff;
   border-radius: 8px;
@@ -82,15 +113,22 @@ function saveSign() {
   margin-top: 16px;
 }
 .signature-area {
-  border: 1px dashed #aaa;
-  min-height: 80px;
-  width: 220px;
-  margin: 18px 0;
+  border: 3px dashed #3477f5;
+  min-height: 140px;
+  width: 50vw;
+  margin: 26px 0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background: #fafafa;
+  background: #f5f8ff;
+  border-radius: 10px;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 2px 8px #e3eafd;
+}
+.signature-area:hover {
+  box-shadow: 0 4px 16px #b1c9f7;
+  background: #eaf2ff;
 }
 .sign-placeholder {
   color: #888;
@@ -117,10 +155,27 @@ function saveSign() {
   top: 50%;
   transform: translate(-50%, -50%);
   background: #fff;
-  padding: 24px;
-  border-radius: 8px;
+  padding: 8px 6px 20px 6px;
+  border-radius: 10px;
   box-shadow: 0 2px 12px #aaa;
+  min-width: 260px;
+  max-width: 96vw;
+  height: 224px;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+@media (max-width: 600px) {
+  .signature-modal-content {
+    min-width: 0;
+    max-width: 98vw;
+    width: 100vw;
+    padding: 4px 2vw 16px 2vw;
+    border-radius: 6px;
+  }
+}
+
 .signature-modal-actions {
   margin-top: 12px;
   text-align: right;
@@ -136,5 +191,16 @@ function saveSign() {
 }
 .signature-modal-actions button:first-child {
   background: #aaa;
+}
+
+/* 强制签名弹窗canvas宽高生效 */
+.signature-modal-content canvas {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 180px;
+  max-width: 100vw;
+  display: block;
+  background: #fff;
+  border-radius: 6px;
 }
 </style>
