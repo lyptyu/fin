@@ -1,5 +1,5 @@
 // 征信报告上传相关接口
-
+import request from '@/utils/request'
 // 上传征信报告
 export function uploadCreditReport(data: FormData) {
   console.log('data', data)
@@ -30,4 +30,11 @@ export function getCreditReportStatus(mockType = 3) {
     code: 0,
     data: mockData[mockType] || mockData[3],
   })
+}
+
+export function fileUpload(data: { file: File, file2: File }) {
+  const formData = new FormData()
+  formData.append('file', data.file)
+  formData.append('file2', data.file2)
+  return request.post('/file/upload', formData)
 }

@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { showToast } from 'vant'
+import { fileUpload } from '@/api/utils'
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const frontImage = ref<string>('')
 const backImage = ref<string>('')
+const frontFile = ref<File | null>(null)
+const backFile = ref<File | null>(null)
 const currentUploadType = ref<'front' | 'back'>('front')
 
 // 判断是否完成上传
@@ -34,9 +37,11 @@ function onFileChange(event: Event) {
     reader.onload = (e) => {
       if (currentUploadType.value === 'front') {
         frontImage.value = e.target?.result as string
+        frontFile.value = file
       }
       else {
         backImage.value = e.target?.result as string
+        backFile.value = file
       }
     }
     reader.readAsDataURL(file)
@@ -46,13 +51,24 @@ function onFileChange(event: Event) {
 }
 
 // 处理提交
-function handleSubmit() {
+async function handleSubmit() {
   if (!isComplete.value) {
     showToast('请上传完整的身份证正反面照片')
     return
   }
-  // TODO: 实现提交逻辑
-  showToast('提交成功')
+  if (!frontFile.value || !backFile.value) {
+    showToast('请重新选择身份证照片')
+    return
+  }
+  try {
+    console.log('上传文件', frontFile.value, backFile.value)
+
+    await fileUpload({ file: frontFile.value, file2: backFile.value })
+    showToast('提交成功')
+  }
+  catch {
+    showToast('上传失败，请重试')
+  }
 }
 </script>
 
