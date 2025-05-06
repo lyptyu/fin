@@ -32,9 +32,11 @@ export function getCreditReportStatus(mockType = 3) {
   })
 }
 
-export function fileUpload(data: { file: File, file2: File }) {
+export function fileUpload(data: { file: File }) {
   const formData = new FormData()
   formData.append('file', data.file)
-  formData.append('file2', data.file2)
   return request.post('/file/upload', formData)
+}
+export function ocrIdCard(data: { frontImageUrl: string, backImageUrl: string }) {
+  return request.post('/ocr/idCard', data)
 }

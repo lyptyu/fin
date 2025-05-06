@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { showToast } from 'vant'
-import { fileUpload } from '@/api/utils'
+import { fileUpload, ocrIdCard } from '@/api/utils'
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const frontImage = ref<string>('')
@@ -63,7 +63,13 @@ async function handleSubmit() {
   try {
     console.log('上传文件', frontFile.value, backFile.value)
 
-    await fileUpload({ file: frontFile.value, file2: backFile.value })
+    const res1 = await fileUpload({ file: frontFile.value })
+    const res2 = await fileUpload({ file: backFile.value })
+    const res = await ocrIdCard({
+      frontImageUrl: res1.data.url,
+      backImageUrl: res2.data.url,
+    })
+    console.log('res', res)
     showToast('提交成功')
   }
   catch {
