@@ -54,7 +54,7 @@ async function onSubmit() {
   }
   catch (error) {
     console.warn(error) // 这里可以根据实际情况处理错误情况，比如显示错误提示等操作。
-    showToast('登录失败')
+    showToast(error)
   }
   finally {
     loading.value = false

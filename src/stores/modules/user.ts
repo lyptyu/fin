@@ -27,8 +27,11 @@ export const useUserStore = defineStore('user', () => {
 
   const login = async (loginForm: LoginData) => {
     try {
-      const { data } = await userLogin(loginForm)
-      setToken(data.token)
+      const { code, msg } = await userLogin(loginForm)
+      if (code !== 0) {
+        throw msg
+      }
+      setToken(loginForm.username)
     }
     catch (error) {
       clearToken()
