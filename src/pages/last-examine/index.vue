@@ -750,78 +750,6 @@
                             <template #right-icon>万</template>
                           </van-field>
                           <van-field
-                            v-model="house.mortgageSecondType"
-                            label="机构类型"
-                            is-link
-                            readonly
-                            placeholder="请选择机构类型"
-                            @click="showHouseSecondTypePicker(house)"
-                          />
-                          <van-field
-                            v-model="house.mortgageSecondOrg"
-                            label="机构名称"
-                            placeholder="请输入机构名称"
-                          />
-                        </div>
-                      </template>
-                    </template>
-                    <!-- 抵押扩展 -->
-                    <template v-if="house.status === '抵押'">
-                      <div class="form-item">
-                        <van-field
-                          v-model="house.pledgeAmount"
-                          label="抵押金额"
-                          type="number"
-                          placeholder="请输入金额"
-                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
-                        >
-                          <template #right-icon>万</template>
-                        </van-field>
-                        <van-field
-                          v-model="house.pledgeOrg"
-                          label="抵押机构名称"
-                          placeholder="请输入机构名称"
-                        />
-                        <van-field
-                          v-model="house.pledgeMonths"
-                          label="供"
-                          type="number"
-                          placeholder="请输入月数"
-                          :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
-                        >
-                          <template #right-icon>个月</template>
-                        </van-field>
-                      </div>
-                      <div class="form-item">
-                        <div class="radio-title">是否有二押</div>
-                        <van-radio-group v-model="house.pledgeSecond" direction="horizontal" class="radio-group">
-                          <van-radio name="否">否</van-radio>
-                          <van-radio name="是">是</van-radio>
-                        </van-radio-group>
-                      </div>
-                      <template v-if="house.pledgeSecond === '是'">
-                        <div class="form-item">
-                          <van-field
-                            v-model="house.pledgeSecondAmount"
-                            label="二押金额"
-                            type="number"
-                            placeholder="请输入金额"
-                            :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
-                          >
-                            <template #right-icon>万</template>
-                          </van-field>
-                          <van-field
-                            v-model="house.pledgeSecondType"
-                            label="机构类型"
-                            is-link
-                            readonly
-                            placeholder="请选择机构类型"
-                            @click="showHouseSecondTypePicker(house)"
-                          />
-                          <van-field
-                            v-model="house.pledgeSecondOrg"
-                            label="机构名称"
-                            placeholder="请输入机构名称"
                           />
                         </div>
                       </template>
@@ -1831,7 +1759,13 @@ function showHouseSecondTypePicker(house: any) {
 
 function onHouseSecondTypeConfirm(val: any) {
   if (currentHouseForSecondType.value) {
-    currentHouseForSecondType.value.mortgageSecondType = val.selectedOptions[0].text
+    // 支持按揭和抵押二押字段赋值
+    if ('mortgageSecondType' in currentHouseForSecondType.value) {
+      currentHouseForSecondType.value.mortgageSecondType = val.selectedOptions[0].text
+    }
+    if ('pledgeSecondType' in currentHouseForSecondType.value) {
+      currentHouseForSecondType.value.pledgeSecondType = val.selectedOptions[0].text
+    }
     showHouseSecondTypePickerVisible.value = false
   }
 }
