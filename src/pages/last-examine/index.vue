@@ -816,17 +816,8 @@
                             is-link
                             readonly
                             placeholder="请选择机构类型"
-                            @click="house.pledgeSecondTypePickerShow = true"
+                            @click="showHouseSecondTypePicker(house)"
                           />
-                          <van-popup v-model:show="house.pledgeSecondTypePickerShow" position="bottom">
-                            <van-picker
-                              :columns="houseSecondTypeOptions"
-                              @confirm="val => { house.pledgeSecondType = val.selectedOptions[0].text; house.pledgeSecondTypePickerShow = false }"
-                              @cancel="house.pledgeSecondTypePickerShow = false"
-                              show-toolbar
-                              title="选择机构类型"
-                            />
-                          </van-popup>
                           <van-field
                             v-model="house.pledgeSecondOrg"
                             label="机构名称"
@@ -1348,7 +1339,6 @@
         title="选择机构类型"
       />
     </van-popup>
-    
     <van-popup v-model:show="showSocialSecurityAreaPicker" position="bottom">
       <van-picker
         :columns="areaOptions"
