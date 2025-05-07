@@ -1124,14 +1124,13 @@ function formatInterest(flow: any, index: number) {
                         placeholder="请输入单位名称"
                       />
                     </div>
-                    <div class="form-item">
+                    <div v-if="module2Data.providentFundCompanyType !== '同社保单位'" class="form-item">
                       <van-field
                         v-model="module2Data.providentFundArea"
                         label="公积金地区"
                         placeholder="请选择公积金地区"
                         readonly
                         is-link
-                        :disabled="module2Data.providentFundCompanyType === '同社保单位'"
                         @click="handleProvidentFundAreaClick"
                       />
                     </div>
@@ -1220,14 +1219,13 @@ function formatInterest(flow: any, index: number) {
                         placeholder="请输入单位名称"
                       />
                     </div>
-                    <div class="form-item">
+                    <div class="form-item" v-if="module2Data.taxCompanyType !== '同社保单位'">
                       <van-field
                         v-model="module2Data.taxArea"
                         label="个税地区"
                         placeholder="请选择个税地区"
                         readonly
                         is-link
-                        :disabled="module2Data.taxCompanyType === '同社保单位'"
                         @click="handleTaxAreaClick"
                       />
                     </div>
