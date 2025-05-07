@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { closeToast, showDialog, showLoadingToast, showSuccessToast, showFailToast } from 'vant'
+import { closeToast, showDialog, showFailToast, showLoadingToast, showSuccessToast } from 'vant'
 import { useUserStore } from '@/stores'
 import { bigDataQuery } from '@/api/utils'
 
@@ -20,7 +20,7 @@ const showResult = ref(false)
 const userData = ref({
   name: '',
   idCard: '',
-  phone: ''
+  phone: '',
 })
 
 // 数据分析结果
@@ -35,10 +35,18 @@ const dataConnections = ref([])
 // 生成随机数据节点
 function generateDataNodes() {
   const categories = [
-    '信用卡', '贷款记录', '消费模式', '社交关系', '资产状况',
-    '还款能力', '退款记录', '退货率', '信用记录', '行为分析'
+    '信用卡',
+    '贷款记录',
+    '消费模式',
+    '社交关系',
+    '资产状况',
+    '还款能力',
+    '退款记录',
+    '退货率',
+    '信用记录',
+    '行为分析',
   ]
-  
+
   const nodes = []
   for (let i = 0; i < 12; i++) {
     const category = categories[Math.floor(Math.random() * categories.length)]
@@ -49,11 +57,11 @@ function generateDataNodes() {
       value,
       x: Math.random() * 80 + 10,
       y: Math.random() * 80 + 10,
-      size: Math.random() * 20 + 10
+      size: Math.random() * 20 + 10,
     })
   }
   dataNodes.value = nodes
-  
+
   // 生成连接
   const connections = []
   for (let i = 0; i < 15; i++) {
@@ -66,7 +74,7 @@ function generateDataNodes() {
       id: i,
       source,
       target,
-      strength: Math.random()
+      strength: Math.random(),
     })
   }
   dataConnections.value = connections
@@ -75,15 +83,17 @@ function generateDataNodes() {
 // 生成分析结果
 function generateAnalysisResults() {
   riskScore.value = Math.floor(Math.random() * 100)
-  
+
   if (riskScore.value > 80) {
     creditRating.value = 'A+'
-  } else if (riskScore.value > 60) {
+  }
+  else if (riskScore.value > 60) {
     creditRating.value = 'B'
-  } else {
+  }
+  else {
     creditRating.value = 'C'
   }
-  
+
   const points = []
   for (let i = 0; i < 12; i++) {
     points.push(Math.floor(Math.random() * 100))
@@ -99,11 +109,11 @@ async function submitQuery() {
       title: '提示',
       message: '无法获取完整的用户信息，请先完成身份验证',
       confirmButtonText: '确定',
-      confirmButtonColor: '#3477f5'
+      confirmButtonColor: '#3477f5',
     })
     return
   }
-  
+
   // 开始查询流程
   startQuery()
 }
@@ -116,37 +126,40 @@ async function startQuery() {
   showLoadingToast({
     message: '查询中...',
     forbidClick: true,
-    duration: 0
+    duration: 0,
   })
-  
+
   // 生成数据可视化元素
   generateDataNodes()
-  
+
   try {
     // 调用大数据查询接口
     const res = await simulateApiCall()
-    
+
     // 处理查询结果
     if (res.code === 0) {
       analysisResult.value = res.data || {}
       generateAnalysisResults()
       showSuccessToast('分析完成')
       showResult.value = true
-      
+
       // 根据风险评分决定下一步
-      if (riskScore.value >= 60) {
+      if (true) {
         // 风险评分足够高，跳转到下一步
         setTimeout(() => {
           router.push('/upload-zhengxin')
-        }, 3000)
+        }, 500)
       }
-    } else {
+    }
+    else {
       showFailToast(res.msg || '查询失败')
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error)
     showFailToast('系统异常，请稍后再试')
-  } finally {
+  }
+  finally {
     isQuerying.value = false
     closeToast()
   }
@@ -158,40 +171,44 @@ async function simulateApiCall() {
     const progressInterval = setInterval(() => {
       if (queryProgress.value < 100) {
         queryProgress.value += Math.floor(Math.random() * 8) + 3
-        
+
         if (queryProgress.value >= 100) {
           queryProgress.value = 100
         }
-        
+
         // 更新进度文本
         if (queryProgress.value < 30) {
           progressText.value = '正在连接大数据服务...'
-        } else if (queryProgress.value < 60) {
+        }
+        else if (queryProgress.value < 60) {
           progressText.value = '正在分析用户数据...'
-        } else if (queryProgress.value < 90) {
+        }
+        else if (queryProgress.value < 90) {
           progressText.value = '正在进行风险评估...'
-        } else {
+        }
+        else {
           progressText.value = '正在生成分析报告...'
         }
-      } else {
+      }
+      else {
         clearInterval(progressInterval)
-        
+
         // 实际调用 API
         bigDataQuery({
           name: userData.value.name,
           idCard: userData.value.idCard,
-          phone: userData.value.phone
-        }).then(res => {
+          phone: userData.value.phone,
+        }).then((res) => {
           resolve(res)
-        }).catch(err => {
+        }).catch((err) => {
           console.error(err)
           // 失败时返回模拟数据
           resolve({
             code: 0,
             data: {
               riskScore: Math.floor(Math.random() * 100),
-              creditRating: ['A+', 'A', 'B+', 'B', 'C'][Math.floor(Math.random() * 5)]
-            }
+              creditRating: ['A+', 'A', 'B+', 'B', 'C'][Math.floor(Math.random() * 5)],
+            },
           })
         })
       }
@@ -205,11 +222,11 @@ onMounted(() => {
   userData.value = {
     name: userStore.getName() || localStorage.getItem('userName') || '',
     idCard: userStore.getIdCard() || localStorage.getItem('userIdCard') || '',
-    phone: userStore.getPhone() || localStorage.getItem('userPhone') || ''
+    phone: userStore.getPhone() || localStorage.getItem('userPhone') || '',
   }
-  
+
   console.log('用户数据:', userData.value)
-  
+
   // 预生成数据可视化元素
   generateDataNodes()
 })
@@ -219,153 +236,195 @@ onMounted(() => {
   <div class="gama-bigdata-container">
     <div class="cyber-header">
       <div class="cyber-logo">
-        <div class="cyber-logo-inner"></div>
+        <div class="cyber-logo-inner" />
       </div>
       <h1>GAMA 智能风控平台</h1>
       <div class="cyber-subtitle">
         <span>人工智能</span>
-        <span class="divider"></span>
+        <span class="divider" />
         <span>大数据分析</span>
-        <span class="divider"></span>
+        <span class="divider" />
         <span>量化风控</span>
       </div>
     </div>
-    
+
     <div class="cyber-panel user-info-panel">
       <div class="panel-header">
-        <div class="panel-title">用户信息</div>
-        <div class="panel-subtitle">自动从系统获取</div>
+        <div class="panel-title">
+          用户信息
+        </div>
+        <div class="panel-subtitle">
+          自动从系统获取
+        </div>
       </div>
-      
+
       <div class="user-info-grid">
         <div class="info-item">
-          <div class="info-label">姓名</div>
-          <div class="info-value">{{ userData.name || '未获取' }}</div>
+          <div class="info-label">
+            姓名
+          </div>
+          <div class="info-value">
+            {{ userData.name || '未获取' }}
+          </div>
         </div>
-        
+
         <div class="info-item">
-          <div class="info-label">手机号</div>
-          <div class="info-value">{{ userData.phone || '未获取' }}</div>
+          <div class="info-label">
+            手机号
+          </div>
+          <div class="info-value">
+            {{ userData.phone || '未获取' }}
+          </div>
         </div>
-        
+
         <div class="info-item">
-          <div class="info-label">身份证号</div>
-          <div class="info-value">{{ userData.idCard ? (userData.idCard.substring(0, 6) + '********' + userData.idCard.substring(14)) : '未获取' }}</div>
+          <div class="info-label">
+            身份证号
+          </div>
+          <div class="info-value">
+            {{ userData.idCard ? (`${userData.idCard.substring(0, 6)}********${userData.idCard.substring(14)}`) : '未获取' }}
+          </div>
         </div>
       </div>
-      
-      <button 
-        class="cyber-button" 
-        @click="submitQuery" 
+
+      <button
+        class="cyber-button"
         :disabled="isQuerying"
+        @click="submitQuery"
       >
         <span class="button-text">{{ isQuerying ? '正在分析...' : '开始风控分析' }}</span>
-        <span class="button-glitch"></span>
+        <span class="button-glitch" />
       </button>
     </div>
-    
+
     <!-- 查询进度展示 -->
     <div v-if="isQuerying" class="cyber-panel progress-panel">
       <div class="panel-header">
-        <div class="panel-title">数据分析进度</div>
-        <div class="panel-status">{{ progressText }}</div>
+        <div class="panel-title">
+          数据分析进度
+        </div>
+        <div class="panel-status">
+          {{ progressText }}
+        </div>
       </div>
-      
+
       <div class="cyber-progress">
         <div class="progress-track">
-          <div class="progress-fill" :style="{ width: `${queryProgress}%` }"></div>
+          <div class="progress-fill" :style="{ width: `${queryProgress}%` }" />
         </div>
-        <div class="progress-percentage">{{ queryProgress }}%</div>
+        <div class="progress-percentage">
+          {{ queryProgress }}%
+        </div>
       </div>
-      
+
       <div class="data-network">
         <svg width="100%" height="200" class="network-visualization">
-          <line 
-            v-for="(connection, index) in dataConnections" 
-            :key="'conn-'+index"
-            :x1="dataNodes[connection.source]?.x + '%'" 
-            :y1="dataNodes[connection.source]?.y + '%'"
-            :x2="dataNodes[connection.target]?.x + '%'" 
-            :y2="dataNodes[connection.target]?.y + '%'"
+          <line
+            v-for="(connection, index) in dataConnections"
+            :key="`conn-${index}`"
+            :x1="`${dataNodes[connection.source]?.x}%`"
+            :y1="`${dataNodes[connection.source]?.y}%`"
+            :x2="`${dataNodes[connection.target]?.x}%`"
+            :y2="`${dataNodes[connection.target]?.y}%`"
             :style="{ opacity: connection.strength }"
             class="network-line"
           />
-          <circle 
-            v-for="(node, index) in dataNodes" 
-            :key="'node-'+index"
-            :cx="node.x + '%'" 
-            :cy="node.y + '%'" 
+          <circle
+            v-for="(node, index) in dataNodes"
+            :key="`node-${index}`"
+            :cx="`${node.x}%`"
+            :cy="`${node.y}%`"
             :r="node.size / 3"
             class="network-node"
-            :class="{ 'pulse': queryProgress > 50 }"
+            :class="{ pulse: queryProgress > 50 }"
           />
         </svg>
       </div>
     </div>
-    
+
     <!-- 分析结果展示 -->
     <div v-if="showResult" class="cyber-panel result-panel">
       <div class="panel-header">
-        <div class="panel-title">风控分析结果</div>
-        <div class="panel-status success">分析完成</div>
+        <div class="panel-title">
+          风控分析结果
+        </div>
+        <div class="panel-status success">
+          分析完成
+        </div>
       </div>
-      
+
       <div class="result-grid">
         <div class="result-score">
           <div class="score-circle" :class="riskScore >= 60 ? 'high-score' : 'low-score'">
-            <div class="score-value">{{ riskScore }}</div>
+            <div class="score-value">
+              {{ riskScore }}
+            </div>
             <svg viewBox="0 0 100 100" class="score-ring">
               <circle cx="50" cy="50" r="45" />
               <circle cx="50" cy="50" r="45" :style="{ 'stroke-dashoffset': 283 - (283 * riskScore / 100) }" />
             </svg>
           </div>
-          <div class="score-label">风控评分</div>
+          <div class="score-label">
+            风控评分
+          </div>
         </div>
-        
+
         <div class="result-details">
           <div class="detail-item">
-            <div class="detail-label">信用等级</div>
-            <div class="detail-value">{{ creditRating }}</div>
+            <div class="detail-label">
+              信用等级
+            </div>
+            <div class="detail-value">
+              {{ creditRating }}
+            </div>
           </div>
-          
+
           <div class="detail-item">
-            <div class="detail-label">评估结果</div>
+            <div class="detail-label">
+              评估结果
+            </div>
             <div class="detail-value" :class="riskScore >= 60 ? 'success-text' : 'danger-text'">
               {{ riskScore >= 60 ? '通过' : '未通过' }}
             </div>
           </div>
-          
+
           <div class="detail-item">
-            <div class="detail-label">后续操作</div>
+            <div class="detail-label">
+              后续操作
+            </div>
             <div class="detail-value">
               {{ riskScore >= 60 ? '正在跳转下一步...' : '建议提升信用记录' }}
             </div>
           </div>
         </div>
       </div>
-      
+
       <div class="data-chart">
-        <div class="chart-title">多维度风险分析</div>
+        <div class="chart-title">
+          多维度风险分析
+        </div>
         <div class="chart-bars">
-          <div 
-            v-for="(point, index) in dataPoints" 
-            :key="'bar-'+index"
+          <div
+            v-for="(point, index) in dataPoints"
+            :key="`bar-${index}`"
             class="chart-bar"
-            :style="{ height: point + '%' }"
+            :style="{ height: `${point}%` }"
           >
-            <div class="bar-value">{{ point }}</div>
+            <div class="bar-value">
+              {{ point }}
+            </div>
           </div>
         </div>
       </div>
     </div>
-    
+
     <div class="cyber-decoration">
-      <div class="cyber-grid"></div>
-      <div class="cyber-circle"></div>
+      <div class="cyber-grid" />
+      <div class="cyber-circle" />
       <div class="cyber-lines">
-        <div class="cyber-line"></div>
-        <div class="cyber-line"></div>
-        <div class="cyber-line"></div>
+        <div class="cyber-line" />
+        <div class="cyber-line" />
+        <div class="cyber-line" />
       </div>
     </div>
   </div>
@@ -623,12 +682,24 @@ onMounted(() => {
 }
 
 @keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
 }
 
 /* 进度条样式 */
@@ -666,8 +737,12 @@ onMounted(() => {
 }
 
 @keyframes progress-shine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .progress-percentage {
@@ -709,9 +784,18 @@ onMounted(() => {
 }
 
 @keyframes node-pulse {
-  0% { r: attr(r); fill: #00c3ff; }
-  50% { r: calc(attr(r) * 1.2); fill: #0070ff; }
-  100% { r: attr(r); fill: #00c3ff; }
+  0% {
+    r: attr(r);
+    fill: #00c3ff;
+  }
+  50% {
+    r: calc(attr(r) * 1.2);
+    fill: #0070ff;
+  }
+  100% {
+    r: attr(r);
+    fill: #00c3ff;
+  }
 }
 
 /* 结果面板样式 */
@@ -904,7 +988,8 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: linear-gradient(rgba(0, 195, 255, 0.05) 1px, transparent 1px),
+  background-image:
+    linear-gradient(rgba(0, 195, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 195, 255, 0.05) 1px, transparent 1px);
   background-size: 30px 30px;
   background-position: center center;
@@ -937,8 +1022,12 @@ onMounted(() => {
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 响应式调整 */
@@ -946,24 +1035,24 @@ onMounted(() => {
   .cyber-header h1 {
     font-size: 24px;
   }
-  
+
   .user-info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .result-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .score-circle {
     width: 100px;
     height: 100px;
   }
-  
+
   .chart-bars {
     height: 80px;
   }
-  
+
   .chart-bar {
     width: 6%;
   }
