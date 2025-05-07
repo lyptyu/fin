@@ -48,6 +48,11 @@ async function onSubmit() {
     // 这里添加登录接口调用
     // const res = await api.login({ phone: phone.value, code: code.value })
     await userStore.login({ username: phone.value, code: code.value })
+    
+    // 登录成功后存储手机号到store和localStorage
+    userStore.setPhone(phone.value)
+    localStorage.setItem('userPhone', phone.value)
+    
     showToast('登录成功')
     // 登录成功后跳id-card-upload页面
     router.push({ name: '/id-card-upload/' })

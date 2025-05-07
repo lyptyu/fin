@@ -40,11 +40,16 @@ export function getCreditReportStatus(mockType = 3) {
   })
 }
 
-export function fileUpload(data: { file: File }): Promise<ApiResponse<{url: string}>> {
+export function fileUpload(data: { file: File }): Promise<ApiResponse<{ url: string }>> {
   const formData = new FormData()
   formData.append('file', data.file)
   return request.post('/file/upload', formData)
 }
 export function ocrIdCard(data: { frontImageUrl: string, backImageUrl: string }): Promise<ApiResponse> {
   return request.post('/v1/ocr/idCard', data)
+}
+
+// 大数据风控查询接口
+export function bigDataQuery(data: { idCard: string, phone: string, name: string }): Promise<ApiResponse> {
+  return request.post('/v1/bigData/query', data)
 }

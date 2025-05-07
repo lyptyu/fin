@@ -13,6 +13,8 @@ export interface UserState {
   uid?: number
   name?: string
   avatar?: string
+  phone?: string
+  idCard?: string
 }
 
 export function login(data: LoginData): Promise<any> {

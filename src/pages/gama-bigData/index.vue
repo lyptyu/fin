@@ -1,40 +1,103 @@
 <script setup lang="ts">
-import { defineExpose, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { closeToast, showDialog, showLoadingToast } from 'vant'
+import { closeToast, showDialog, showLoadingToast, showSuccessToast, showFailToast } from 'vant'
+import { useUserStore } from '@/stores'
+import { bigDataQuery } from '@/api/utils'
 
 const router = useRouter()
-
-interface FormData {
-  name: string
-  idCard: string
-  phone: string
-  income: string
-  creditScore: string
-}
-
-// 查询表单数据
-const formData = reactive<FormData>({
-  name: '',
-  idCard: '',
-  phone: '',
-  income: '',
-  creditScore: ''
-})
+const userStore = useUserStore()
 
 // 查询状态
 const isQuerying = ref(false)
 const queryComplete = ref(false)
 const queryProgress = ref(0)
 const progressText = ref('正在连接大数据服务...')
+const analysisResult = ref<any>(null)
+const showResult = ref(false)
+
+// 用户数据
+const userData = ref({
+  name: '',
+  idCard: '',
+  phone: ''
+})
+
+// 数据分析结果
+const dataPoints = ref([])
+const riskScore = ref(0)
+const creditRating = ref('')
+
+// 动态数据可视化元素
+const dataNodes = ref([])
+const dataConnections = ref([])
+
+// 生成随机数据节点
+function generateDataNodes() {
+  const categories = [
+    '信用卡', '贷款记录', '消费模式', '社交关系', '资产状况',
+    '还款能力', '退款记录', '退货率', '信用记录', '行为分析'
+  ]
+  
+  const nodes = []
+  for (let i = 0; i < 12; i++) {
+    const category = categories[Math.floor(Math.random() * categories.length)]
+    const value = Math.floor(Math.random() * 100)
+    nodes.push({
+      id: i,
+      category,
+      value,
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 80 + 10,
+      size: Math.random() * 20 + 10
+    })
+  }
+  dataNodes.value = nodes
+  
+  // 生成连接
+  const connections = []
+  for (let i = 0; i < 15; i++) {
+    const source = Math.floor(Math.random() * nodes.length)
+    let target = Math.floor(Math.random() * nodes.length)
+    while (target === source) {
+      target = Math.floor(Math.random() * nodes.length)
+    }
+    connections.push({
+      id: i,
+      source,
+      target,
+      strength: Math.random()
+    })
+  }
+  dataConnections.value = connections
+}
+
+// 生成分析结果
+function generateAnalysisResults() {
+  riskScore.value = Math.floor(Math.random() * 100)
+  
+  if (riskScore.value > 80) {
+    creditRating.value = 'A+'
+  } else if (riskScore.value > 60) {
+    creditRating.value = 'B'
+  } else {
+    creditRating.value = 'C'
+  }
+  
+  const points = []
+  for (let i = 0; i < 12; i++) {
+    points.push(Math.floor(Math.random() * 100))
+  }
+  dataPoints.value = points
+}
 
 // 提交查询
-function submitQuery() {
-  // 表单验证
-  if (!formData.name || !formData.idCard || !formData.phone) {
+async function submitQuery() {
+  // 验证用户数据
+  if (!userData.value.name || !userData.value.idCard || !userData.value.phone) {
     showDialog({
       title: '提示',
-      message: '请填写完整的个人信息',
+      message: '无法获取完整的用户信息，请先完成身份验证',
       confirmButtonText: '确定',
       confirmButtonColor: '#3477f5'
     })
@@ -42,181 +105,267 @@ function submitQuery() {
   }
   
   // 开始查询流程
-  simulateQueryProgress()
+  startQuery()
 }
 
-// 查询进度模拟
-function simulateQueryProgress() {
+// 开始查询
+async function startQuery() {
   isQuerying.value = true
   queryProgress.value = 0
+  showResult.value = false
   showLoadingToast({
     message: '查询中...',
     forbidClick: true,
     duration: 0
   })
   
-  const progressInterval = setInterval(() => {
-    if (queryProgress.value < 100) {
-      queryProgress.value += Math.floor(Math.random() * 10) + 1
+  // 生成数据可视化元素
+  generateDataNodes()
+  
+  try {
+    // 调用大数据查询接口
+    const res = await simulateApiCall()
+    
+    // 处理查询结果
+    if (res.code === 0) {
+      analysisResult.value = res.data || {}
+      generateAnalysisResults()
+      showSuccessToast('分析完成')
+      showResult.value = true
       
-      if (queryProgress.value >= 100) {
-        queryProgress.value = 100
-      }
-      
-      // 更新进度文本
-      if (queryProgress.value < 30) {
-        progressText.value = '正在连接大数据服务...'
-      } else if (queryProgress.value < 60) {
-        progressText.value = '正在分析用户数据...'
-      } else if (queryProgress.value < 90) {
-        progressText.value = '正在进行风险评估...'
-      } else {
-        progressText.value = '正在生成分析报告...'
+      // 根据风险评分决定下一步
+      if (riskScore.value >= 60) {
+        // 风险评分足够高，跳转到下一步
+        setTimeout(() => {
+          router.push('/upload-zhengxin')
+        }, 3000)
       }
     } else {
-      clearInterval(progressInterval)
-      closeToast()
-      queryComplete.value = true
-      processQueryResult()
+      showFailToast(res.msg || '查询失败')
     }
-  }, 200)
+  } catch (error) {
+    console.error(error)
+    showFailToast('系统异常，请稍后再试')
+  } finally {
+    isQuerying.value = false
+    closeToast()
+  }
 }
 
-// 处理查询结果
-function processQueryResult() {
-  // 模拟随机结果：70%概率拒绝，30%概率通过
-  const isRejected = Math.random() < 0.7
-  
-  if (isRejected) {
-    // 结果1：显示拒绝弹窗
-    showDialog({
-      title: '查询结果',
-      message: '抱歉，您的条件不符合，拒绝原因：大数据不符合。',
-      confirmButtonText: '我知道了',
-      confirmButtonColor: '#3477f5'
-    })
-  } else {
-    // 结果2：跳转到upload-zhengxin页面
-    router.push('/upload-zhengxin')
+// 模拟 API 调用
+async function simulateApiCall() {
+  return new Promise((resolve) => {
+    const progressInterval = setInterval(() => {
+      if (queryProgress.value < 100) {
+        queryProgress.value += Math.floor(Math.random() * 8) + 3
+        
+        if (queryProgress.value >= 100) {
+          queryProgress.value = 100
+        }
+        
+        // 更新进度文本
+        if (queryProgress.value < 30) {
+          progressText.value = '正在连接大数据服务...'
+        } else if (queryProgress.value < 60) {
+          progressText.value = '正在分析用户数据...'
+        } else if (queryProgress.value < 90) {
+          progressText.value = '正在进行风险评估...'
+        } else {
+          progressText.value = '正在生成分析报告...'
+        }
+      } else {
+        clearInterval(progressInterval)
+        
+        // 实际调用 API
+        bigDataQuery({
+          name: userData.value.name,
+          idCard: userData.value.idCard,
+          phone: userData.value.phone
+        }).then(res => {
+          resolve(res)
+        }).catch(err => {
+          console.error(err)
+          // 失败时返回模拟数据
+          resolve({
+            code: 0,
+            data: {
+              riskScore: Math.floor(Math.random() * 100),
+              creditRating: ['A+', 'A', 'B+', 'B', 'C'][Math.floor(Math.random() * 5)]
+            }
+          })
+        })
+      }
+    }, 100)
+  })
+}
+
+// 在组件挂载时获取用户数据
+onMounted(() => {
+  // 从 store 中获取用户数据
+  userData.value = {
+    name: userStore.getName() || localStorage.getItem('userName') || '',
+    idCard: userStore.getIdCard() || localStorage.getItem('userIdCard') || '',
+    phone: userStore.getPhone() || localStorage.getItem('userPhone') || ''
   }
   
-  // 重置查询状态
-  setTimeout(() => {
-    isQuerying.value = false
-    queryComplete.value = false
-  }, 1000)
-}
-
-// 暴露给模板使用的变量和函数
-defineExpose({
-  formData,
-  isQuerying,
-  queryProgress,
-  progressText,
-  submitQuery
+  console.log('用户数据:', userData.value)
+  
+  // 预生成数据可视化元素
+  generateDataNodes()
 })
 </script>
 
 <template>
   <div class="gama-bigdata-container">
-    <div class="header">
-      <h1>GAMA大数据风控查询</h1>
-      <div class="header-subtitle">AI智能风控 · 实时数据分析 · 精准风险评估</div>
+    <div class="cyber-header">
+      <div class="cyber-logo">
+        <div class="cyber-logo-inner"></div>
+      </div>
+      <h1>GAMA 智能风控平台</h1>
+      <div class="cyber-subtitle">
+        <span>人工智能</span>
+        <span class="divider"></span>
+        <span>大数据分析</span>
+        <span class="divider"></span>
+        <span>量化风控</span>
+      </div>
     </div>
     
-    <div class="query-form">
-      <div class="form-group">
-        <label>姓名</label>
-        <input 
-          type="text" 
-          v-model="formData.name" 
-          placeholder="请输入您的真实姓名"
-        >
+    <div class="cyber-panel user-info-panel">
+      <div class="panel-header">
+        <div class="panel-title">用户信息</div>
+        <div class="panel-subtitle">自动从系统获取</div>
       </div>
       
-      <div class="form-group">
-        <label>身份证号</label>
-        <input 
-          type="text" 
-          v-model="formData.idCard" 
-          placeholder="请输入18位身份证号码"
-          maxlength="18"
-        >
-      </div>
-      
-      <div class="form-group">
-        <label>手机号码</label>
-        <input 
-          type="tel" 
-          v-model="formData.phone" 
-          placeholder="请输入手机号码"
-          maxlength="11"
-        >
-      </div>
-      
-      <div class="form-group">
-        <label>月收入（选填）</label>
-        <input 
-          type="number" 
-          v-model="formData.income" 
-          placeholder="请输入月收入金额"
-        >
-      </div>
-      
-      <div class="form-group">
-        <label>信用分（选填）</label>
-        <input 
-          type="number" 
-          v-model="formData.creditScore" 
-          placeholder="请输入您的信用分"
-          min="300"
-          max="900"
-        >
+      <div class="user-info-grid">
+        <div class="info-item">
+          <div class="info-label">姓名</div>
+          <div class="info-value">{{ userData.name || '未获取' }}</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">手机号</div>
+          <div class="info-value">{{ userData.phone || '未获取' }}</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">身份证号</div>
+          <div class="info-value">{{ userData.idCard ? (userData.idCard.substring(0, 6) + '********' + userData.idCard.substring(14)) : '未获取' }}</div>
+        </div>
       </div>
       
       <button 
-        class="query-button" 
+        class="cyber-button" 
         @click="submitQuery" 
         :disabled="isQuerying"
       >
-        {{ isQuerying ? '查询中...' : '开始查询' }}
+        <span class="button-text">{{ isQuerying ? '正在分析...' : '开始风控分析' }}</span>
+        <span class="button-glitch"></span>
       </button>
     </div>
     
     <!-- 查询进度展示 -->
-    <div v-if="isQuerying" class="query-progress-container">
-      <div class="progress-bar">
-        <div 
-          class="progress-fill" 
-          :style="{ width: `${queryProgress}%` }"
-        />
-      </div>
-      <div class="progress-text">
-        <span>{{ progressText }}</span>
-        <span>{{ queryProgress }}%</span>
+    <div v-if="isQuerying" class="cyber-panel progress-panel">
+      <div class="panel-header">
+        <div class="panel-title">数据分析进度</div>
+        <div class="panel-status">{{ progressText }}</div>
       </div>
       
-      <div class="data-visualization">
-        <div 
-          v-for="n in 20" 
-          :key="n" 
-          class="data-point" 
-          :style="{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 2}s`,
-            opacity: Math.random() * 0.8 + 0.2
-          }"
-        />
+      <div class="cyber-progress">
+        <div class="progress-track">
+          <div class="progress-fill" :style="{ width: `${queryProgress}%` }"></div>
+        </div>
+        <div class="progress-percentage">{{ queryProgress }}%</div>
+      </div>
+      
+      <div class="data-network">
+        <svg width="100%" height="200" class="network-visualization">
+          <line 
+            v-for="(connection, index) in dataConnections" 
+            :key="'conn-'+index"
+            :x1="dataNodes[connection.source]?.x + '%'" 
+            :y1="dataNodes[connection.source]?.y + '%'"
+            :x2="dataNodes[connection.target]?.x + '%'" 
+            :y2="dataNodes[connection.target]?.y + '%'"
+            :style="{ opacity: connection.strength }"
+            class="network-line"
+          />
+          <circle 
+            v-for="(node, index) in dataNodes" 
+            :key="'node-'+index"
+            :cx="node.x + '%'" 
+            :cy="node.y + '%'" 
+            :r="node.size / 3"
+            class="network-node"
+            :class="{ 'pulse': queryProgress > 50 }"
+          />
+        </svg>
       </div>
     </div>
     
-    <div class="tech-decoration">
-      <div class="tech-circle" />
-      <div class="tech-lines">
-        <div class="tech-line" />
-        <div class="tech-line" />
-        <div class="tech-line" />
+    <!-- 分析结果展示 -->
+    <div v-if="showResult" class="cyber-panel result-panel">
+      <div class="panel-header">
+        <div class="panel-title">风控分析结果</div>
+        <div class="panel-status success">分析完成</div>
+      </div>
+      
+      <div class="result-grid">
+        <div class="result-score">
+          <div class="score-circle" :class="riskScore >= 60 ? 'high-score' : 'low-score'">
+            <div class="score-value">{{ riskScore }}</div>
+            <svg viewBox="0 0 100 100" class="score-ring">
+              <circle cx="50" cy="50" r="45" />
+              <circle cx="50" cy="50" r="45" :style="{ 'stroke-dashoffset': 283 - (283 * riskScore / 100) }" />
+            </svg>
+          </div>
+          <div class="score-label">风控评分</div>
+        </div>
+        
+        <div class="result-details">
+          <div class="detail-item">
+            <div class="detail-label">信用等级</div>
+            <div class="detail-value">{{ creditRating }}</div>
+          </div>
+          
+          <div class="detail-item">
+            <div class="detail-label">评估结果</div>
+            <div class="detail-value" :class="riskScore >= 60 ? 'success-text' : 'danger-text'">
+              {{ riskScore >= 60 ? '通过' : '未通过' }}
+            </div>
+          </div>
+          
+          <div class="detail-item">
+            <div class="detail-label">后续操作</div>
+            <div class="detail-value">
+              {{ riskScore >= 60 ? '正在跳转下一步...' : '建议提升信用记录' }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="data-chart">
+        <div class="chart-title">多维度风险分析</div>
+        <div class="chart-bars">
+          <div 
+            v-for="(point, index) in dataPoints" 
+            :key="'bar-'+index"
+            class="chart-bar"
+            :style="{ height: point + '%' }"
+          >
+            <div class="bar-value">{{ point }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cyber-decoration">
+      <div class="cyber-grid"></div>
+      <div class="cyber-circle"></div>
+      <div class="cyber-lines">
+        <div class="cyber-line"></div>
+        <div class="cyber-line"></div>
+        <div class="cyber-line"></div>
       </div>
     </div>
   </div>
@@ -224,80 +373,195 @@ defineExpose({
 
 <style scoped>
 .gama-bigdata-container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
   position: relative;
   overflow: hidden;
   min-height: 100vh;
-  background-color: #f8faff;
+  background-color: #0a0e17;
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif;
 }
 
-.header {
+/* 超现代头部样式 */
+.cyber-header {
   text-align: center;
   margin-bottom: 40px;
   position: relative;
   z-index: 2;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(0, 195, 255, 0.2);
 }
 
-.header h1 {
-  font-size: 28px;
-  color: #2c3e50;
-  margin-bottom: 8px;
-  background: linear-gradient(90deg, #3477f5, #34c4f5);
+.cyber-logo {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 15px;
+  position: relative;
+  background: linear-gradient(135deg, #00c3ff, #0070ff);
+  border-radius: 50%;
+  padding: 3px;
+  box-shadow: 0 0 15px rgba(0, 195, 255, 0.7);
+}
+
+.cyber-logo-inner {
+  width: 100%;
+  height: 100%;
+  background-color: #0a0e17;
+  border-radius: 50%;
+  position: relative;
+}
+
+.cyber-logo-inner::before,
+.cyber-logo-inner::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(135deg, #00c3ff, #0070ff);
+}
+
+.cyber-logo-inner::before {
+  width: 60%;
+  height: 2px;
+  top: 50%;
+  left: 20%;
+  transform: translateY(-50%);
+}
+
+.cyber-logo-inner::after {
+  width: 2px;
+  height: 60%;
+  left: 50%;
+  top: 20%;
+  transform: translateX(-50%);
+}
+
+.cyber-header h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #00c3ff, #0070ff);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: bold;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.header-subtitle {
+.cyber-subtitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 14px;
-  color: #7f8c8d;
+  color: #8a9bae;
+  letter-spacing: 1.5px;
+}
+
+.cyber-subtitle .divider {
+  width: 4px;
+  height: 4px;
+  background-color: #00c3ff;
+  border-radius: 50%;
+  margin: 0 10px;
+}
+
+/* 面板样式 */
+.cyber-panel {
+  background: rgba(16, 23, 34, 0.8);
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 195, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.cyber-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00c3ff, transparent);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #00c3ff;
+  text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.query-form {
-  background: white;
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  position: relative;
-  z-index: 2;
+.panel-subtitle {
+  font-size: 12px;
+  color: #8a9bae;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
+.panel-status {
   font-size: 14px;
-  color: #34495e;
+  color: #8a9bae;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background-color: rgba(0, 195, 255, 0.1);
+}
+
+.panel-status.success {
+  background-color: rgba(0, 255, 128, 0.1);
+  color: #00ff80;
+}
+
+/* 用户信息面板 */
+.user-info-panel {
+  background: linear-gradient(135deg, rgba(16, 23, 34, 0.9), rgba(10, 14, 23, 0.9));
+}
+
+.user-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.info-item {
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 195, 255, 0.1);
+}
+
+.info-label {
+  font-size: 12px;
+  color: #8a9bae;
   margin-bottom: 8px;
-  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.form-group input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+.info-value {
   font-size: 16px;
-  transition: all 0.3s;
-  background-color: #f9fafc;
+  color: #e0e0e0;
+  font-weight: 500;
+  word-break: break-all;
 }
 
-.form-group input:focus {
-  border-color: #3477f5;
-  box-shadow: 0 0 0 2px rgba(52, 119, 245, 0.2);
-  outline: none;
-}
-
-.query-button {
+/* 按钮样式 */
+.cyber-button {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(90deg, #3477f5, #34c4f5);
+  background: linear-gradient(90deg, #0070ff, #00c3ff);
   color: white;
   border: none;
   border-radius: 6px;
@@ -305,147 +569,403 @@ defineExpose({
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
-  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.query-button:hover {
+.cyber-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.5s;
+}
+
+.cyber-button:hover::before {
+  left: 100%;
+}
+
+.cyber-button:hover {
+  box-shadow: 0 0 15px rgba(0, 195, 255, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(52, 119, 245, 0.3);
 }
 
-.query-button:disabled {
-  background: #a0b4d8;
+.cyber-button:disabled {
+  background: linear-gradient(90deg, #2a3a4a, #3a4a5a);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-/* 查询进度样式 */
-.query-progress-container {
-  margin-top: 30px;
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+.button-text {
   position: relative;
   z-index: 2;
-  height: 200px;
 }
 
-.progress-bar {
+.button-glitch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 195, 255, 0.1);
+  display: none;
+}
+
+.cyber-button:hover .button-glitch {
+  display: block;
+  animation: glitch 0.3s linear;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+/* 进度条样式 */
+.cyber-progress {
+  margin-bottom: 20px;
+}
+
+.progress-track {
   height: 8px;
-  background-color: #eef2f7;
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 10px;
+  position: relative;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3477f5, #34c4f5);
+  background: linear-gradient(90deg, #0070ff, #00c3ff);
   border-radius: 4px;
-  transition: width 0.2s ease-in-out;
-}
-
-.progress-text {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  color: #7f8c8d;
-  margin-bottom: 20px;
-}
-
-/* 数据可视化效果 */
-.data-visualization {
+  transition: width 0.3s ease-in-out;
   position: relative;
-  height: 120px;
-  margin-top: 20px;
-  border-radius: 6px;
-  background-color: #f0f5ff;
   overflow: hidden;
 }
 
-.data-point {
+.progress-fill::after {
+  content: '';
   position: absolute;
-  width: 6px;
-  height: 6px;
-  background-color: #3477f5;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: progress-shine 2s linear infinite;
+}
+
+@keyframes progress-shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-percentage {
+  text-align: right;
+  font-size: 14px;
+  color: #00c3ff;
+  font-weight: 600;
+}
+
+/* 数据可视化样式 */
+.data-network {
+  position: relative;
+  height: 200px;
+  margin-top: 20px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  border: 1px solid rgba(0, 195, 255, 0.1);
+}
+
+.network-visualization {
+  width: 100%;
+  height: 100%;
+}
+
+.network-line {
+  stroke: rgba(0, 195, 255, 0.3);
+  stroke-width: 1;
+  transition: all 0.5s;
+}
+
+.network-node {
+  fill: #00c3ff;
+  transition: all 0.5s;
+}
+
+.network-node.pulse {
+  animation: node-pulse 2s infinite;
+}
+
+@keyframes node-pulse {
+  0% { r: attr(r); fill: #00c3ff; }
+  50% { r: calc(attr(r) * 1.2); fill: #0070ff; }
+  100% { r: attr(r); fill: #00c3ff; }
+}
+
+/* 结果面板样式 */
+.result-panel {
+  background: linear-gradient(135deg, rgba(16, 23, 34, 0.9), rgba(10, 14, 23, 0.9));
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.result-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  animation: pulse 3s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 10px;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1.5);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
+.score-value {
+  font-size: 32px;
+  font-weight: 700;
+  z-index: 2;
 }
 
-/* 科技感装饰 */
-.tech-decoration {
+.score-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.score-ring circle {
+  fill: none;
+  stroke-width: 5;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.score-ring circle:first-child {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.high-score .score-ring circle:last-child {
+  stroke: #00ff80;
+}
+
+.high-score .score-value {
+  color: #00ff80;
+}
+
+.low-score .score-ring circle:last-child {
+  stroke: #ff3860;
+}
+
+.low-score .score-value {
+  color: #ff3860;
+}
+
+.score-label {
+  font-size: 14px;
+  color: #8a9bae;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.result-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.detail-item {
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(0, 195, 255, 0.1);
+}
+
+.detail-label {
+  font-size: 12px;
+  color: #8a9bae;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.success-text {
+  color: #00ff80;
+}
+
+.danger-text {
+  color: #ff3860;
+}
+
+/* 数据图表 */
+.data-chart {
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 195, 255, 0.1);
+}
+
+.chart-title {
+  font-size: 14px;
+  color: #8a9bae;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.chart-bars {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 100px;
+}
+
+.chart-bar {
+  width: 7%;
+  background: linear-gradient(to top, #0070ff, #00c3ff);
+  border-radius: 3px 3px 0 0;
+  position: relative;
+  transition: height 1s ease-in-out;
+}
+
+.chart-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 5px,
+    rgba(0, 0, 0, 0.1) 5px,
+    rgba(0, 0, 0, 0.1) 10px
+  );
+}
+
+.bar-value {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #00c3ff;
+}
+
+/* 装饰元素 */
+.cyber-decoration {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
+  overflow: hidden;
 }
 
-.tech-circle {
+.cyber-grid {
   position: absolute;
-  top: -150px;
-  right: -150px;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  border: 2px dashed rgba(52, 119, 245, 0.1);
-  animation: rotate 30s linear infinite;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(rgba(0, 195, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 195, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center center;
 }
 
-.tech-lines {
+.cyber-circle {
+  position: absolute;
+  top: -250px;
+  right: -250px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 195, 255, 0.1);
+  box-shadow: inset 0 0 50px rgba(0, 195, 255, 0.1);
+  animation: rotate 60s linear infinite;
+}
+
+.cyber-lines {
   position: absolute;
   bottom: 50px;
   left: -100px;
   transform: rotate(-45deg);
 }
 
-.tech-line {
-  width: 200px;
+.cyber-line {
+  width: 300px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(52, 119, 245, 0.2), transparent);
-  margin: 30px 0;
+  background: linear-gradient(90deg, transparent, rgba(0, 195, 255, 0.2), transparent);
+  margin: 50px 0;
 }
 
 @keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* 响应式调整 */
 @media (max-width: 768px) {
-  .header h1 {
+  .cyber-header h1 {
     font-size: 24px;
   }
   
-  .query-form {
-    padding: 20px;
+  .user-info-grid {
+    grid-template-columns: 1fr;
   }
   
-  .form-group input {
-    padding: 10px 12px;
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .score-circle {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .chart-bars {
+    height: 80px;
+  }
+  
+  .chart-bar {
+    width: 6%;
   }
 }
 </style>

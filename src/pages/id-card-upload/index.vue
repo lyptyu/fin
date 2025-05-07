@@ -3,8 +3,10 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { fileUpload, ocrIdCard } from '@/api/utils'
+import { useUserStore } from '@/stores'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const frontImage = ref<string>('')
@@ -81,6 +83,17 @@ async function handleSubmit() {
     })
     console.log('res', res)
     if (res.code === 0) {
+      // 存储身份证信息到store和localStorage
+      if (res.data && res.data.name && res.data.idNumber) {
+        // 存储到store
+        userStore.setName(res.data.name)
+        userStore.setIdCard(res.data.idNumber)
+        
+        // 存储到localStorage
+        localStorage.setItem('userName', res.data.name)
+        localStorage.setItem('userIdCard', res.data.idNumber)
+      }
+      
       // 接下来的步骤:进入支付页面
       router.push('/pay')
     }

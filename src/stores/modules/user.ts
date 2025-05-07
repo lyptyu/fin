@@ -15,6 +15,9 @@ const InitUserInfo = {
   uid: 0,
   nickname: '',
   avatar: '',
+  name: '',
+  phone: '',
+  idCard: '',
 }
 
 export const useUserStore = defineStore('user', () => {
@@ -23,6 +26,36 @@ export const useUserStore = defineStore('user', () => {
   // Set user's information
   const setInfo = (partial: Partial<UserState>) => {
     userInfo.value = { ...partial }
+  }
+
+  // Set user's phone number
+  const setPhone = (phone: string) => {
+    userInfo.value.phone = phone
+  }
+
+  // Set user's name
+  const setName = (name: string) => {
+    userInfo.value.name = name
+  }
+
+  // Set user's ID card
+  const setIdCard = (idCard: string) => {
+    userInfo.value.idCard = idCard
+  }
+
+  // Get user's phone number
+  const getPhone = (): string | undefined => {
+    return userInfo.value.phone
+  }
+
+  // Get user's name
+  const getName = (): string | undefined => {
+    return userInfo.value.name
+  }
+
+  // Get user's ID card
+  const getIdCard = (): string | undefined => {
+    return userInfo.value.idCard
   }
 
   const login = async (loginForm: LoginData) => {
@@ -92,6 +125,12 @@ export const useUserStore = defineStore('user', () => {
     getCode,
     reset,
     register,
+    setPhone,
+    setName,
+    setIdCard,
+    getPhone,
+    getName,
+    getIdCard,
   }
 }, {
   persist: true,
