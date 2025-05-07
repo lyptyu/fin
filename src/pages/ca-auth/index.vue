@@ -24,7 +24,7 @@ async function mockCAAuth() {
 
     // 模拟跳转到下一步
     setTimeout(() => {
-      router.push('/authbook')
+      router.push('/gama-bigdata')
     }, 1000)
   }
   catch {

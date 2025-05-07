@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { showToast } from 'vant'
+import { showDialog, showToast } from 'vant'
 import { fileUpload, ocrIdCard } from '@/api/utils'
 import { useUserStore } from '@/stores'
 
@@ -36,7 +36,13 @@ function onFileChange(event: Event) {
 
     // 检查文件大小（最大 5MB）
     if (file.size > 5 * 1024 * 1024) {
-      showToast('图片大小不能超过5MB')
+      showDialog({
+        title: '提示',
+        message: '图片大小不能超过5MB',
+        theme: 'round-button',
+        confirmButtonText: '我知道了',
+        confirmButtonColor: '#1989fa'
+      })
       return
     }
 
@@ -98,11 +104,25 @@ async function handleSubmit() {
       router.push('/pay')
     }
     else {
-      showToast(res.msg)
+      // 使用弹窗显示拒绝原因
+      showDialog({
+        title: '提示',
+        message: `抱歉，您的条件不符合，拒绝原因：${res.msg}`,
+        theme: 'round-button',
+        confirmButtonText: '我知道了',
+        confirmButtonColor: '#1989fa',
+        overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' }
+      })
     }
   }
   catch {
-    showToast('上传失败，请重试')
+    showDialog({
+      title: '上传失败',
+      message: '请重试',
+      theme: 'round-button',
+      confirmButtonText: '确定',
+      confirmButtonColor: '#1989fa'
+    })
   }
   finally {
     isLoading.value = false

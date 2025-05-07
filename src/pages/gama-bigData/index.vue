@@ -143,9 +143,30 @@ async function startQuery() {
       showSuccessToast('分析完成')
       showResult.value = true
 
-      // 根据风险评分决定下一步
-      if (true) {
-        // 风险评分足够高，跳转到下一步
+      // 根据风险评分决定下一步 res.data.riskInfo.riskScore
+      if (res.data.riskInfo.riskScore > 80) {
+        // 伽马≥80分,系统拒,终止流程,弹窗：抱歉，您的条件不符合，拒绝原因：大数据不符合
+        showDialog({
+          title: '提示',
+          message: '抱歉，您的条件不符合，拒绝原因：大数据不符合',
+          theme: 'round-button',
+          confirmButtonText: '我知道了',
+          confirmButtonColor: '#1989fa',
+          overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' }
+        })
+      }
+      else if (res.data.riskInfo.riskScore > 60) {
+        // 伽马[50~79)分,且刑事案件或被告执行中案件,终止流程
+        showDialog({
+          title: '提示',
+          message: '抱歉，您的条件不符合，拒绝原因：大数据不符合',
+          theme: 'round-button',
+          confirmButtonText: '我知道了',
+          confirmButtonColor: '#1989fa',
+          overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' }
+        })
+      }
+      else {
         setTimeout(() => {
           router.push('/upload-zhengxin')
         }, 500)
