@@ -85,18 +85,18 @@ function generateAnalysisResults() {
   riskScore.value = Math.floor(Math.random() * 100)
 
   if (riskScore.value > 80) {
-    creditRating.value = 'A+'
+    creditRating.value = 'C'
   }
   else if (riskScore.value > 60) {
     creditRating.value = 'B'
   }
   else {
-    creditRating.value = 'C'
+    creditRating.value = 'A'
   }
 
   const points = []
   for (let i = 0; i < 12; i++) {
-    points.push(Math.floor(Math.random() * 100))
+    points.push(riskScore.value)
   }
   dataPoints.value = points
 }
@@ -152,7 +152,7 @@ async function startQuery() {
           theme: 'round-button',
           confirmButtonText: '我知道了',
           confirmButtonColor: '#1989fa',
-          overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' }
+          overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' },
         })
       }
       else if (res.data.riskInfo.riskScore > 60) {
@@ -163,7 +163,7 @@ async function startQuery() {
           theme: 'round-button',
           confirmButtonText: '我知道了',
           confirmButtonColor: '#1989fa',
-          overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' }
+          overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' },
         })
       }
       else {
