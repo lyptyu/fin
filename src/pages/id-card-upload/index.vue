@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { fileUpload, ocrIdCard } from '@/api/utils'
+
+const router = useRouter()
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const frontImage = ref<string>('')
@@ -9,6 +12,7 @@ const backImage = ref<string>('')
 const frontFile = ref<File | null>(null)
 const backFile = ref<File | null>(null)
 const currentUploadType = ref<'front' | 'back'>('front')
+// Define loading state for submission
 const isLoading = ref<boolean>(false)
 
 // 判断是否完成上传
@@ -68,15 +72,21 @@ async function handleSubmit() {
     // 使用Promise.all同时上传两个文件
     const [res1, res2] = await Promise.all([
       fileUpload({ file: frontFile.value }),
-      fileUpload({ file: backFile.value })
+      fileUpload({ file: backFile.value }),
     ])
-    
+
     const res = await ocrIdCard({
       frontImageUrl: res1.data.url,
       backImageUrl: res2.data.url,
     })
     console.log('res', res)
-    showToast('提交成功')
+    if (res.code === 0) {
+      // 接下来的步骤:进入支付页面
+      router.push('/pay')
+    }
+    else {
+      showToast(res.msg)
+    }
   }
   catch {
     showToast('上传失败，请重试')

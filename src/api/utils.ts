@@ -1,5 +1,13 @@
 // 征信报告上传相关接口
 import request from '@/utils/request'
+
+// API响应类型定义
+export interface ApiResponse<T = any> {
+  code: number
+  msg?: string
+  message?: string
+  data?: T
+}
 // 上传征信报告
 export function uploadCreditReport(data: FormData) {
   console.log('data', data)
@@ -32,11 +40,11 @@ export function getCreditReportStatus(mockType = 3) {
   })
 }
 
-export function fileUpload(data: { file: File }) {
+export function fileUpload(data: { file: File }): Promise<ApiResponse<{url: string}>> {
   const formData = new FormData()
   formData.append('file', data.file)
   return request.post('/file/upload', formData)
 }
-export function ocrIdCard(data: { frontImageUrl: string, backImageUrl: string }) {
-  return request.post('/ocr/idCard', data)
+export function ocrIdCard(data: { frontImageUrl: string, backImageUrl: string }): Promise<ApiResponse> {
+  return request.post('/v1/ocr/idCard', data)
 }
