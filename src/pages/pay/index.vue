@@ -1,16 +1,3 @@
-<template>
-  <div class="pay-page">
-    <div class="pay-box">
-      <h2>扫码支付</h2>
-      <div class="qrcode-area">
-        <img :src="qrcodeUrl" alt="支付二维码" />
-      </div>
-      <div class="pay-tip">请使用微信/支付宝扫码支付</div>
-      <button class="pay-btn" :disabled="paying" @click="mockPay">模拟支付成功</button>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -22,10 +9,27 @@ const paying = ref(false)
 function mockPay() {
   paying.value = true
   setTimeout(() => {
-    router.push('/authbook')
+    router.push('/ca-auth')
   }, 1200)
 }
 </script>
+
+<template>
+  <div class="pay-page">
+    <div class="pay-box">
+      <h2>扫码支付</h2>
+      <div class="qrcode-area">
+        <img :src="qrcodeUrl" alt="支付二维码">
+      </div>
+      <div class="pay-tip">
+        请使用微信/支付宝扫码支付
+      </div>
+      <button class="pay-btn" :disabled="paying" @click="mockPay">
+        模拟支付成功
+      </button>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .pay-page {
