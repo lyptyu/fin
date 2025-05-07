@@ -3,11 +3,14 @@ import { computed, nextTick, ref } from 'vue'
 import Vue3Signature from 'vue3-signature'
 import { fileUpload } from '@/api/utils'
 import html2canvas from 'html2canvas'
+import { useRouter } from 'vue-router'
+import { showToast } from 'vant'
 
 const showPad = ref(false)
 const signatureImg = ref('')
 const signatureRef = ref(null)
 const authbookRef = ref(null)
+const router = useRouter()
 
 // 响应式签名板宽高，移动端适配
 function getPadWidth() {
@@ -54,6 +57,8 @@ async function submitAuthbook() {
   const file = dataURLtoFile(dataUrl, 'authbook.png')
   const res = await fileUpload({ file })
   showToast('提交成功！')
+  // 提交成功后跳转到gama-bigdata页面
+  router.push('/gama-bigdata')
 }
 
 function openPad() {
@@ -90,13 +95,17 @@ if (typeof window !== 'undefined') {
           <p>为了保障您的合法权益，请您务必阅读并充分理解与遵守本授权书；若您不接受本授权书的任何条款，请您立即终止授权。</p>
           <p>贵司已经对上述事宜及其风险向本人做了充分说明，本人已知晓并同意。</p>
           <p>本授权书一经出具即生效，有效期自签署之日起至业务终止之日止。本授权书是本人真实意思表示，本人同意承担由此带来的一切法律后果。</p>
-          <br/>
-          <p style="text-align:right">授权人（签字）：   （最终用户）</p>
+          <br>
+          <p style="text-align:right">
+            授权人（签字）：   （最终用户）
+          </p>
           <div class="signature-area" @click="openPad">
             <img v-if="signatureImg" :src="signatureImg" alt="签名" style="max-width: 200px; max-height: 80px;">
             <span v-else class="sign-placeholder">点击此处签字</span>
           </div>
-          <p style="text-align:right">出具日期：20   年   月   日</p>
+          <p style="text-align:right">
+            出具日期：20   年   月   日
+          </p>
         </div>
       </div>
       <!-- 签名弹窗 -->
@@ -234,6 +243,7 @@ if (typeof window !== 'undefined') {
 
 .submit-btn {
   margin-top: 28px;
+  margin-bottom: 28px;
   width: 100%;
   max-width: 320px;
   padding: 12px 0;
