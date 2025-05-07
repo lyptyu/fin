@@ -9,6 +9,7 @@ const backImage = ref<string>('')
 const frontFile = ref<File | null>(null)
 const backFile = ref<File | null>(null)
 const currentUploadType = ref<'front' | 'back'>('front')
+const isLoading = ref<boolean>(false)
 
 // 判断是否完成上传
 const isComplete = computed(() => {
@@ -61,10 +62,15 @@ async function handleSubmit() {
     return
   }
   try {
+    isLoading.value = true
     console.log('上传文件', frontFile.value, backFile.value)
 
-    const res1 = await fileUpload({ file: frontFile.value })
-    const res2 = await fileUpload({ file: backFile.value })
+    // 使用Promise.all同时上传两个文件
+    const [res1, res2] = await Promise.all([
+      fileUpload({ file: frontFile.value }),
+      fileUpload({ file: backFile.value })
+    ])
+    
     const res = await ocrIdCard({
       frontImageUrl: res1.data.url,
       backImageUrl: res2.data.url,
@@ -74,6 +80,9 @@ async function handleSubmit() {
   }
   catch {
     showToast('上传失败，请重试')
+  }
+  finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -133,6 +142,8 @@ async function handleSubmit() {
         block
         :disabled="!isComplete"
         class="submit-btn"
+        :loading="isLoading"
+        loading-text="提交中..."
         @click="handleSubmit"
       >
         确认提交
