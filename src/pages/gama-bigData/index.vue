@@ -10,10 +10,8 @@ const userStore = useUserStore()
 
 // 查询状态
 const isQuerying = ref(false)
-const queryComplete = ref(false)
 const queryProgress = ref(0)
 const progressText = ref('正在连接大数据服务...')
-const analysisResult = ref<any>(null)
 const showResult = ref(false)
 
 // 用户数据
@@ -22,11 +20,6 @@ const userData = ref({
   idCard: '',
   phone: '',
 })
-
-// 数据分析结果
-const dataPoints = ref([])
-const riskScore = ref(0)
-const creditRating = ref('')
 
 // 动态数据可视化元素
 const dataNodes = ref([])
@@ -80,27 +73,6 @@ function generateDataNodes() {
   dataConnections.value = connections
 }
 
-// 生成分析结果
-function generateAnalysisResults() {
-  riskScore.value = Math.floor(Math.random() * 100)
-
-  if (riskScore.value > 80) {
-    creditRating.value = 'C'
-  }
-  else if (riskScore.value > 60) {
-    creditRating.value = 'B'
-  }
-  else {
-    creditRating.value = 'A'
-  }
-
-  const points = []
-  for (let i = 0; i < 12; i++) {
-    points.push(riskScore.value)
-  }
-  dataPoints.value = points
-}
-
 // 提交查询
 async function submitQuery() {
   // 验证用户数据
@@ -138,10 +110,7 @@ async function startQuery() {
 
     // 处理查询结果
     if (res.code === 0) {
-      analysisResult.value = res.data || {}
-      generateAnalysisResults()
       showSuccessToast('分析完成')
-      showResult.value = true
 
       // 根据风险评分决定下一步 res.data.riskInfo.riskScore
       if (res.data.riskInfo.riskScore > 80) {
@@ -227,8 +196,9 @@ async function simulateApiCall() {
           resolve({
             code: 0,
             data: {
-              riskScore: Math.floor(Math.random() * 100),
-              creditRating: ['A+', 'A', 'B+', 'B', 'C'][Math.floor(Math.random() * 5)],
+              riskInfo: {
+                riskScore: Math.floor(Math.random() * 100),
+              }
             },
           })
         })
@@ -360,82 +330,6 @@ onMounted(() => {
             :class="{ pulse: queryProgress > 50 }"
           />
         </svg>
-      </div>
-    </div>
-
-    <!-- 分析结果展示 -->
-    <div v-if="showResult" class="cyber-panel result-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          风控分析结果
-        </div>
-        <div class="panel-status success">
-          分析完成
-        </div>
-      </div>
-
-      <div class="result-grid">
-        <div class="result-score">
-          <div class="score-circle" :class="riskScore >= 60 ? 'high-score' : 'low-score'">
-            <div class="score-value">
-              {{ riskScore }}
-            </div>
-            <svg viewBox="0 0 100 100" class="score-ring">
-              <circle cx="50" cy="50" r="45" />
-              <circle cx="50" cy="50" r="45" :style="{ 'stroke-dashoffset': 283 - (283 * riskScore / 100) }" />
-            </svg>
-          </div>
-          <div class="score-label">
-            风控评分
-          </div>
-        </div>
-
-        <div class="result-details">
-          <div class="detail-item">
-            <div class="detail-label">
-              信用等级
-            </div>
-            <div class="detail-value">
-              {{ creditRating }}
-            </div>
-          </div>
-
-          <div class="detail-item">
-            <div class="detail-label">
-              评估结果
-            </div>
-            <div class="detail-value" :class="riskScore >= 60 ? 'success-text' : 'danger-text'">
-              {{ riskScore >= 60 ? '通过' : '未通过' }}
-            </div>
-          </div>
-
-          <div class="detail-item">
-            <div class="detail-label">
-              后续操作
-            </div>
-            <div class="detail-value">
-              {{ riskScore >= 60 ? '正在跳转下一步...' : '建议提升信用记录' }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="data-chart">
-        <div class="chart-title">
-          多维度风险分析
-        </div>
-        <div class="chart-bars">
-          <div
-            v-for="(point, index) in dataPoints"
-            :key="`bar-${index}`"
-            class="chart-bar"
-            :style="{ height: `${point}%` }"
-          >
-            <div class="bar-value">
-              {{ point }}
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -819,178 +713,6 @@ onMounted(() => {
   }
 }
 
-/* 结果面板样式 */
-.result-panel {
-  background: linear-gradient(135deg, rgba(16, 23, 34, 0.9), rgba(10, 14, 23, 0.9));
-}
-
-.result-grid {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.result-score {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.score-circle {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin-bottom: 10px;
-}
-
-.score-value {
-  font-size: 32px;
-  font-weight: 700;
-  z-index: 2;
-}
-
-.score-ring {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.score-ring circle {
-  fill: none;
-  stroke-width: 5;
-  transform: rotate(-90deg);
-  transform-origin: center;
-  stroke-dasharray: 283;
-  transition: stroke-dashoffset 1s ease-in-out;
-}
-
-.score-ring circle:first-child {
-  stroke: rgba(255, 255, 255, 0.1);
-}
-
-.high-score .score-ring circle:last-child {
-  stroke: #00ff80;
-}
-
-.high-score .score-value {
-  color: #00ff80;
-}
-
-.low-score .score-ring circle:last-child {
-  stroke: #ff3860;
-}
-
-.low-score .score-value {
-  color: #ff3860;
-}
-
-.score-label {
-  font-size: 14px;
-  color: #8a9bae;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.result-details {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.detail-item {
-  padding: 12px;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  margin-bottom: 10px;
-  border: 1px solid rgba(0, 195, 255, 0.1);
-}
-
-.detail-label {
-  font-size: 12px;
-  color: #8a9bae;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.detail-value {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.success-text {
-  color: #00ff80;
-}
-
-.danger-text {
-  color: #ff3860;
-}
-
-/* 数据图表 */
-.data-chart {
-  padding: 15px;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  border: 1px solid rgba(0, 195, 255, 0.1);
-}
-
-.chart-title {
-  font-size: 14px;
-  color: #8a9bae;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-align: center;
-}
-
-.chart-bars {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  height: 100px;
-}
-
-.chart-bar {
-  width: 7%;
-  background: linear-gradient(to top, #0070ff, #00c3ff);
-  border-radius: 3px 3px 0 0;
-  position: relative;
-  transition: height 1s ease-in-out;
-}
-
-.chart-bar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 5px,
-    rgba(0, 0, 0, 0.1) 5px,
-    rgba(0, 0, 0, 0.1) 10px
-  );
-}
-
-.bar-value {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
-  color: #00c3ff;
-}
-
 /* 装饰元素 */
 .cyber-decoration {
   position: absolute;
@@ -999,7 +721,7 @@ onMounted(() => {
   right: 0;
   bottom: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
   overflow: hidden;
 }
 
@@ -1059,15 +781,6 @@ onMounted(() => {
 
   .user-info-grid {
     grid-template-columns: 1fr;
-  }
-
-  .result-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .score-circle {
-    width: 100px;
-    height: 100px;
   }
 
   .chart-bars {
