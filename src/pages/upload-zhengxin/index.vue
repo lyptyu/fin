@@ -684,15 +684,15 @@ function resetForm() {
     <div v-if="showAdditionalForm" class="additional-form glass-card">
       <!-- 返回按钮 -->
       <div class="back-button-container">
-        <button 
-          class="tech-back-button"
+        <van-button 
+          type="primary"
+          size="small"
+          icon="arrow-left"
+          class="harmony-back-button"
           @click="resetForm"
         >
-          <span class="tech-icon">
-            <van-icon name="arrow-left" />
-          </span>
-          <span class="tech-text">返回重新上传</span>
-        </button>
+          返回重新上传
+        </van-button>
       </div>
       <h2>征信补充信息</h2>
 
@@ -1182,58 +1182,18 @@ function resetForm() {
   margin-bottom: 15px;
 }
 
-.tech-back-button {
-  display: flex;
-  align-items: center;
-  background: linear-gradient(135deg, #2c3e50, #1a2533);
-  color: #00e5ff;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 12px;
+.harmony-back-button {
   font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 229, 255, 0.3);
-  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-  position: relative;
-  overflow: hidden;
+  border-radius: 4px;
+  color: #ffffff;
+  border: none;
+  background-color: #1989fa;
+  transition: all 0.3s ease;
 }
 
-.tech-back-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.2), transparent);
-  transition: 0.5s;
-}
-
-.tech-back-button:hover {
-  box-shadow: 0 4px 12px rgba(0, 229, 255, 0.5);
-  transform: translateY(-2px);
-}
-
-.tech-back-button:hover::before {
-  left: 100%;
-}
-
-.tech-icon {
-  margin-right: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #00e5ff;
-}
-
-.tech-text {
-  background: linear-gradient(90deg, #00e5ff, #00b8d4);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+.harmony-back-button:hover {
+  opacity: 0.9;
+  box-shadow: 0 2px 8px rgba(25, 137, 250, 0.3);
 }
 
 .submit-button {
