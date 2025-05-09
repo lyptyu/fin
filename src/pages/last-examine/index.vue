@@ -24,6 +24,37 @@ const module1Data = reactive({
       rejectReason: '',
     },
   ],
+  // 征信后新增放款补充
+  newLoans: {
+    loans: [
+      {
+        date: '2025-05-04',
+        org: '机构A-30万',
+        loanType: '',
+        monthlyPayment: '',
+      },
+      {
+        date: '2025-05-04',
+        org: '机构B-30万',
+        loanType: '',
+        monthlyPayment: '',
+      }
+    ],
+    creditCards: [
+      {
+        date: '2025-05-04',
+        org: '机构A-30万',
+        cardType: '大额专项分期卡',
+        monthlyPayment: '',
+      },
+      {
+        date: '2025-05-04',
+        org: '机构B-30万',
+        cardType: '贷记卡',
+        usedLimit: '',
+      }
+    ]
+  },
   // 近五年未结清
   unpaidLoans: [
     {
@@ -41,6 +72,51 @@ const module1Data = reactive({
   rejectedOrgs: [],
   rejectReasons: {},
 })
+
+// 贷款类型选项
+const loanTypeOptions = [
+  { text: '模拟数据1', value: '模拟数据1' },
+  { text: '模拟数据2', value: '模拟数据2' },
+  { text: '模拟数据3', value: '模拟数据3' },
+]
+
+// 信用卡类型选项
+const creditCardTypeOptions = [
+  { text: '大额专项分期卡', value: '大额专项分期卡' },
+  { text: '贷记卡', value: '贷记卡' },
+]
+
+// 贷款类型选择相关代码
+const showLoanTypePicker = ref(false)
+const currentLoanIndex = ref(-1)
+
+function handleLoanTypeClick(idx: number) {
+  currentLoanIndex.value = idx
+  showLoanTypePicker.value = true
+}
+
+function onLoanTypeConfirm(val: any) {
+  if (currentLoanIndex.value !== -1) {
+    module1Data.newLoans.loans[currentLoanIndex.value].loanType = val.selectedOptions[0]?.text || ''
+    showLoanTypePicker.value = false
+  }
+}
+
+// 信用卡类型选择相关代码
+const showCreditCardTypePicker = ref(false)
+const currentCreditCardIndex = ref(-1)
+
+function handleCreditCardTypeClick(idx: number) {
+  currentCreditCardIndex.value = idx
+  showCreditCardTypePicker.value = true
+}
+
+function onCreditCardTypeConfirm(val: any) {
+  if (currentCreditCardIndex.value !== -1) {
+    module1Data.newLoans.creditCards[currentCreditCardIndex.value].cardType = val.selectedOptions[0]?.text || ''
+    showCreditCardTypePicker.value = false
+  }
+}
 
 // 模块2的数据
 const module2Data = reactive({
@@ -657,63 +733,150 @@ function formatInterest(flow: any, index: number) {
             <div class="section-title">
               01近半年以下查询记录的原因及细节
             </div>
-            <div v-for="(record, index) in module1Data.queryRecords" :key="index" class="record-item">
-              <div class="record-header">
-                <span class="record-date">{{ record.date }}</span>
-                <span class="record-org">{{ record.org }}</span>
-              </div>
-
-              <div class="radio-title">
-                申请贷款类型：
-              </div>
-              <van-radio-group v-model="record.loanType" direction="horizontal" class="radio-group">
-                <van-radio name="装修贷">
-                  装修贷
-                </van-radio>
-                <van-radio name="车贷">
-                  车贷
-                </van-radio>
-                <van-radio name="信贷">
-                  信贷
-                </van-radio>
-                <van-radio name="其它">
-                  其它
-                </van-radio>
-              </van-radio-group>
-
-              <div class="radio-title">
-                后续进度：
-              </div>
-              <van-radio-group v-model="record.progress" direction="horizontal" class="radio-group">
-                <van-radio name="已批-未放款">
-                  已批-未放款
-                </van-radio>
-                <van-radio name="已批-已放款">
-                  已批-已放款
-                </van-radio>
-                <van-radio name="已拒">
-                  已拒
-                </van-radio>
-              </van-radio-group>
-
-              <div v-if="record.progress === '已拒'" class="form-item required">
-                <div class="radio-title">
-                  拒绝原因：
+            <template v-for="(record, index) in module1Data.queryRecords" :key="index">
+              <div class="record-item">
+                <div class="record-header">
+                  <span class="record-date">{{ record.date }}</span>
+                  <span class="record-org">{{ record.org }}</span>
                 </div>
-                <van-field
-                  v-model="record.rejectReason"
-                  placeholder="请输入拒绝原因"
-                  class="reject-reason"
-                  :rules="[{ required: true, message: '请输入拒绝原因' }]"
-                />
+
+                <div class="radio-title">
+                  申请贷款类型：
+                </div>
+                <van-radio-group v-model="record.loanType" direction="horizontal" class="radio-group">
+                  <van-radio name="装修贷">
+                    装修贷
+                  </van-radio>
+                  <van-radio name="车贷">
+                    车贷
+                  </van-radio>
+                  <van-radio name="信贷">
+                    信贷
+                  </van-radio>
+                  <van-radio name="其它">
+                    其它
+                  </van-radio>
+                </van-radio-group>
+
+                <div class="radio-title">
+                  后续进度：
+                </div>
+                <van-radio-group v-model="record.progress" direction="horizontal" class="radio-group">
+                  <van-radio name="已批-未放款">
+                    已批-未放款
+                  </van-radio>
+                  <van-radio name="已批-已放款">
+                    已批-已放款
+                  </van-radio>
+                  <van-radio name="已拒">
+                    已拒
+                  </van-radio>
+                </van-radio-group>
+
+                <div v-if="record.progress === '已拒'" class="form-item required">
+                  <div class="radio-title">
+                    拒绝原因：
+                  </div>
+                  <van-field
+                    v-model="record.rejectReason"
+                    placeholder="请输入拒绝原因"
+                    class="reject-reason"
+                    :rules="[{ required: true, message: '请输入拒绝原因' }]"
+                  />
+                </div>
               </div>
-            </div>
+            </template>
           </div>
 
-          <!-- 02近五年未结清 -->
+          <!-- 02征信后新增放款补充 -->
           <div class="section">
             <div class="section-title">
-              02近五年未结清的以下机构补充
+              02征信后新增放款补充
+            </div>
+            
+            <!-- 贷款类 -->
+            <div class="subsection-header">贷款类</div>
+            <template v-for="(loan, index) in module1Data.newLoans.loans" :key="index">
+              <div class="subsection">
+                <div class="date-org">
+                  <span class="date">{{ loan.date }}</span>
+                  <span class="org">{{ loan.org }}</span>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    readonly
+                    clickable
+                    label="贷款类型"
+                    :value="loan.loanType"
+                    placeholder="请选择贷款类型"
+                    @click="handleLoanTypeClick(index)"
+                  />
+                </div>
+                <div class="form-item">
+                  <van-field
+                    v-model="loan.monthlyPayment"
+                    label="还款月供"
+                    placeholder="请输入"
+                    type="number"
+                  >
+                    <template #button>
+                      <span class="field-suffix">元</span>
+                    </template>
+                  </van-field>
+                </div>
+              </div>
+            </template>
+
+            <!-- 信用卡类 -->
+            <div class="subsection-header">信用卡类</div>
+            <template v-for="(card, index) in module1Data.newLoans.creditCards" :key="index">
+              <div class="subsection">
+                <div class="date-org">
+                  <span class="date">{{ card.date }}</span>
+                  <span class="org">{{ card.org }}</span>
+                </div>
+                <div class="form-item">
+                  <van-field
+                    readonly
+                    clickable
+                    label="贷款类型"
+                    :value="card.cardType"
+                    placeholder="请选择贷款类型"
+                    @click="handleCreditCardTypeClick(index)"
+                  />
+                </div>
+                <div class="form-item" v-if="card.cardType === '大额专项分期卡'">
+                  <van-field
+                    v-model="card.monthlyPayment"
+                    label="还款月供"
+                    placeholder="请输入"
+                    type="number"
+                  >
+                    <template #button>
+                      <span class="field-suffix">元</span>
+                    </template>
+                  </van-field>
+                </div>
+                <div class="form-item" v-if="card.cardType === '贷记卡'">
+                  <van-field
+                    v-model="card.usedLimit"
+                    label="已用额度"
+                    placeholder="请输入"
+                    type="number"
+                  >
+                    <template #button>
+                      <span class="field-suffix">元</span>
+                    </template>
+                  </van-field>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <!-- 03近五年未结清 -->
+          <div class="section">
+            <div class="section-title">
+              03近五年未结清的以下机构补充
             </div>
             <div v-for="(loan, index) in module1Data.unpaidLoans" :key="index" class="loan-item">
               <div class="loan-header">
@@ -2399,6 +2562,28 @@ function formatInterest(flow: any, index: number) {
         @cancel="showAssetTypePicker = false"
       />
     </van-popup>
+
+    <!-- 贷款类型选择器弹窗 -->
+    <van-popup v-model:show="showLoanTypePicker" position="bottom">
+      <van-picker
+        :columns="loanTypeOptions"
+        show-toolbar
+        title="选择贷款类型"
+        @confirm="onLoanTypeConfirm"
+        @cancel="showLoanTypePicker = false"
+      />
+    </van-popup>
+
+    <!-- 信用卡类型选择器弹窗 -->
+    <van-popup v-model:show="showCreditCardTypePicker" position="bottom">
+      <van-picker
+        :columns="creditCardTypeOptions"
+        show-toolbar
+        title="选择信用卡类型"
+        @confirm="onCreditCardTypeConfirm"
+        @cancel="showCreditCardTypePicker = false"
+      />
+    </van-popup>
   </div>
 </template>
 
@@ -2535,7 +2720,6 @@ function formatInterest(flow: any, index: number) {
 .section-title {
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1a;
   margin-bottom: 16px;
   padding-left: 8px;
   border-left: 3px solid #1976d2;
@@ -2732,5 +2916,16 @@ function formatInterest(flow: any, index: number) {
 
 .required-field.star-before :deep(.van-field__label)::after {
   content: '';
+}
+.subsection-header {
+  font-size: 15px;
+  font-weight: bold;
+  margin: 16px 0 8px;
+  color: #333;
+}
+
+.field-suffix {
+  margin-right: 8px;
+  color: #666;
 }
 </style>
