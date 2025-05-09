@@ -30,7 +30,11 @@ const creditForm = reactive({
   queryCount: '', // 新增查询次数
   queries: [] as any[], // 查询信息数组
 
-  // 02 新增放款 (开发中)
+  // 02 新增放款
+  hasNewLoan: '', // 是否有新增放款
+  loanCount: '', // 新增放款家数
+  loans: [] as any[], // 放款信息数组
+
   // 03 新增逾期 (开发中)
 })
 
@@ -71,11 +75,25 @@ const creditInstitutions = [
   { text: '浦发银行股份有限公司', value: '浦发银行股份有限公司' },
 ]
 
+// 放款类型选项
+const loanTypeOptions = [
+  { text: '贷款', value: '贷款' },
+  { text: '信用卡', value: '信用卡' },
+]
+
 // 选择器控制
 const currentSelectingIndex = ref(-1)
+
+// 查询相关选择器
 const showQueryTypePicker = ref(false)
 const showQueryReasonPicker = ref(false)
 const showQueryInstitutionPicker = ref(false)
+
+// 放款相关选择器
+const showLoanTypePicker = ref(false)
+const showLoanInstitutionPicker = ref(false)
+
+// 机构搜索相关
 const filteredInstitutions = ref([...creditInstitutions])
 const institutionSearchValue = ref('')
 
@@ -133,6 +151,56 @@ function onQueryReasonConfirm(value: any) {
   showQueryReasonPicker.value = false
 }
 
+// 处理放款类型选择
+function handleLoanTypeClick(index: number) {
+  currentSelectingIndex.value = index
+  showLoanTypePicker.value = true
+}
+
+function onLoanTypeConfirm(value: any) {
+  const idx = currentSelectingIndex.value
+  if (idx >= 0) {
+    creditForm.loans[idx].type = value.selectedOptions[0].text
+  }
+  showLoanTypePicker.value = false
+}
+
+// 处理放款机构选择
+function handleLoanInstitutionClick(index: number) {
+  currentSelectingIndex.value = index
+  filteredInstitutions.value = [...creditInstitutions]
+  institutionSearchValue.value = ''
+  showLoanInstitutionPicker.value = true
+}
+
+function onLoanInstitutionConfirm(value: any) {
+  const idx = currentSelectingIndex.value
+  if (idx >= 0) {
+    creditForm.loans[idx].institution = value.selectedOptions[0].text
+  }
+  showLoanInstitutionPicker.value = false
+}
+
+// 处理放款时间选择
+function handleLoanTimeClick(index: number) {
+  currentDatePickerIndex.value = index
+  // 如果已有日期，则转换为数组格式
+  if (creditForm.loans[index].time) {
+    const dateparts = creditForm.loans[index].time.split('-')
+    currentDate.value = [dateparts[0], dateparts[1], dateparts[2]]
+  }
+  else {
+    // 默认当前日期
+    const today = new Date()
+    currentDate.value = [
+      today.getFullYear().toString(),
+      (today.getMonth() + 1).toString().padStart(2, '0'),
+      today.getDate().toString().padStart(2, '0'),
+    ]
+  }
+  showDatePicker.value = true
+}
+
 // 处理查询时间选择
 function handleQueryTimeClick(index: number) {
   currentDatePickerIndex.value = index
@@ -161,7 +229,13 @@ function onQueryTimeConfirm(value: { selectedValues: string[] }) {
     const year = selectedValues[0] || ''
     const month = selectedValues[1] ? selectedValues[1].toString().padStart(2, '0') : '01'
     const day = selectedValues[2] ? selectedValues[2].toString().padStart(2, '0') : '01'
-    creditForm.queries[idx].time = `${year}-${month}-${day}`
+    
+    // 判断是查询时间还是放款时间
+    if (currentSelectingIndex.value >= 0 && creditForm.queries[currentSelectingIndex.value]) {
+      creditForm.queries[idx].time = `${year}-${month}-${day}`
+    } else if (currentSelectingIndex.value >= 0 && creditForm.loans[currentSelectingIndex.value]) {
+      creditForm.loans[idx].time = `${year}-${month}-${day}`
+    }
   }
   showDatePicker.value = false
 }
@@ -184,6 +258,29 @@ function updateQueryForms() {
         time: '', // 查询时间
         institution: '', // 查询机构 (仅机构查询)
         reason: '', // 查询原因
+      },
+    )
+  }
+}
+
+// 监听放款家数变化，动态生成表单
+function updateLoanForms() {
+  const count = Number.parseInt(creditForm.loanCount) || 0
+
+  // 保留现有数据
+  const existingLoans = [...creditForm.loans]
+
+  // 重置放款数组
+  creditForm.loans = []
+
+  // 创建指定数量的放款对象
+  for (let i = 0; i < count; i++) {
+    creditForm.loans.push(
+      existingLoans[i] || {
+        type: '', // 放款类型：贷款/信用卡
+        time: '', // 放款时间/发卡时间
+        institution: '', // 放款机构/发卡机构
+        amount: '', // 放款额度/信用卡额度
       },
     )
   }
@@ -255,6 +352,7 @@ function submitForm() {
   }
 
   if (creditForm.hasNewInfo === '是') {
+    // 验证新增查询
     if (!creditForm.hasNewQuery) {
       showDialog({ title: '提示', message: '请选择是否有新增查询' })
       return
@@ -287,6 +385,43 @@ function submitForm() {
         }
       }
     }
+    
+    // 验证新增放款
+    if (!creditForm.hasNewLoan) {
+      showDialog({ title: '提示', message: '请选择是否有新增放款' })
+      return
+    }
+    
+    if (creditForm.hasNewLoan === '是') {
+      if (!creditForm.loanCount) {
+        showDialog({ title: '提示', message: '请填写新增放款家数' })
+        return
+      }
+      
+      // 检查每个放款的必填项
+      for (let i = 0; i < creditForm.loans.length; i++) {
+        const loan = creditForm.loans[i]
+        if (!loan.type) {
+          showDialog({ title: '提示', message: `请选择第${i + 1}家放款的放款类型` })
+          return
+        }
+        if (!loan.time) {
+          const timeType = loan.type === '贷款' ? '放款时间' : '发卡时间'
+          showDialog({ title: '提示', message: `请选择第${i + 1}家放款的${timeType}` })
+          return
+        }
+        if (!loan.institution) {
+          const instType = loan.type === '贷款' ? '放款机构' : '发卡机构'
+          showDialog({ title: '提示', message: `请选择第${i + 1}家放款的${instType}` })
+          return
+        }
+        if (!loan.amount) {
+          const amountType = loan.type === '贷款' ? '放款额度' : '信用卡额度'
+          showDialog({ title: '提示', message: `请填写第${i + 1}家放款的${amountType}` })
+          return
+        }
+      }
+    }
   }
 
   // 提交成功提示
@@ -302,6 +437,9 @@ function resetForm() {
   creditForm.hasNewQuery = ''
   creditForm.queryCount = ''
   creditForm.queries = []
+  creditForm.hasNewLoan = ''
+  creditForm.loanCount = ''
+  creditForm.loans = []
   showAdditionalForm.value = false
   uploadComplete.value = false
   fileList.value = []
@@ -465,8 +603,81 @@ function resetForm() {
           <div class="form-subtitle">
             02 新增放款
           </div>
-          <div class="form-developing">
-            开发中...
+          <van-radio-group v-model="creditForm.hasNewLoan" direction="horizontal">
+            <van-radio name="否">
+              否
+            </van-radio>
+            <van-radio name="是">
+              是
+            </van-radio>
+          </van-radio-group>
+
+          <!-- 新增放款家数 -->
+          <div v-if="creditForm.hasNewLoan === '是'" class="query-count">
+            <van-field
+              v-model="creditForm.loanCount"
+              label="合计"
+              type="digit"
+              placeholder="请输入家数"
+              input-align="right"
+              @input="updateLoanForms"
+            >
+              <template #button>
+                <span>家</span>
+              </template>
+            </van-field>
+          </div>
+
+          <!-- 放款信息表单 -->
+          <div v-if="creditForm.hasNewLoan === '是' && creditForm.loans.length > 0" class="query-forms">
+            <div v-for="(loan, index) in creditForm.loans" :key="index" class="query-form">
+              <div class="query-title">
+                新增第 {{ index + 1 }} 家机构放款
+              </div>
+
+              <!-- 放款类型 -->
+              <van-field
+                readonly
+                clickable
+                label="放款类型"
+                v-model="loan.type"
+                placeholder="请选择放款类型"
+                @click="handleLoanTypeClick(index)"
+              />
+
+              <!-- 放款时间/发卡时间 -->
+              <van-field
+                readonly
+                clickable
+                :label="loan.type === '贷款' ? '放款时间' : '发卡时间'"
+                v-model="loan.time"
+                :placeholder="loan.type === '贷款' ? '请选择放款时间' : '请选择发卡时间'"
+                @click="handleLoanTimeClick(index)"
+              />
+
+              <!-- 放款机构/发卡机构 -->
+              <van-field
+                readonly
+                clickable
+                :label="loan.type === '贷款' ? '放款机构' : '发卡机构'"
+                v-model="loan.institution"
+                placeholder="请选择机构"
+                @click="handleLoanInstitutionClick(index)"
+              />
+
+              <!-- 放款额度/信用卡额度 -->
+              <van-field
+                v-model="loan.amount"
+                :label="loan.type === '贷款' ? '放款额度' : '信用卡额度'"
+                type="digit"
+                placeholder="请输入额度"
+                input-align="right"
+              >
+                <template #button>
+                  <span>元</span>
+                </template>
+              </van-field>
+            </div>
           </div>
         </div>
 
@@ -541,12 +752,48 @@ function resetForm() {
     <van-popup v-model:show="showDatePicker" position="bottom">
       <van-date-picker
         v-model="currentDate"
-        title="选择查询时间"
+        title="选择时间"
         :min-date="minDate"
         :max-date="maxDate"
         @confirm="onQueryTimeConfirm"
         @cancel="showDatePicker = false"
       />
+    </van-popup>
+    
+    <!-- 放款类型选择器 -->
+    <van-popup v-model:show="showLoanTypePicker" position="bottom">
+      <van-picker
+        :columns="loanTypeOptions"
+        show-toolbar
+        title="选择放款类型"
+        @confirm="onLoanTypeConfirm"
+        @cancel="showLoanTypePicker = false"
+      />
+    </van-popup>
+    
+    <!-- 放款机构选择器 -->
+    <van-popup v-model:show="showLoanInstitutionPicker" position="bottom" round>
+      <div class="search-picker">
+        <div class="search-header">
+          <van-field
+            v-model="institutionSearchValue"
+            placeholder="输入机构名称关键字"
+            clearable
+            @input="onQueryInstitutionInput"
+          >
+            <template #button>
+              <van-icon name="search" />
+            </template>
+          </van-field>
+        </div>
+        <van-picker
+          :columns="filteredInstitutions"
+          show-toolbar
+          title="选择机构"
+          @confirm="onLoanInstitutionConfirm"
+          @cancel="showLoanInstitutionPicker = false"
+        />
+      </div>
     </van-popup>
   </div>
 </template>
