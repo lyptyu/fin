@@ -53,3 +53,8 @@ export function ocrIdCard(data: { frontImageUrl: string, backImageUrl: string })
 export function bigDataQuery(data: { idCard: string, phone: string, name: string }): Promise<ApiResponse> {
   return request.post('/v1/bigData/query', data)
 }
+
+// 征信风控解析接口
+export function creditAnalysis(data: { url: string, analysisType: string }): Promise<ApiResponse> {
+  return request.post('/credit/parse', data)
+}

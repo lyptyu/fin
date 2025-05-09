@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { showDialog, showSuccessToast } from 'vant'
-import { getCreditReportStatus, uploadCreditReport } from '@/api/utils'
+import { creditAnalysis, fileUpload } from '@/api/utils'
 
 // 报告类型
 const reportType = ref('simple') // simple: 简版, detail: 详版
@@ -407,19 +407,23 @@ function showResultDialog(data) {
 async function onUpload(file) {
   uploading.value = true
   try {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('type', reportType.value)
-    await uploadCreditReport(formData)
-
-    // 获取状态 - 这里使用 1-3 来模拟不同状态
-    const mockType = Math.floor(Math.random() * 3) + 1
-    const { data } = await getCreditReportStatus(mockType)
+    // 先上传PDF文件
+    const { data: uploadResult } = await fileUpload({ file: file.file })
+    
+    if (!uploadResult || !uploadResult.url) {
+      throw new Error('文件上传失败')
+    }
+    
+    // 调用征信解析接口
+    const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
+    const { data } = await creditAnalysis({
+      url: uploadResult.url,
+      analysisType
+    })
     
     // 等待弹窗关闭后再设置状态
     await showResultDialog(data)
     
-    // 注意：不需要再设置uploadComplete，因为showResultDialog中已经处理了
     if (data.status === 'success') {
       uploadComplete.value = true
     }
@@ -428,7 +432,7 @@ async function onUpload(file) {
     console.error(error)
     showDialog({
       title: '上传失败',
-      message: '请稍后重试',
+      message: error.message || '请稍后重试',
       confirmButtonText: '确定',
       confirmButtonColor: '#f44336',
     })
@@ -638,10 +642,12 @@ function resetForm() {
         v-model="fileList"
         :max-count="1"
         :after-read="onUpload"
+        accept=".pdf"
       >
         <div class="upload-trigger">
-          <van-icon name="plus" size="32" />
-          <p>点击上传征信报告</p>
+          <van-icon name="description" size="32" />
+          <p>点击上传征信报告PDF文件</p>
+          <span class="upload-tip">支持PDF格式文件</span>
         </div>
       </van-uploader>
     </div>
