@@ -386,30 +386,21 @@ function updateLoanForms() {
   }
 }
 
-// 显示结果弹窗
+// 只在解析失败时显示结果弹窗
 function showResultDialog(data) {
-  let dialogConfig = {
-    title: '提示',
-    message: '征信解析完成',
-    confirmButtonText: '确定',
-  }
-
-  if (data.status === 'success') {
-    dialogConfig = {
-      title: '解析成功',
-      message: `征信解析成功${data.amount ? '，额度：' + data.amount + '元' : ''}`,
-      confirmButtonText: '继续填写',
-    }
-  } else if (data.status === 'strong-reject' || data.status === 'weak-reject') {
-    dialogConfig = {
+  // 只有在解析失败时才显示弹窗
+  if (data.status === 'strong-reject' || data.status === 'weak-reject') {
+    const dialogConfig = {
       title: '审核结果',
       message: data.message || '很抱歉，您暂时不符合贷款条件',
       confirmButtonText: '我知道了',
       confirmButtonColor: '#f44336',
     }
+    return showDialog(dialogConfig)
   }
-
-  return showDialog(dialogConfig)
+  
+  // 成功时不显示弹窗，直接返回已解决的Promise
+  return Promise.resolve()
 }
 
 // 上传文件
@@ -433,8 +424,13 @@ async function onUpload(file) {
       analysisType,
     })
 
-    // 等待弹窗关闭后再设置状态
+    // 只在解析失败时显示弹窗
     await showResultDialog(data)
+    
+    // 解析成功时显示轻提示
+    if (data.status === 'success') {
+      showSuccessToast('征信解析完成')
+    }
     
     // 无论返回什么状态，都标记征信解析完成，允许提交表单
     analysisComplete.value = true
@@ -685,7 +681,7 @@ function resetForm() {
       <!-- 返回按钮 -->
       <div class="back-button-container">
         <van-button 
-          type="primary"
+          type="text"
           size="small"
           icon="arrow-left"
           class="harmony-back-button"
@@ -1184,16 +1180,15 @@ function resetForm() {
 
 .harmony-back-button {
   font-size: 12px;
-  border-radius: 4px;
-  color: #ffffff;
+  color: #1989fa;
   border: none;
-  background-color: #1989fa;
+  background-color: transparent;
   transition: all 0.3s ease;
+  padding: 0;
 }
 
 .harmony-back-button:hover {
-  opacity: 0.9;
-  box-shadow: 0 2px 8px rgba(25, 137, 250, 0.3);
+  color: #157af0;
 }
 
 .submit-button {
