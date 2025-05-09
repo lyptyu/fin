@@ -37,16 +37,16 @@ const creditForm = reactive({
 
   // 03 新增逾期
   hasOverdue: '', // 是否有新增逾期
-  
+
   // 贷款类逾期
   loanOverdues: [
-    { id: 'loan1', institution: '中国建设银行', type: '个人住房贷款' }
+    { id: 'loan1', institution: '中国建设银行', type: '个人住房贷款' },
   ] as any[], // 贷款类逾期数组
   loanOverdueDetails: {} as Record<string, any>, // 贷款类逾期详情
-  
+
   // 贷记卡类逾期
   cardOverdues: [
-    { id: 'card1', institution: '中国工商银行', cardNo: '6222 **** **** 1234' }
+    { id: 'card1', institution: '中国工商银行', cardNo: '6222 **** **** 1234' },
   ] as any[], // 贷记卡类逾期数组
   cardOverdueDetails: {} as Record<string, any>, // 贷记卡类逾期详情
 })
@@ -239,23 +239,24 @@ function onOverdueLevelConfirm(value: any) {
   if (currentOverdueType.value && currentOverdueId.value) {
     const type = currentOverdueType.value
     const id = currentOverdueId.value
-    
+
     // 设置逾期级别
     if (type === 'loan') {
       if (!creditForm.loanOverdueDetails[id]) {
         creditForm.loanOverdueDetails[id] = {
           level: '',
           amount: '',
-          repaid: '否'
+          repaid: '否',
         }
       }
       creditForm.loanOverdueDetails[id].level = value.selectedValues[0]
-    } else if (type === 'card') {
+    }
+    else if (type === 'card') {
       if (!creditForm.cardOverdueDetails[id]) {
         creditForm.cardOverdueDetails[id] = {
           level: '',
           amount: '',
-          repaid: '否'
+          repaid: '否',
         }
       }
       creditForm.cardOverdueDetails[id].level = value.selectedValues[0]
@@ -267,30 +268,33 @@ function onOverdueLevelConfirm(value: any) {
 // 处理逾期项目选择
 function toggleOverdueItem(type: string, id: string) {
   // 检查当前状态并切换
-  const isChecked = type === 'loan' 
-    ? !!creditForm.loanOverdueDetails[id] 
+  const isChecked = type === 'loan'
+    ? !!creditForm.loanOverdueDetails[id]
     : !!creditForm.cardOverdueDetails[id]
-  
+
   if (!isChecked) {
     // 初始化逾期详情
     if (type === 'loan') {
       creditForm.loanOverdueDetails[id] = {
         level: '',
         amount: '',
-        repaid: '否'
+        repaid: '否',
       }
-    } else if (type === 'card') {
+    }
+    else if (type === 'card') {
       creditForm.cardOverdueDetails[id] = {
         level: '',
         amount: '',
-        repaid: '否'
+        repaid: '否',
       }
     }
-  } else {
+  }
+  else {
     // 移除逾期详情
     if (type === 'loan') {
       delete creditForm.loanOverdueDetails[id]
-    } else if (type === 'card') {
+    }
+    else if (type === 'card') {
       delete creditForm.cardOverdueDetails[id]
     }
   }
@@ -324,11 +328,12 @@ function onQueryTimeConfirm(value: { selectedValues: string[] }) {
     const year = selectedValues[0] || ''
     const month = selectedValues[1] ? selectedValues[1].toString().padStart(2, '0') : '01'
     const day = selectedValues[2] ? selectedValues[2].toString().padStart(2, '0') : '01'
-    
+
     // 判断是查询时间还是放款时间
     if (currentSelectingIndex.value >= 0 && creditForm.queries[currentSelectingIndex.value]) {
       creditForm.queries[idx].time = `${year}-${month}-${day}`
-    } else if (currentSelectingIndex.value >= 0 && creditForm.loans[currentSelectingIndex.value]) {
+    }
+    else if (currentSelectingIndex.value >= 0 && creditForm.loans[currentSelectingIndex.value]) {
       creditForm.loans[idx].time = `${year}-${month}-${day}`
     }
   }
@@ -409,21 +414,21 @@ async function onUpload(file) {
   try {
     // 先上传PDF文件
     const { data: uploadResult } = await fileUpload({ file: file.file })
-    
+
     if (!uploadResult || !uploadResult.url) {
       throw new Error('文件上传失败')
     }
-    
+
     // 调用征信解析接口
     const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
     const { data } = await creditAnalysis({
       url: uploadResult.url,
-      analysisType
+      analysisType,
     })
-    
+
     // 等待弹窗关闭后再设置状态
     await showResultDialog(data)
-    
+
     if (data.status === 'success') {
       uploadComplete.value = true
     }
@@ -484,19 +489,19 @@ function submitForm() {
         }
       }
     }
-    
+
     // 验证新增放款
     if (!creditForm.hasNewLoan) {
       showDialog({ title: '提示', message: '请选择是否有新增放款' })
       return
     }
-    
+
     if (creditForm.hasNewLoan === '是') {
       if (!creditForm.loanCount) {
         showDialog({ title: '提示', message: '请填写新增放款家数' })
         return
       }
-      
+
       // 检查每个放款的必填项
       for (let i = 0; i < creditForm.loans.length; i++) {
         const loan = creditForm.loans[i]
@@ -521,23 +526,23 @@ function submitForm() {
         }
       }
     }
-    
+
     // 验证新增逃期
     if (!creditForm.hasOverdue) {
       showDialog({ title: '提示', message: '请选择是否有新增逃期' })
       return
     }
-    
+
     if (creditForm.hasOverdue === '是') {
       // 检查是否选择了逃期项目
       const loanOverdueIds = Object.keys(creditForm.loanOverdueDetails)
       const cardOverdueIds = Object.keys(creditForm.cardOverdueDetails)
-      
+
       if (loanOverdueIds.length === 0 && cardOverdueIds.length === 0) {
         showDialog({ title: '提示', message: '请至少选择一项逃期记录' })
         return
       }
-      
+
       // 检查每个贷款类逃期详情
       for (const id of loanOverdueIds) {
         const detail = creditForm.loanOverdueDetails[id]
@@ -554,7 +559,7 @@ function submitForm() {
           return
         }
       }
-      
+
       // 检查每个贷记卡类逃期详情
       for (const id of cardOverdueIds) {
         const detail = creditForm.cardOverdueDetails[id]
@@ -712,20 +717,20 @@ function resetForm() {
 
               <!-- 查询类型 -->
               <van-field
+                v-model="query.type"
                 readonly
                 clickable
                 label="查询类型"
-                v-model="query.type"
                 placeholder="请选择查询类型"
                 @click="handleQueryTypeClick(index)"
               />
 
               <!-- 查询时间 -->
               <van-field
+                v-model="query.time"
                 readonly
                 clickable
                 label="查询时间"
-                v-model="query.time"
                 placeholder="请选择查询时间"
                 @click="handleQueryTimeClick(index)"
               />
@@ -733,10 +738,10 @@ function resetForm() {
               <!-- 机构查询特有字段 -->
               <template v-if="query.type === '机构查询'">
                 <van-field
+                  v-model="query.institution"
                   readonly
                   clickable
                   label="查询机构"
-                  v-model="query.institution"
                   placeholder="请选择查询机构"
                   @click="handleQueryInstitutionClick(index)"
                 />
@@ -744,10 +749,10 @@ function resetForm() {
 
               <!-- 查询原因 -->
               <van-field
+                v-model="query.reason"
                 readonly
                 clickable
                 label="查询原因"
-                v-model="query.reason"
                 placeholder="请选择查询原因"
                 @click="handleQueryReasonClick(index)"
               />
@@ -794,30 +799,30 @@ function resetForm() {
 
               <!-- 放款类型 -->
               <van-field
+                v-model="loan.type"
                 readonly
                 clickable
                 label="放款类型"
-                v-model="loan.type"
                 placeholder="请选择放款类型"
                 @click="handleLoanTypeClick(index)"
               />
 
               <!-- 放款时间/发卡时间 -->
               <van-field
+                v-model="loan.time"
                 readonly
                 clickable
                 :label="loan.type === '贷款' ? '放款时间' : '发卡时间'"
-                v-model="loan.time"
                 :placeholder="loan.type === '贷款' ? '请选择放款时间' : '请选择发卡时间'"
                 @click="handleLoanTimeClick(index)"
               />
 
               <!-- 放款机构/发卡机构 -->
               <van-field
+                v-model="loan.institution"
                 readonly
                 clickable
                 :label="loan.type === '贷款' ? '放款机构' : '发卡机构'"
-                v-model="loan.institution"
                 placeholder="请选择机构"
                 @click="handleLoanInstitutionClick(index)"
               />
@@ -851,14 +856,14 @@ function resetForm() {
               是
             </van-radio>
           </van-radio-group>
-          
+
           <template v-if="creditForm.hasOverdue === '是'">
             <!-- 贷款类逾期 -->
             <div class="sub-section">
               <div class="sub-section-title">
                 贷款类逾期
               </div>
-              
+
               <!-- 贷款类逾期选择 -->
               <div class="overdue-selection">
                 <template v-for="(item, index) in creditForm.loanOverdues" :key="index">
@@ -870,29 +875,31 @@ function resetForm() {
                     {{ item.institution }} - {{ item.type }}
                   </van-checkbox>
                 </template>
-                
+
                 <template v-if="creditForm.loanOverdues.length === 0">
-                  <div class="empty-notice">暂无贷款类逾期记录</div>
+                  <div class="empty-notice">
+                    暂无贷款类逾期记录
+                  </div>
                 </template>
               </div>
-              
+
               <!-- 贷款类逾期详情 -->
               <template v-for="(detail, id) in creditForm.loanOverdueDetails" :key="id">
                 <div class="overdue-detail">
                   <div class="overdue-detail-title">
-                    {{ creditForm.loanOverdues.find(item => item.id === id)?.institution }} - 
+                    {{ creditForm.loanOverdues.find(item => item.id === id)?.institution }} -
                     {{ creditForm.loanOverdues.find(item => item.id === id)?.type }}
                   </div>
-                  
+
                   <van-field
+                    v-model="detail.level"
                     readonly
                     clickable
-                    v-model="detail.level"
                     label="逾期级别"
                     placeholder="请选择逾期级别"
                     @click="handleOverdueLevelClick('loan', id)"
                   />
-                  
+
                   <van-field
                     v-model="detail.amount"
                     label="逾期金额"
@@ -904,27 +911,31 @@ function resetForm() {
                       <span>元</span>
                     </template>
                   </van-field>
-                  
+
                   <van-field
                     label="是否已还"
                   >
                     <template #input>
                       <van-radio-group v-model="detail.repaid" direction="horizontal">
-                        <van-radio name="是">是</van-radio>
-                        <van-radio name="否">否</van-radio>
+                        <van-radio name="是">
+                          是
+                        </van-radio>
+                        <van-radio name="否">
+                          否
+                        </van-radio>
                       </van-radio-group>
                     </template>
                   </van-field>
                 </div>
               </template>
             </div>
-            
+
             <!-- 贷记卡类逾期 -->
             <div class="sub-section">
               <div class="sub-section-title">
                 贷记卡类逾期
               </div>
-              
+
               <!-- 贷记卡类逾期选择 -->
               <div class="overdue-selection">
                 <template v-for="(item, index) in creditForm.cardOverdues" :key="index">
@@ -936,29 +947,31 @@ function resetForm() {
                     {{ item.institution }} - {{ item.cardNo }}
                   </van-checkbox>
                 </template>
-                
+
                 <template v-if="creditForm.cardOverdues.length === 0">
-                  <div class="empty-notice">暂无贷记卡类逾期记录</div>
+                  <div class="empty-notice">
+                    暂无贷记卡类逾期记录
+                  </div>
                 </template>
               </div>
-              
+
               <!-- 贷记卡类逾期详情 -->
               <template v-for="(detail, id) in creditForm.cardOverdueDetails" :key="id">
                 <div class="overdue-detail">
                   <div class="overdue-detail-title">
-                    {{ creditForm.cardOverdues.find(item => item.id === id)?.institution }} - 
+                    {{ creditForm.cardOverdues.find(item => item.id === id)?.institution }} -
                     {{ creditForm.cardOverdues.find(item => item.id === id)?.cardNo }}
                   </div>
-                  
+
                   <van-field
+                    v-model="detail.level"
                     readonly
                     clickable
-                    v-model="detail.level"
                     label="逾期级别"
                     placeholder="请选择逾期级别"
                     @click="handleOverdueLevelClick('card', id)"
                   />
-                  
+
                   <van-field
                     v-model="detail.amount"
                     label="逾期金额"
@@ -970,14 +983,18 @@ function resetForm() {
                       <span>元</span>
                     </template>
                   </van-field>
-                  
+
                   <van-field
                     label="是否已还"
                   >
                     <template #input>
                       <van-radio-group v-model="detail.repaid" direction="horizontal">
-                        <van-radio name="是">是</van-radio>
-                        <van-radio name="否">否</van-radio>
+                        <van-radio name="是">
+                          是
+                        </van-radio>
+                        <van-radio name="否">
+                          否
+                        </van-radio>
                       </van-radio-group>
                     </template>
                   </van-field>
@@ -1055,7 +1072,7 @@ function resetForm() {
         @cancel="showDatePicker = false"
       />
     </van-popup>
-    
+
     <!-- 放款类型选择器 -->
     <van-popup v-model:show="showLoanTypePicker" position="bottom">
       <van-picker
@@ -1066,7 +1083,7 @@ function resetForm() {
         @cancel="showLoanTypePicker = false"
       />
     </van-popup>
-    
+
     <!-- 放款机构选择器 -->
     <van-popup v-model:show="showLoanInstitutionPicker" position="bottom" round>
       <div class="search-picker">
@@ -1093,7 +1110,7 @@ function resetForm() {
         </div>
       </div>
     </van-popup>
-    
+
     <!-- 逾期级别选择器 -->
     <van-popup v-model:show="showOverdueLevelPicker" position="bottom">
       <van-picker

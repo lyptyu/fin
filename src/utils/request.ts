@@ -13,7 +13,7 @@ export const REQUEST_TOKEN_KEY = 'Access-Token'
 const request = axios.create({
   // API 请求的默认前缀
   baseURL: import.meta.env.VITE_APP_API_BASE_URL,
-  timeout: 6000, // 请求超时时间
+  timeout: 30000, // 请求超时时间
 })
 
 export type RequestError = AxiosError<{
