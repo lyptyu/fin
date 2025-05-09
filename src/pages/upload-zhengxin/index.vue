@@ -9,6 +9,7 @@ const reportType = ref('simple') // simple: 简版, detail: 详版
 // 文件上传状态
 const fileList = ref([])
 const uploading = ref(false)
+const uploadFailed = ref(false) // 上传是否失败标志
 
 // 表单状态控制
 const showAdditionalForm = ref(false) // 是否显示上传后的表单
@@ -448,6 +449,9 @@ async function onUpload(file) {
       confirmButtonText: '确定',
       confirmButtonColor: '#f44336',
     })
+    // 标记上传失败状态
+    analysisComplete.value = false
+    uploadFailed.value = true
   }
   finally {
     uploading.value = false
@@ -458,11 +462,20 @@ async function onUpload(file) {
 function submitForm() {
   // 如果征信解析未完成，不允许提交
   if (!analysisComplete.value) {
-    showDialog({
-      title: '提示',
-      message: '征信报告解析尚未完成，请稍候再试',
-      confirmButtonText: '确定',
-    })
+    if(uploadFailed.value){
+      showDialog({
+        title: '提示',
+        message: '上传失败，请重新上传',
+        confirmButtonText: '确定',
+      })
+      resetForm()
+    }else{
+      showDialog({
+        title: '提示',
+        message: '征信报告解析尚未完成，请稍候再试',
+        confirmButtonText: '确定',
+      })
+    }
     return
   }
   // 验证表单
@@ -618,6 +631,7 @@ function resetForm() {
   creditForm.cardOverdueDetails = {}
   showAdditionalForm.value = false
   analysisComplete.value = false
+  uploadFailed.value = false
   fileList.value = []
 }
 </script>
@@ -1042,13 +1056,15 @@ function resetForm() {
           type="primary" 
           block
           :loading="uploading" 
-          :disabled="!analysisComplete" 
-          @click="submitForm"
+          :disabled="uploadFailed ? false : !analysisComplete" 
+          @click="uploadFailed ? resetForm() : submitForm()"
           class="submit-button"
+          :type="uploadFailed ? 'danger' : 'primary'"
         >
-          {{ analysisComplete ? '提交' : '等待征信解析完成...' }}
+          <template v-if="uploadFailed">上传失败请重新上传</template>
+          <template v-else>{{ analysisComplete ? '提交' : '等待征信解析完成...' }}</template>
         </van-button>
-        <div v-if="!analysisComplete" class="submit-tip">
+        <div v-if="!analysisComplete && !uploadFailed" class="submit-tip">
           征信报告正在解析中，请稍候...
         </div>
       </div>
