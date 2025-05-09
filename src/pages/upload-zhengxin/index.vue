@@ -1245,6 +1245,48 @@ function resetForm() {
   font-weight: bold;
 }
 
+/* 逾期模块样式 */
+.sub-section {
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+.sub-section-title {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: bold;
+}
+
+.overdue-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  margin-top: 15px;
+}
+
+.overdue-detail {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  margin-top: 15px;
+}
+
+.overdue-detail-title {
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: bold;
+}
+
+.empty-notice {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  padding: 10px 0;
+}
+
 .form-developing {
   font-style: italic;
   opacity: 0.7;
