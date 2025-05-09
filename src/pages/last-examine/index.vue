@@ -697,6 +697,52 @@ function formatInterest(flow: any, index: number) {
     }
   }
 }
+
+// 格式化金融资产金额，保留两位小数
+function formatAssetAmount(asset: any) {
+  if (asset.amount && asset.amount !== '') {
+    const numVal = Number.parseFloat(asset.amount)
+    if (!Number.isNaN(numVal)) {
+      asset.amount = numVal.toFixed(2)
+    }
+  }
+}
+
+// 格式化车产按揭金额，保留两位小数
+function formatCarMortgageAmount() {
+  if (module3CarData.carMortgageAmount && module3CarData.carMortgageAmount !== '') {
+    const numVal = Number.parseFloat(module3CarData.carMortgageAmount)
+    if (!Number.isNaN(numVal)) {
+      module3CarData.carMortgageAmount = numVal.toFixed(2)
+    }
+  }
+}
+
+// 格式化二手车评估金额，保留两位小数
+function formatCarEvalAmount() {
+  if (module3CarData.carEval && module3CarData.carEval !== '') {
+    const numVal = Number.parseFloat(module3CarData.carEval)
+    if (!Number.isNaN(numVal)) {
+      module3CarData.carEval = numVal.toFixed(2)
+    }
+  }
+}
+
+// 格式化一手车发票金额，保留两位小数
+function formatCarInvoiceAmount() {
+  if (module3CarData.carInvoice && module3CarData.carInvoice !== '') {
+    const numVal = Number.parseFloat(module3CarData.carInvoice)
+    if (!Number.isNaN(numVal)) {
+      module3CarData.carInvoice = numVal.toFixed(2)
+    }
+  }
+}
+
+// 格式化金融资产金额
+module3AssetData.assets.forEach((asset) => {
+  formatAssetAmount(asset)
+})
+
 </script>
 
 <template>
@@ -1865,9 +1911,10 @@ function formatInterest(flow: any, index: number) {
                   <van-field
                     v-model="module3CarData.carInvoice"
                     label="发票"
-                    type="digit"
+                    type="number"
                     placeholder="请输入金额"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                    :rules="[{ pattern: /^\d+(\.\d{1,2})?$/, message: '请输入数字，最多2位小数' }]"
+                    @blur="formatCarInvoiceAmount()"
                   >
                     <template #right-icon>
                       万
@@ -1907,9 +1954,10 @@ function formatInterest(flow: any, index: number) {
                   <van-field
                     v-model="module3CarData.carEval"
                     label="评估"
-                    type="digit"
+                    type="number"
                     placeholder="请输入金额"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                    :rules="[{ pattern: /^\d+(\.\d{1,2})?$/, message: '请输入数字，最多2位小数' }]"
+                    @blur="formatCarEvalAmount()"
                   >
                     <template #right-icon>
                       万
@@ -1951,9 +1999,10 @@ function formatInterest(flow: any, index: number) {
                   <van-field
                     v-model="module3CarData.carMortgageAmount"
                     label="按揭金额"
-                    type="digit"
+                    type="number"
                     placeholder="请输入金额"
-                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                    :rules="[{ pattern: /^\d+(\.\d{1,2})?$/, message: '请输入数字，最多2位小数' }]"
+                    @blur="formatCarMortgageAmount()"
                   >
                     <template #right-icon>
                       万
@@ -2075,9 +2124,10 @@ function formatInterest(flow: any, index: number) {
                     <van-field
                       v-model="asset.amount"
                       label="当前"
-                      type="digit"
+                      type="number"
                       placeholder="请输入金额"
-                      :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      :rules="[{ pattern: /^\d+(\.\d{1,2})?$/, message: '请输入数字，最多2位小数' }]"
+                      @blur="formatAssetAmount(asset)"
                     >
                       <template #right-icon>
                         万
