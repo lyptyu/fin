@@ -13,6 +13,7 @@ const uploading = ref(false)
 // 表单状态控制
 const showAdditionalForm = ref(false) // 是否显示上传后的表单
 const uploadComplete = ref(false) // 上传成功标志
+const analysisComplete = ref(false) // 征信解析完成标志
 
 // 日期选择器控制
 const showDatePicker = ref(false)
@@ -388,24 +389,28 @@ function updateLoanForms() {
 
 // 显示结果弹窗
 function showResultDialog(data) {
-  const dialogConfig = {
-    title: data.status === 'success' ? '审核结果' : '审核未通过',
-    message: data.message,
+  let dialogConfig = {
+    title: '提示',
+    message: '征信解析完成',
     confirmButtonText: '确定',
-    confirmButtonColor: data.status === 'success' ? '#4caf50' : '#f44336',
-    className: `status-dialog ${data.status}`,
   }
 
-  if (data.status === 'success' && data.amount) {
-    dialogConfig.message += `\n可贷额度：${data.amount}元`
-  }
-
-  return showDialog(dialogConfig).then(() => {
-    if (data.status === 'success') {
-      // 显示额外表单
-      showAdditionalForm.value = true
+  if (data.status === 'success') {
+    dialogConfig = {
+      title: '解析成功',
+      message: `征信解析成功${data.amount ? '，额度：' + data.amount + '元' : ''}`,
+      confirmButtonText: '继续填写',
     }
-  })
+  } else if (data.status === 'strong-reject' || data.status === 'weak-reject') {
+    dialogConfig = {
+      title: '审核结果',
+      message: data.message || '很抱歉，您暂时不符合贷款条件',
+      confirmButtonText: '我知道了',
+      confirmButtonColor: '#f44336',
+    }
+  }
+
+  return showDialog(dialogConfig)
 }
 
 // 上传文件
@@ -419,6 +424,10 @@ async function onUpload(file) {
       throw new Error('文件上传失败')
     }
 
+    // 上传成功后立即显示新增信息表单
+    showAdditionalForm.value = true
+    uploadComplete.value = true
+    
     // 调用征信解析接口
     const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
     const { data } = await creditAnalysis({
@@ -428,10 +437,14 @@ async function onUpload(file) {
 
     // 等待弹窗关闭后再设置状态
     await showResultDialog(data)
-
-    if (data.status === 'success') {
-      uploadComplete.value = true
-    }
+    
+    // 无论返回什么状态，都标记征信解析完成，允许提交表单
+    analysisComplete.value = true
+    
+    // 如果状态不是成功，可以在这里添加额外处理
+    // if (data.status !== 'success') {
+    //   // 可以添加额外的处理逻辑
+    // }
   }
   catch (error) {
     console.error(error)
@@ -449,6 +462,15 @@ async function onUpload(file) {
 
 // 提交表单
 function submitForm() {
+  // 如果征信解析未完成，不允许提交
+  if (!analysisComplete.value) {
+    showDialog({
+      title: '提示',
+      message: '征信报告解析尚未完成，请稍候再试',
+      confirmButtonText: '确定',
+    })
+    return
+  }
   // 验证表单
   if (!creditForm.hasNewInfo) {
     showDialog({ title: '提示', message: '请选择是否有新增信息' })
@@ -602,6 +624,7 @@ function resetForm() {
   creditForm.cardOverdueDetails = {}
   showAdditionalForm.value = false
   uploadComplete.value = false
+  analysisComplete.value = false
   fileList.value = []
 }
 </script>
@@ -642,7 +665,7 @@ function resetForm() {
     </div>
 
     <!-- 文件上传区域 -->
-    <div v-if="!uploadComplete" class="upload-area glass-card">
+    <div class="upload-area glass-card">
       <van-uploader
         v-model="fileList"
         :max-count="1"
@@ -1007,9 +1030,18 @@ function resetForm() {
 
       <!-- 表单提交按钮 -->
       <div class="form-actions">
-        <van-button type="primary" block :loading="uploading" @click="submitForm">
-          提交
+        <van-button 
+          type="primary" 
+          block 
+          :loading="uploading" 
+          :disabled="!analysisComplete" 
+          @click="submitForm"
+        >
+          {{ analysisComplete ? '提交' : '等待征信解析完成...' }}
         </van-button>
+        <div v-if="!analysisComplete" class="submit-tip">
+          征信报告正在解析中，请稍候...
+        </div>
       </div>
     </div>
 
@@ -1125,6 +1157,13 @@ function resetForm() {
 </template>
 
 <style scoped>
+.submit-tip {
+  margin-top: 8px;
+  text-align: center;
+  color: #ff9800;
+  font-size: 14px;
+}
+
 .upload-zhengxin {
   min-height: 100vh;
   padding: 20px;
