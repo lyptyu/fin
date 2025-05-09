@@ -12,7 +12,6 @@ const uploading = ref(false)
 
 // 表单状态控制
 const showAdditionalForm = ref(false) // 是否显示上传后的表单
-const uploadComplete = ref(false) // 上传成功标志
 const analysisComplete = ref(false) // 征信解析完成标志
 
 // 日期选择器控制
@@ -426,7 +425,6 @@ async function onUpload(file) {
 
     // 上传成功后立即显示新增信息表单
     showAdditionalForm.value = true
-    uploadComplete.value = true
     
     // 调用征信解析接口
     const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
@@ -623,7 +621,6 @@ function resetForm() {
   creditForm.cardOverdues = []
   creditForm.cardOverdueDetails = {}
   showAdditionalForm.value = false
-  uploadComplete.value = false
   analysisComplete.value = false
   fileList.value = []
 }
@@ -631,57 +628,72 @@ function resetForm() {
 
 <template>
   <div class="upload-zhengxin">
-    <!-- 报告类型选择 -->
-    <div v-if="!uploadComplete" class="report-type glass-card">
-      <h2>选择征信报告类型</h2>
-      <div class="type-options">
-        <div
-          class="type-option"
-          :class="{ active: reportType === 'simple' }"
-          @click="reportType = 'simple'"
-        >
-          <div class="option-icon">
-            📄
+    <!-- 当未上传时显示报告类型选择和上传区域 -->
+    <div v-if="!showAdditionalForm">
+      <!-- 报告类型选择 -->
+      <div class="report-type glass-card">
+        <h2>选择征信报告类型</h2>
+        <div class="type-options">
+          <div
+            class="type-option"
+            :class="{ active: reportType === 'simple' }"
+            @click="reportType = 'simple'"
+          >
+            <div class="option-icon">
+              📄
+            </div>
+            <div class="option-text">
+              <h3>简版征信报告</h3>
+              <p>适用于快速审核场景</p>
+            </div>
           </div>
-          <div class="option-text">
-            <h3>简版征信报告</h3>
-            <p>适用于快速审核场景</p>
-          </div>
-        </div>
-        <div
-          class="type-option"
-          :class="{ active: reportType === 'detail' }"
-          @click="reportType = 'detail'"
-        >
-          <div class="option-icon">
-            📑
-          </div>
-          <div class="option-text">
-            <h3>详版征信报告</h3>
-            <p>提供完整的征信信息</p>
+          <div
+            class="type-option"
+            :class="{ active: reportType === 'detail' }"
+            @click="reportType = 'detail'"
+          >
+            <div class="option-icon">
+              📑
+            </div>
+            <div class="option-text">
+              <h3>详版征信报告</h3>
+              <p>提供完整的征信信息</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 文件上传区域 -->
-    <div class="upload-area glass-card">
-      <van-uploader
-        v-model="fileList"
-        :max-count="1"
-        :after-read="onUpload"
-        accept=".pdf"
-      >
-        <div class="upload-trigger">
-          <van-icon name="description" size="32" />
-          <p>点击上传征信报告PDF文件</p>
-          <span class="upload-tip">支持PDF格式文件</span>
-        </div>
-      </van-uploader>
+      <!-- 文件上传区域 -->
+      <div class="upload-area glass-card">
+        <van-uploader
+          v-model="fileList"
+          :max-count="1"
+          :after-read="onUpload"
+          accept=".pdf"
+        >
+          <div class="upload-trigger">
+            <van-icon name="description" size="32" />
+            <p>点击上传征信报告PDF文件</p>
+            <span class="upload-tip">支持PDF格式文件</span>
+          </div>
+        </van-uploader>
+      </div>
     </div>
 
     <!-- 上传后的额外表单 -->
     <div v-if="showAdditionalForm" class="additional-form glass-card">
+      <!-- 返回按钮 -->
+      <div class="back-button-container">
+        <button 
+          class="tech-back-button"
+          @click="resetForm"
+        >
+          <span class="tech-icon">
+            <van-icon name="arrow-left" />
+          </span>
+          <span class="tech-text">返回重新上传</span>
+        </button>
+      </div>
       <h2>征信补充信息</h2>
 
       <!-- 征信后是否有新增 -->
@@ -1032,10 +1044,11 @@ function resetForm() {
       <div class="form-actions">
         <van-button 
           type="primary" 
-          block 
+          block
           :loading="uploading" 
           :disabled="!analysisComplete" 
           @click="submitForm"
+          class="submit-button"
         >
           {{ analysisComplete ? '提交' : '等待征信解析完成...' }}
         </van-button>
@@ -1162,6 +1175,69 @@ function resetForm() {
   text-align: center;
   color: #ff9800;
   font-size: 14px;
+}
+
+.back-button-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.tech-back-button {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #2c3e50, #1a2533);
+  color: #00e5ff;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 229, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-back-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.tech-back-button:hover {
+  box-shadow: 0 4px 12px rgba(0, 229, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.tech-back-button:hover::before {
+  left: 100%;
+}
+
+.tech-icon {
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00e5ff;
+}
+
+.tech-text {
+  background: linear-gradient(90deg, #00e5ff, #00b8d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+.submit-button {
+  width: 100%;
 }
 
 .upload-zhengxin {
