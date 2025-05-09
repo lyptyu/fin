@@ -153,13 +153,14 @@ function handleQueryTimeClick(index: number) {
   showDatePicker.value = true
 }
 
-function onQueryTimeConfirm(value: string[]) {
+function onQueryTimeConfirm(value: { selectedValues: string[] }) {
   const idx = currentDatePickerIndex.value
-  if (idx >= 0 && Array.isArray(value) && value.length >= 3) {
+  if (idx >= 0 && value && value.selectedValues && Array.isArray(value.selectedValues) && value.selectedValues.length >= 3) {
     // 将数组转换为日期字符串 YYYY-MM-DD
-    const year = value[0] || ''
-    const month = value[1] ? value[1].toString().padStart(2, '0') : '01'
-    const day = value[2] ? value[2].toString().padStart(2, '0') : '01'
+    const selectedValues = value.selectedValues
+    const year = selectedValues[0] || ''
+    const month = selectedValues[1] ? selectedValues[1].toString().padStart(2, '0') : '01'
+    const day = selectedValues[2] ? selectedValues[2].toString().padStart(2, '0') : '01'
     creditForm.queries[idx].time = `${year}-${month}-${day}`
   }
   showDatePicker.value = false
