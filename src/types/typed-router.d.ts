@@ -25,6 +25,7 @@ declare module 'vue-router/auto-routes' {
     '/gama-bigdata/': RouteRecordInfo<'/gama-bigdata/', '/gama-bigdata', Record<never, never>, Record<never, never>>,
     '/id-card-upload/': RouteRecordInfo<'/id-card-upload/', '/id-card-upload', Record<never, never>, Record<never, never>>,
     '/last-examine/': RouteRecordInfo<'/last-examine/', '/last-examine', Record<never, never>, Record<never, never>>,
+    '/last-start/': RouteRecordInfo<'/last-start/', '/last-start', Record<never, never>, Record<never, never>>,
     '/pay/': RouteRecordInfo<'/pay/', '/pay', Record<never, never>, Record<never, never>>,
     '/phone-login/': RouteRecordInfo<'/phone-login/', '/phone-login', Record<never, never>, Record<never, never>>,
     'upload-zhengxin': RouteRecordInfo<'upload-zhengxin', '/upload-zhengxin', Record<never, never>, Record<never, never>>,
