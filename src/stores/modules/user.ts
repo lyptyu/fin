@@ -64,7 +64,7 @@ export const useUserStore = defineStore('user', () => {
       if (code !== 0) {
         throw msg
       }
-      setToken(loginForm.username)
+      setToken(loginForm.phone)
     }
     catch (error) {
       clearToken()

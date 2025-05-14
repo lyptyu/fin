@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { showToast } from 'vant'
 import { useUserStore } from '@/stores'
 import router from '@/router'
+import { sendCode as apiSendCode } from '@/api/utils'
 
 const userStore = useUserStore()
 const phone = ref('')
@@ -10,6 +11,7 @@ const code = ref('')
 const loading = ref(false)
 const timer = ref<number | null>(null)
 const countdown = ref(60)
+const hasRequestedCode = ref(false)
 
 async function sendCode() {
   if (!/^1[3-9]\d{9}$/.test(phone.value)) {
@@ -17,14 +19,22 @@ async function sendCode() {
     return
   }
 
-  // 这里添加发送验证码的接口调用
+  // 调用发送验证码接口
   try {
-    // const res = await api.sendCode(phone.value)
-    showToast('验证码发送成功')
-    startCountdown()
+    // 由于可能是模拟环境，我们直接设置为成功状态
+    // 实际环境下应使用以下代码：
+    const res = await apiSendCode({ phone: phone.value })
+    if (res.code === 0) {
+      showToast('验证码发送成功')
+      hasRequestedCode.value = true
+      startCountdown()
+    }
+    else {
+      showToast(res.message || '验证码发送失败')
+    }
   }
   catch (error) {
-    console.warn(error) // 这里可以根据实际情况处理错误情况，比如显示错误提示等操作。F
+    console.warn(error)
     showToast('验证码发送失败')
   }
 }
@@ -43,23 +53,36 @@ function startCountdown() {
 }
 
 async function onSubmit() {
+  // 验证是否已获取验证码
+  if (!hasRequestedCode.value) {
+    showToast('请先获取验证码')
+    return
+  }
+
   loading.value = true
   try {
-    // 这里添加登录接口调用
-    // const res = await api.login({ phone: phone.value, code: code.value })
-    await userStore.login({ username: phone.value, code: code.value })
-    
+    // 调用登录接口
+    await userStore.login({ phone: phone.value, code: code.value })
+
     // 登录成功后存储手机号到store和localStorage
     userStore.setPhone(phone.value)
     localStorage.setItem('userPhone', phone.value)
-    
+
     showToast('登录成功')
     // 登录成功后跳id-card-upload页面
     router.push({ name: '/id-card-upload/' })
   }
   catch (error) {
-    console.warn(error) // 这里可以根据实际情况处理错误情况，比如显示错误提示等操作。
-    showToast(error)
+    console.warn(error)
+    if (typeof error === 'string') {
+      showToast(error)
+    }
+    else if (error && typeof error === 'object' && 'message' in error) {
+      showToast(error.message as string)
+    }
+    else {
+      showToast('登录失败，请重试')
+    }
   }
   finally {
     loading.value = false
@@ -107,8 +130,8 @@ async function onSubmit() {
           </van-cell-group>
 
           <div class="submit-btn">
-            <van-button round block type="primary" native-type="submit" :loading="loading">
-              登录
+            <van-button round block type="primary" native-type="submit" :loading="loading" :disabled="!hasRequestedCode || !code">
+              {{ !hasRequestedCode ? '请先获取验证码' : !code ? '请输入验证码' : '登录' }}
             </van-button>
           </div>
         </van-form>

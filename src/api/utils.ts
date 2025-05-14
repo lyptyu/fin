@@ -58,3 +58,9 @@ export function bigDataQuery(data: { idCard: string, phone: string, name: string
 export function creditAnalysis(data: { url: string, analysisType: string }): Promise<ApiResponse> {
   return request.post(`/credit/parse?url=${data.url}&analysisType=${data.analysisType}`)
 }
+
+// 发送验证码接口
+
+export function sendCode(data: { phone: string }): Promise<ApiResponse> {
+  return request.post(`/sms/sendCode?phone=${data.phone}`)
+}
