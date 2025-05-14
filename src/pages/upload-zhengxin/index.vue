@@ -329,13 +329,15 @@ function onQueryTimeConfirm(value: { selectedValues: string[] }) {
     const year = selectedValues[0] || ''
     const month = selectedValues[1] ? selectedValues[1].toString().padStart(2, '0') : '01'
     const day = selectedValues[2] ? selectedValues[2].toString().padStart(2, '0') : '01'
+    const dateStr = `${year}-${month}-${day}`
 
-    // 判断是查询时间还是放款时间
-    if (currentSelectingIndex.value >= 0 && creditForm.queries[currentSelectingIndex.value]) {
-      creditForm.queries[idx].time = `${year}-${month}-${day}`
+    // 直接使用currentDatePickerIndex来设置时间
+    // 这里的问题是混淆了currentSelectingIndex和currentDatePickerIndex
+    if (creditForm.queries[idx]) {
+      creditForm.queries[idx].time = dateStr
     }
-    else if (currentSelectingIndex.value >= 0 && creditForm.loans[currentSelectingIndex.value]) {
-      creditForm.loans[idx].time = `${year}-${month}-${day}`
+    else if (creditForm.loans[idx]) {
+      creditForm.loans[idx].time = dateStr
     }
   }
   showDatePicker.value = false
