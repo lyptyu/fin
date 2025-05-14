@@ -19,6 +19,7 @@ const analysisComplete = ref(false) // 征信解析完成标志
 const showDatePicker = ref(false)
 const currentDatePickerIndex = ref(-1)
 const currentDate = ref(['', '', ''])
+const currentSelectingType = ref('') // 'query' 或 'loan'
 const minDate = new Date(2020, 0, 1)
 const maxDate = new Date(2025, 11, 31)
 
@@ -212,6 +213,8 @@ function onLoanInstitutionConfirm(value: any) {
 // 处理放款时间选择
 function handleLoanTimeClick(index: number) {
   currentDatePickerIndex.value = index
+  // 标记当前是放款时间选择
+  currentSelectingType.value = 'loan'
   // 如果已有日期，则转换为数组格式
   if (creditForm.loans[index].time) {
     const dateparts = creditForm.loans[index].time.split('-')
@@ -304,6 +307,8 @@ function toggleOverdueItem(type: string, id: string) {
 // 处理查询时间选择
 function handleQueryTimeClick(index: number) {
   currentDatePickerIndex.value = index
+  // 标记当前是查询时间选择
+  currentSelectingType.value = 'query'
   // 如果已有日期，则转换为数组格式
   if (creditForm.queries[index].time) {
     const dateparts = creditForm.queries[index].time.split('-')
@@ -321,7 +326,8 @@ function handleQueryTimeClick(index: number) {
   showDatePicker.value = true
 }
 
-function onQueryTimeConfirm(value: { selectedValues: string[] }) {
+// 日期选择器确认函数，处理所有类型的日期选择
+function onDateConfirm(value: { selectedValues: string[] }) {
   const idx = currentDatePickerIndex.value
   if (idx >= 0 && value && value.selectedValues && Array.isArray(value.selectedValues) && value.selectedValues.length >= 3) {
     // 将数组转换为日期字符串 YYYY-MM-DD
@@ -331,16 +337,27 @@ function onQueryTimeConfirm(value: { selectedValues: string[] }) {
     const day = selectedValues[2] ? selectedValues[2].toString().padStart(2, '0') : '01'
     const dateStr = `${year}-${month}-${day}`
 
-    // 直接使用currentDatePickerIndex来设置时间
-    // 这里的问题是混淆了currentSelectingIndex和currentDatePickerIndex
-    if (creditForm.queries[idx]) {
+    // 打印日期选择信息以便调试
+    console.log('日期选择确认:', {
+      type: currentSelectingType.value,
+      idx,
+      dateStr
+    })
+
+    // 根据当前选择的类型设置时间
+    if (currentSelectingType.value === 'query' && idx >= 0 && idx < creditForm.queries.length) {
       creditForm.queries[idx].time = dateStr
     }
-    else if (creditForm.loans[idx]) {
+    else if (currentSelectingType.value === 'loan' && idx >= 0 && idx < creditForm.loans.length) {
       creditForm.loans[idx].time = dateStr
     }
   }
   showDatePicker.value = false
+}
+
+// 为了兼容性，保留原来的函数名
+function onQueryTimeConfirm(value: { selectedValues: string[] }) {
+  return onDateConfirm(value)
 }
 
 // 监听查询次数变化，动态生成表单
@@ -401,7 +418,7 @@ function showResultDialog(data) {
     }
     return showDialog(dialogConfig)
   }
-  
+
   // 成功时不显示弹窗，直接返回已解决的Promise
   return Promise.resolve()
 }
@@ -419,7 +436,7 @@ async function onUpload(file) {
 
     // 上传成功后立即显示新增信息表单
     showAdditionalForm.value = true
-    
+
     // 调用征信解析接口
     const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
     const { data } = await creditAnalysis({
@@ -429,15 +446,15 @@ async function onUpload(file) {
 
     // 只在解析失败时显示弹窗
     await showResultDialog(data)
-    
+
     // 解析成功时显示轻提示
     if (data.status === 'success') {
       showSuccessToast('征信解析完成')
     }
-    
+
     // 无论返回什么状态，都标记征信解析完成，允许提交表单
     analysisComplete.value = true
-    
+
     // 如果状态不是成功，可以在这里添加额外处理
     // if (data.status !== 'success') {
     //   // 可以添加额外的处理逻辑
@@ -464,14 +481,15 @@ async function onUpload(file) {
 function submitForm() {
   // 如果征信解析未完成，不允许提交
   if (!analysisComplete.value) {
-    if(uploadFailed.value){
+    if (uploadFailed.value) {
       showDialog({
         title: '提示',
         message: '上传失败，请重新上传',
         confirmButtonText: '确定',
       })
       resetForm()
-    }else{
+    }
+    else {
       showDialog({
         title: '提示',
         message: '征信报告解析尚未完成，请稍候再试',
@@ -610,6 +628,9 @@ function submitForm() {
     }
   }
 
+  // 打印表单数据
+  console.log('提交的表单数据:', JSON.stringify(creditForm, null, 2))
+
   // 提交成功提示
   showSuccessToast('提交成功')
 
@@ -619,6 +640,7 @@ function submitForm() {
 
 // 重置表单
 function resetForm() {
+  console.log('提交的表单数据:', JSON.stringify(creditForm, null, 2))
   creditForm.hasNewInfo = ''
   creditForm.hasNewQuery = ''
   creditForm.queryCount = ''
@@ -696,7 +718,7 @@ function resetForm() {
     <div v-if="showAdditionalForm" class="additional-form glass-card">
       <!-- 返回按钮 -->
       <div class="back-button-container">
-        <van-button 
+        <van-button
           type="text"
           size="small"
           icon="arrow-left"
@@ -1054,17 +1076,21 @@ function resetForm() {
 
       <!-- 表单提交按钮 -->
       <div class="form-actions">
-        <van-button 
-          type="primary" 
+        <van-button
+          type="primary"
           block
-          :loading="uploading" 
-          :disabled="uploadFailed ? false : !analysisComplete" 
-          @click="uploadFailed ? resetForm() : submitForm()"
+          :loading="uploading"
+          :disabled="uploadFailed ? false : !analysisComplete"
           class="submit-button"
           :type="uploadFailed ? 'danger' : 'primary'"
+          @click="uploadFailed ? resetForm() : submitForm()"
         >
-          <template v-if="uploadFailed">上传失败请重新上传</template>
-          <template v-else>{{ analysisComplete ? '提交' : '等待征信解析完成...' }}</template>
+          <template v-if="uploadFailed">
+            上传失败请重新上传
+          </template>
+          <template v-else>
+            {{ analysisComplete ? '提交' : '等待征信解析完成...' }}
+          </template>
         </van-button>
         <div v-if="!analysisComplete && !uploadFailed" class="submit-tip">
           征信报告正在解析中，请稍候...
@@ -1127,7 +1153,7 @@ function resetForm() {
         title="选择时间"
         :min-date="minDate"
         :max-date="maxDate"
-        @confirm="onQueryTimeConfirm"
+        @confirm="onDateConfirm"
         @cancel="showDatePicker = false"
       />
     </van-popup>
