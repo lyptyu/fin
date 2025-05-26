@@ -17,8 +17,8 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       host: true,
       port: 3000,
       proxy: {
-        '/api': {
-          target: 'http://111.229.68.101',
+        '/prod/api': {
+          target: 'http://43.154.90.13:8899',
           ws: false,
           changeOrigin: true,
         },
