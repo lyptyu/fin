@@ -8,7 +8,6 @@ import type { EnhancedRouteLocation } from './types'
 import useRouteCacheStore from '@/stores/modules/routeCache'
 import { useUserStore } from '@/stores'
 
-import { isLogin } from '@/utils/auth'
 import setPageTitle from '@/utils/set-page-title'
 
 NProgress.configure({ showSpinner: true, parent: '#app' })
@@ -33,9 +32,6 @@ router.beforeEach(async (to: EnhancedRouteLocation) => {
 
   // Set page title
   setPageTitle(to.meta.title)
-
-  if (isLogin() && !userStore.userInfo?.uid)
-    await userStore.info()
 })
 
 router.afterEach(() => {
