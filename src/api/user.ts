@@ -44,8 +44,17 @@ export function register(): Promise<any> {
 }
 
 export function selectSimpleLoanOverdue(agentId?: string): Promise<any> {
-  return request.post(`/credit/selectSimpleLoanOverdue?agent_id=${agentId}`)
+  return request.post('/credit/selectSimpleLoanOverdue', {}, {
+    headers: {
+      'Agent-Id': agentId || ''
+    }
+  })
 }
+
 export function selectDetailedLoanOverdue(agentId?: string): Promise<any> {
-  return request.post(`/credit/selectDetailedLoanOverdue?agent_id=${agentId}`)
+  return request.post('/credit/selectDetailedLoanOverdue', {}, {
+    headers: {
+      'Agent-Id': agentId || ''
+    }
+  })
 }
