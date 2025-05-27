@@ -3,6 +3,7 @@ import request from '@/utils/request'
 export interface LoginData {
   phone: string
   code: string
+  agentId?: string
 }
 
 export interface LoginRes {
@@ -15,6 +16,7 @@ export interface UserState {
   avatar?: string
   phone?: string
   idCard?: string
+  agentId?: string
 }
 
 export function login(data: LoginData): Promise<any> {

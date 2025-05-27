@@ -43,9 +43,21 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value.idCard = idCard
   }
 
+  // Set user's agent ID
+  const setAgentId = (agentId: string) => {
+    userInfo.value.agentId = agentId
+    // 同时保存到localStorage以便持久化
+    localStorage.setItem('userAgentId', agentId)
+  }
+
   // Get user's phone number
   const getPhone = (): string | undefined => {
     return userInfo.value.phone
+  }
+  
+  // Get user's agent ID
+  const getAgentId = (): string | undefined => {
+    return userInfo.value.agentId
   }
 
   // Get user's name
@@ -128,9 +140,11 @@ export const useUserStore = defineStore('user', () => {
     setPhone,
     setName,
     setIdCard,
+    setAgentId,
     getPhone,
     getName,
     getIdCard,
+    getAgentId,
   }
 }, {
   persist: true,

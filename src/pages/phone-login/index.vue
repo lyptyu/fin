@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { showToast } from 'vant'
 import { useUserStore } from '@/stores'
 import router from '@/router'
+import { useRoute } from 'vue-router'
 import { sendCode as apiSendCode } from '@/api/utils'
 
+const route = useRoute()
 const userStore = useUserStore()
 const phone = ref('')
 const code = ref('')
@@ -12,6 +14,14 @@ const loading = ref(false)
 const timer = ref<number | null>(null)
 const countdown = ref(60)
 const hasRequestedCode = ref(false)
+
+// 在组件挂载时获取URL参数agent_id并保存到store
+onMounted(() => {
+  const agentId = route.query.agent_id as string
+  if (agentId) {
+    userStore.setAgentId(agentId)
+  }
+})
 
 async function sendCode() {
   if (!/^1[3-9]\d{9}$/.test(phone.value)) {
@@ -61,8 +71,24 @@ async function onSubmit() {
 
   loading.value = true
   try {
+    // 构建登录参数，包含agentId
+    const loginParams: {
+      phone: string;
+      code: string;
+      agentId?: string;
+    } = {
+      phone: phone.value,
+      code: code.value,
+    }
+    
+    // 如果有agentId，添加到登录参数中
+    const agentId = userStore.getAgentId()
+    if (agentId) {
+      loginParams.agentId = agentId
+    }
+    
     // 调用登录接口
-    await userStore.login({ phone: phone.value, code: code.value })
+    await userStore.login(loginParams)
 
     // 登录成功后存储手机号到store和localStorage
     userStore.setPhone(phone.value)
