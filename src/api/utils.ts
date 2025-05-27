@@ -43,7 +43,11 @@ export function getCreditReportStatus(mockType = 3) {
 export function fileUpload(data: { file: File }): Promise<ApiResponse<{ url: string }>> {
   const formData = new FormData()
   formData.append('file', data.file)
-  return request.post('/file/upload', formData)
+  return request.post('/file/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
 }
 export function ocrIdCard(data: { frontImageUrl: string, backImageUrl: string }): Promise<ApiResponse> {
   return request.post('/v1/ocr/idCard', data)

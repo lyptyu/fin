@@ -341,7 +341,7 @@ function onDateConfirm(value: { selectedValues: string[] }) {
     console.log('日期选择确认:', {
       type: currentSelectingType.value,
       idx,
-      dateStr
+      dateStr,
     })
 
     // 根据当前选择的类型设置时间
@@ -427,6 +427,7 @@ function showResultDialog(data) {
 async function onUpload(file) {
   uploading.value = true
   try {
+    console.log('file: ', file)
     // 先上传PDF文件
     const { data: uploadResult } = await fileUpload({ file: file.file })
 
