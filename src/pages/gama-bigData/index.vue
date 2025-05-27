@@ -10,8 +10,6 @@ const userStore = useUserStore()
 
 // 查询状态
 const isQuerying = ref(false)
-const queryProgress = ref(0)
-const progressText = ref('正在连接大数据服务...')
 const showResult = ref(false)
 
 // 用户数据
@@ -93,7 +91,6 @@ async function submitQuery() {
 // 开始查询
 async function startQuery() {
   isQuerying.value = true
-  queryProgress.value = 0
   showResult.value = false
   showLoadingToast({
     message: '查询中...',
@@ -140,52 +137,28 @@ async function startQuery() {
 // 模拟 API 调用
 async function simulateApiCall() {
   return new Promise((resolve) => {
-    const progressInterval = setInterval(() => {
-      if (queryProgress.value < 100) {
-        queryProgress.value += Math.floor(Math.random() * 8) + 3
-
-        if (queryProgress.value >= 100) {
-          queryProgress.value = 100
-        }
-
-        // 更新进度文本
-        if (queryProgress.value < 30) {
-          progressText.value = '正在连接大数据服务...'
-        }
-        else if (queryProgress.value < 60) {
-          progressText.value = '正在分析用户数据...'
-        }
-        else if (queryProgress.value < 90) {
-          progressText.value = '正在进行风险评估...'
-        }
-        else {
-          progressText.value = '正在生成分析报告...'
-        }
-      }
-      else {
-        clearInterval(progressInterval)
-
-        // 实际调用 API
-        bigDataQuery({
-          name: userData.value.name,
-          idCard: userData.value.idCard,
-          phone: userData.value.phone,
-        }).then((res) => {
-          resolve(res)
-        }).catch((err) => {
-          console.error(err)
-          // 失败时返回模拟数据
-          resolve({
-            code: 0,
-            data: {
-              riskInfo: {
-                riskScore: Math.floor(Math.random() * 100),
-              },
+    // 添加一个短暂停，模拟请求时间
+    setTimeout(() => {
+      // 实际调用 API
+      bigDataQuery({
+        name: userData.value.name,
+        idCard: userData.value.idCard,
+        phone: userData.value.phone,
+      }).then((res) => {
+        resolve(res)
+      }).catch((err) => {
+        console.error(err)
+        // 失败时返回模拟数据
+        resolve({
+          code: 0,
+          data: {
+            riskInfo: {
+              riskScore: Math.floor(Math.random() * 100),
             },
-          })
+          },
         })
-      }
-    }, 100)
+      })
+    }, 1000) // 模拟1秒的请求时间
   })
 }
 
@@ -270,50 +243,7 @@ onMounted(() => {
       </button>
     </div>
 
-    <!-- 查询进度展示 -->
-    <div v-if="isQuerying" class="cyber-panel progress-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          数据分析进度
-        </div>
-        <div class="panel-status">
-          {{ progressText }}
-        </div>
-      </div>
-
-      <div class="cyber-progress">
-        <div class="progress-track">
-          <div class="progress-fill" :style="{ width: `${queryProgress}%` }" />
-        </div>
-        <div class="progress-percentage">
-          {{ queryProgress }}%
-        </div>
-      </div>
-
-      <div class="data-network">
-        <svg width="100%" height="200" class="network-visualization">
-          <line
-            v-for="(connection, index) in dataConnections"
-            :key="`conn-${index}`"
-            :x1="`${dataNodes[connection.source]?.x}%`"
-            :y1="`${dataNodes[connection.source]?.y}%`"
-            :x2="`${dataNodes[connection.target]?.x}%`"
-            :y2="`${dataNodes[connection.target]?.y}%`"
-            :style="{ opacity: connection.strength }"
-            class="network-line"
-          />
-          <circle
-            v-for="(node, index) in dataNodes"
-            :key="`node-${index}`"
-            :cx="`${node.x}%`"
-            :cy="`${node.y}%`"
-            :r="node.size / 3"
-            class="network-node"
-            :class="{ pulse: queryProgress > 50 }"
-          />
-        </svg>
-      </div>
-    </div>
+    <!-- 已删除查询进度展示 -->
 
     <div class="cyber-decoration">
       <div class="cyber-grid" />
@@ -599,101 +529,7 @@ onMounted(() => {
   }
 }
 
-/* 进度条样式 */
-.cyber-progress {
-  margin-bottom: 20px;
-}
-
-.progress-track {
-  height: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 10px;
-  position: relative;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #0070ff, #00c3ff);
-  border-radius: 4px;
-  transition: width 0.3s ease-in-out;
-  position: relative;
-  overflow: hidden;
-}
-
-.progress-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  animation: progress-shine 2s linear infinite;
-}
-
-@keyframes progress-shine {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.progress-percentage {
-  text-align: right;
-  font-size: 14px;
-  color: #00c3ff;
-  font-weight: 600;
-}
-
-/* 数据可视化样式 */
-.data-network {
-  position: relative;
-  height: 200px;
-  margin-top: 20px;
-  border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  border: 1px solid rgba(0, 195, 255, 0.1);
-}
-
-.network-visualization {
-  width: 100%;
-  height: 100%;
-}
-
-.network-line {
-  stroke: rgba(0, 195, 255, 0.3);
-  stroke-width: 1;
-  transition: all 0.5s;
-}
-
-.network-node {
-  fill: #00c3ff;
-  transition: all 0.5s;
-}
-
-.network-node.pulse {
-  animation: node-pulse 2s infinite;
-}
-
-@keyframes node-pulse {
-  0% {
-    r: attr(r);
-    fill: #00c3ff;
-  }
-  50% {
-    r: calc(attr(r) * 1.2);
-    fill: #0070ff;
-  }
-  100% {
-    r: attr(r);
-    fill: #00c3ff;
-  }
-}
+/* 已删除进度条和数据可视化相关样式 */
 
 /* 装饰元素 */
 .cyber-decoration {
