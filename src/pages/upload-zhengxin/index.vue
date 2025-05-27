@@ -409,6 +409,14 @@ function updateLoanForms() {
 // 上传文件
 async function onUpload(file) {
   uploading.value = true
+  
+  // 一开始就显示正在解析的提示
+  showLoadingToast({
+    message: '征信报告正在解析中...',
+    forbidClick: true,
+    duration: 0,
+  })
+  
   try {
     console.log('file: ', file)
     // 先上传PDF文件
@@ -417,13 +425,6 @@ async function onUpload(file) {
     if (!uploadResult || !uploadResult.url) {
       throw new Error('文件上传失败')
     }
-
-    // 显示正在解析的提示
-    showLoadingToast({
-      message: '征信报告正在解析中...',
-      forbidClick: true,
-      duration: 0,
-    })
 
     // 调用征信解析接口
     const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
