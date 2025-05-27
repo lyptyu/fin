@@ -438,16 +438,23 @@ async function onUpload(file) {
 
     // 只在解析失败时显示弹窗
     if (code !== 0) {
-      showDialog({
-        title: '解析失败',
-        message: msg || '请稍后重试',
-        confirmButtonText: '确定',
-      })
       // 解析失败后将PDF文件置为空
       fileList.value = []
       // 设置解析失败状态
       analysisComplete.value = false
       uploadFailed.value = true
+      
+      // 使用showDialog并等待用户确认
+      showDialog({
+        title: '解析失败',
+        message: msg || '请稍后重试',
+        confirmButtonText: '确定',
+      }).then(() => {
+        // 点击确定后重置表单
+        resetForm()
+        // 关闭加载提示，确保它被关闭
+        closeToast()
+      })
     } // 解析成功时显示轻提示
     else {
       showSuccessToast({
@@ -465,15 +472,25 @@ async function onUpload(file) {
   }
   catch (error) {
     console.error(error)
+    // 标记上传失败状态
+    analysisComplete.value = false
+    uploadFailed.value = true
+    // 清空文件列表
+    fileList.value = []
+    
+    // 关闭加载提示
+    closeToast()
+    
+    // 显示上传失败弹窗
     showDialog({
       title: '上传失败',
       message: error.message || '请稍后重试',
       confirmButtonText: '确定',
       confirmButtonColor: '#f44336',
+    }).then(() => {
+      // 点击确定后重置表单
+      resetForm()
     })
-    // 标记上传失败状态
-    analysisComplete.value = false
-    uploadFailed.value = true
   }
   finally {
     uploading.value = false
