@@ -77,7 +77,7 @@ function generateDataNodes() {
 async function submitQuery() {
   // 验证用户数据
   if (!userData.value.name || !userData.value.idCard || !userData.value.phone) {
-    showDialog({
+    await showDialog({
       title: '提示',
       message: '无法获取完整的用户信息，请先完成身份验证',
       confirmButtonText: '确定',
@@ -112,46 +112,28 @@ async function startQuery() {
     if (res.code === 0) {
       showSuccessToast('分析完成')
 
-      // 根据风险评分决定下一步 res.data.riskInfo.riskScore
-      if (res.data.riskInfo.riskScore > 80) {
-        // 伽马≥80分,系统拒,终止流程,弹窗：抱歉，您的条件不符合，拒绝原因：大数据不符合
-        showDialog({
-          title: '提示',
-          message: '抱歉，您的条件不符合，拒绝原因：大数据不符合',
-          theme: 'round-button',
-          confirmButtonText: '我知道了',
-          confirmButtonColor: '#1989fa',
-          overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' },
-        })
-      }
-      else if (res.data.riskInfo.riskScore > 60) {
-        // 伽马[50~79)分,且刑事案件或被告执行中案件,终止流程
-        showDialog({
-          title: '提示',
-          message: '抱歉，您的条件不符合，拒绝原因：大数据不符合',
-          theme: 'round-button',
-          confirmButtonText: '我知道了',
-          confirmButtonColor: '#1989fa',
-          overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' },
-        })
-      }
-      else {
-        setTimeout(() => {
-          router.push('/upload-zhengxin')
-        }, 500)
-      }
+      setTimeout(() => {
+        router.push('/upload-zhengxin')
+      }, 500)
     }
     else {
-      showFailToast(res.msg || '查询失败')
+      console.log('fail123')
+      showFailToast({
+        message: res.msg || '查询失败',
+        duration: 2000,
+      })
     }
   }
   catch (error) {
     console.error(error)
-    showFailToast('系统异常，请稍后再试')
+    showFailToast({
+      message: '系统异常，请稍后再试',
+      duration: 2000,
+    })
   }
   finally {
     isQuerying.value = false
-    closeToast()
+    // 移除closeToast()调用，让Toast按照设定的duration自动关闭
   }
 }
 
@@ -198,7 +180,7 @@ async function simulateApiCall() {
             data: {
               riskInfo: {
                 riskScore: Math.floor(Math.random() * 100),
-              }
+              },
             },
           })
         })
