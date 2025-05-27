@@ -45,8 +45,8 @@ export function fileUpload(data: { file: File }): Promise<ApiResponse<{ url: str
   formData.append('file', data.file)
   return request.post('/file/upload', formData, {
     headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+      'Content-Type': 'multipart/form-data',
+    },
   })
 }
 export function ocrIdCard(data: { frontImageUrl: string, backImageUrl: string }): Promise<ApiResponse> {

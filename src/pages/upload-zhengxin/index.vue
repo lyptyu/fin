@@ -409,14 +409,14 @@ function updateLoanForms() {
 // 上传文件
 async function onUpload(file) {
   uploading.value = true
-  
+
   // 一开始就显示正在解析的提示
   showLoadingToast({
     message: '征信报告正在解析中...',
     forbidClick: true,
     duration: 0,
   })
-  
+
   try {
     console.log('file: ', file)
     // 先上传PDF文件
@@ -443,7 +443,7 @@ async function onUpload(file) {
       // 设置解析失败状态
       analysisComplete.value = false
       uploadFailed.value = true
-      
+
       // 使用showDialog并等待用户确认
       showDialog({
         title: '解析失败',
@@ -477,10 +477,10 @@ async function onUpload(file) {
     uploadFailed.value = true
     // 清空文件列表
     fileList.value = []
-    
+
     // 关闭加载提示
     closeToast()
-    
+
     // 显示上传失败弹窗
     showDialog({
       title: '上传失败',
@@ -718,7 +718,7 @@ function resetForm() {
       </div>
 
       <!-- 文件上传区域 -->
-      <div class="upload-area glass-card">
+      <div class="glass-card upload-area">
         <van-uploader
           v-model="fileList"
           :max-count="1"
@@ -735,7 +735,7 @@ function resetForm() {
     </div>
 
     <!-- 上传后的额外表单 -->
-    <div v-if="showAdditionalForm" class="additional-form glass-card">
+    <div v-if="showAdditionalForm" class="glass-card additional-form">
       <!-- 返回按钮 -->
       <div class="back-button-container">
         <van-button
