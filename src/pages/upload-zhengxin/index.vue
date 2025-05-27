@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { showDialog, showSuccessToast } from 'vant'
+import { closeToast, showDialog, showLoadingToast, showSuccessToast } from 'vant'
 import { creditAnalysis, fileUpload } from '@/api/utils'
 
 // 报告类型
@@ -406,23 +406,6 @@ function updateLoanForms() {
   }
 }
 
-// 只在解析失败时显示结果弹窗
-function showResultDialog(data) {
-  // 只有在解析失败时才显示弹窗
-  if (data.status === 'strong-reject' || data.status === 'weak-reject') {
-    const dialogConfig = {
-      title: '审核结果',
-      message: data.message || '很抱歉，您暂时不符合贷款条件',
-      confirmButtonText: '我知道了',
-      confirmButtonColor: '#f44336',
-    }
-    return showDialog(dialogConfig)
-  }
-
-  // 成功时不显示弹窗，直接返回已解决的Promise
-  return Promise.resolve()
-}
-
 // 上传文件
 async function onUpload(file) {
   uploading.value = true
@@ -435,31 +418,49 @@ async function onUpload(file) {
       throw new Error('文件上传失败')
     }
 
-    // 上传成功后立即显示新增信息表单
-    showAdditionalForm.value = true
+    // 显示正在解析的提示
+    showLoadingToast({
+      message: '征信报告正在解析中...',
+      forbidClick: true,
+      duration: 0,
+    })
 
     // 调用征信解析接口
     const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
-    const { data } = await creditAnalysis({
+    const { code, data, msg } = await creditAnalysis({
       url: uploadResult.url,
       analysisType,
     })
 
-    // 只在解析失败时显示弹窗
-    await showResultDialog(data)
+    // 关闭正在解析的提示
+    closeToast()
 
-    // 解析成功时显示轻提示
-    if (data.status === 'success') {
-      showSuccessToast('征信解析完成')
+    // 只在解析失败时显示弹窗
+    if (code !== 0) {
+      showDialog({
+        title: '解析失败',
+        message: msg || '请稍后重试',
+        confirmButtonText: '确定',
+      })
+      // 解析失败后将PDF文件置为空
+      fileList.value = []
+      // 设置解析失败状态
+      analysisComplete.value = false
+      uploadFailed.value = true
+    } // 解析成功时显示轻提示
+    else {
+      showSuccessToast({
+        message: '解析成功',
+        duration: 1500,
+      })
+      // 解析成功后显示新增信息表单
+      showAdditionalForm.value = true
+      // 设置解析成功状态
+      analysisComplete.value = true
+      uploadFailed.value = false
     }
 
-    // 无论返回什么状态，都标记征信解析完成，允许提交表单
-    analysisComplete.value = true
-
-    // 如果状态不是成功，可以在这里添加额外处理
-    // if (data.status !== 'success') {
-    //   // 可以添加额外的处理逻辑
-    // }
+    // 状态已在各自分支中设置，这里不需要重复设置
   }
   catch (error) {
     console.error(error)
