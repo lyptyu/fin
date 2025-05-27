@@ -42,3 +42,10 @@ export function resetPassword(): Promise<any> {
 export function register(): Promise<any> {
   return request.post('/user/register')
 }
+
+export function selectSimpleLoanOverdue(agentId?: string): Promise<any> {
+  return request.post(`/credit/selectSimpleLoanOverdue?agent_id=${agentId}`)
+}
+export function selectDetailedLoanOverdue(agentId?: string): Promise<any> {
+  return request.post(`/credit/selectDetailedLoanOverdue?agent_id=${agentId}`)
+}

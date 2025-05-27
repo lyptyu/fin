@@ -2,6 +2,8 @@
 import { reactive, ref } from 'vue'
 import { closeToast, showDialog, showLoadingToast, showSuccessToast } from 'vant'
 import { creditAnalysis, fileUpload } from '@/api/utils'
+import { selectSimpleLoanOverdue, selectDetailedLoanOverdue } from '@/api/user'
+import { useUserStore } from '@/stores'
 
 // 报告类型
 const reportType = ref('simple') // simple: 简版, detail: 详版
@@ -406,6 +408,9 @@ function updateLoanForms() {
   }
 }
 
+// 创建用户store实例
+const userStore = useUserStore()
+
 // 上传文件
 async function onUpload(file) {
   uploading.value = true
@@ -437,7 +442,7 @@ async function onUpload(file) {
     closeToast()
 
     // 只在解析失败时显示弹窗
-    if (code !== 0) {
+    if (false && code !== 0) {
       // 解析失败后将PDF文件置为空
       fileList.value = []
       // 设置解析失败状态
@@ -455,8 +460,32 @@ async function onUpload(file) {
         // 关闭加载提示，确保它被关闭
         closeToast()
       })
-    } // 解析成功时显示轻提示
-    else {
+    } else { // 解析成功时显示轻提示
+      // 根据报告类型调用不同的接口
+      try {
+        // 获取用户的agent_id
+        const agentId = userStore.getAgentId()
+        
+        // 根据报告类型调用不同的接口
+        let loanResult
+        if (reportType.value === 'simple') {
+          // 简版征信报告
+          loanResult = await selectSimpleLoanOverdue(agentId)
+        } else {
+          // 详版征信报告
+          loanResult = await selectDetailedLoanOverdue(agentId)
+        }
+        
+        // 检查接口返回结果
+        if (loanResult.code === 0) {
+          console.warn('贷款逾期信息查询成功:', loanResult.data)
+        } else {
+          console.warn('贷款逾期信息查询失败:', loanResult.msg)
+        }
+      } catch (error) {
+        console.warn('贷款逾期信息查询异常:', error)
+      }
+      
       showSuccessToast({
         message: '解析成功',
         duration: 1500,
