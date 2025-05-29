@@ -415,17 +415,18 @@ const userStore = useUserStore()
 function fillOverdueInformation(data: any, reportType: string) {
   // 首先设置是否有新增逾期
   creditForm.hasOverdue = '是'
-  
+
   // 清空原有的逾期数据
   creditForm.loanOverdues = []
   creditForm.cardOverdues = []
   creditForm.loanOverdueDetails = {}
   creditForm.cardOverdueDetails = {}
-  
+
   if (reportType === 'simple') {
     // 处理简版征信报告数据
     handleSimpleReportData(data)
-  } else {
+  }
+  else {
     // 处理详版征信报告数据
     handleDetailedReportData(data)
   }
@@ -436,108 +437,110 @@ function handleSimpleReportData(data: any) {
   // 处理贷款逾期信息
   if (data.loanDetails && Array.isArray(data.loanDetails)) {
     // 过滤出有效的贷款，并且不包含“合计”项
-    const validLoans = data.loanDetails.filter(loan => 
-      loan.bank_name !== '合计' && 
-      (loan.current_status === '正常' || 
-       loan.current_status === '当前无逾期' || 
-       loan.current_status === '当前逾期')
+    const validLoans = data.loanDetails.filter(loan =>
+      loan.bank_name !== '合计'
+      && (loan.current_status === '正常'
+        || loan.current_status === '当前无逾期'
+        || loan.current_status === '当前逾期'),
     )
-    
+
     // 添加到逾期贷款列表
     validLoans.forEach((loan, index) => {
       const id = `loan${index + 1}`
-      
+
       // 格式化日期
       const grantDate = loan.show_grant_date_format || loan.show_grant_date || loan.grant_date_format?.substring(0, 10) || loan.grant_date || ''
       const formattedDate = grantDate.replace(/\./g, '-').replace(/\u5E74/g, '-').replace(/\u6708/g, '-').replace(/\u65E5/g, '')
-      
+
       // 生成标题格式：“日期-机构-总额-类型”
       const title = `${formattedDate}-${loan.bank_name}-总额${loan.grant_amount || 0}元-${loan.loan_type_complete || loan.loan_type || '个人贷款'}`
-      
+
       // 添加到贷款类逾期列表
       creditForm.loanOverdues.push({
         id,
         institution: title, // 使用格式化后的标题
-        type: loan.loan_type_complete || loan.loan_type || '个人贷款'
+        type: loan.loan_type_complete || loan.loan_type || '个人贷款',
       })
-      
+
       // 根据状态设置逾期详情
       let level = '0' // 简版征信默认0级
       let amount = '0' // 默认金额
       let repaid = '是' // 默认已还
-      
+
       // 简版征信中，只有0和4级，如果有m4_overdue则为4级，否则为0级
       if (loan.m4_overdue) {
         level = '4'
         amount = loan.grant_amount ? Math.round(loan.grant_amount * 0.1).toString() : '1000'
         repaid = loan.current_status === '已结清' ? '是' : '否'
-      } else if (loan.current_status === '当前逾期') {
+      }
+      else if (loan.current_status === '当前逾期') {
         // 如果是当前逾期，即使没有m4_overdue，也设置为4级
         level = '4'
         amount = loan.grant_amount ? Math.round(loan.grant_amount * 0.05).toString() : '500'
         repaid = '否'
       }
-      
+
       // 添加逾期详情
       creditForm.loanOverdueDetails[id] = {
         level,
         amount,
-        repaid
+        repaid,
       }
     })
   }
-  
+
   // 处理信用卡逾期信息
   if (data.creditCardDetails && Array.isArray(data.creditCardDetails)) {
     // 过滤出有效的信用卡，并且不包含“合计”项
-    const validCards = data.creditCardDetails.filter(card => 
-      card.bank_name !== '合计' && 
-      (card.current_status === '正常' || 
-       card.current_status === '当前无逾期' || 
-       card.current_status === '当前逾期')
+    const validCards = data.creditCardDetails.filter(card =>
+      card.bank_name !== '合计'
+      && (card.current_status === '正常'
+        || card.current_status === '当前无逾期'
+        || card.current_status === '当前逾期'),
     )
-    
+
     // 添加到逾期信用卡列表
     validCards.forEach((card, index) => {
       const id = `card${index + 1}`
-      
+
       // 格式化日期
       const grantDate = card.grant_date_format?.substring(0, 10) || card.grant_date || ''
       const formattedDate = grantDate.replace(/\u5E74/g, '-').replace(/\u6708/g, '-').replace(/\u65E5/g, '')
-      
+
       // 生成标题格式：“日期-机构-总额-信用卡”
       const title = `${formattedDate}-${card.bank_name}-总额${card.grant_amount || 0}元-信用卡`
       const maskedCardNo = `${card.bank_name}信用卡`
-      
+
       // 添加到贷记卡类逾期列表
       creditForm.cardOverdues.push({
         id,
         institution: title, // 使用格式化后的标题
-        cardNo: maskedCardNo
+        cardNo: maskedCardNo,
       })
-      
+
       // 根据状态设置逾期详情
       let level = '0' // 简版征信默认0级
       let amount = '0' // 默认金额
       let repaid = '是' // 默认已还
-      
+
       // 简版征信中，只有0和4级，如果有m4_overdue则为4级，否则为0级
       if (card.m4_overdue) {
         level = '4'
         amount = card.grant_amount ? Math.round(card.grant_amount * 0.2).toString() : '500'
         repaid = card.current_status === '当前无逾期' || card.current_status === '正常' ? '是' : '否'
-      } else if (card.current_status === '当前逾期') {
+      }
+      else if (card.current_status === '当前逾期') {
         // 如果是当前逾期，即使没有m4_overdue，也设置为4级
         level = '4'
         amount = card.grant_amount ? Math.round(card.grant_amount * 0.1).toString() : '200'
         repaid = '否'
       }
-      
+
       // 添加逾期详情
       creditForm.cardOverdueDetails[id] = {
         level,
         amount,
-        repaid
+        repaid,
       }
     })
   }
@@ -551,72 +554,72 @@ function handleDetailedReportData(data: any) {
     handleSimpleReportData(data)
     return
   }
-  
+
   // 如果数据结构不同，需要特殊处理
   // 这里先做一个占位处理，待实际数据结构确定后再补充
-  
+
   // 假设详版数据中可能有以下字段：
   // loans: 贷款列表
   // creditCards: 信用卡列表
   // overdueRecords: 逾期记录
-  
+
   // 处理贷款信息
   if (data.loans && Array.isArray(data.loans)) {
     data.loans.forEach((loan, index) => {
       const id = `loan${index + 1}`
-      
+
       // 尝试从不同字段获取数据
       const bankName = loan.institution || loan.bankName || loan.bank || ''
       const loanType = loan.type || loan.loanType || ''
       const loanAmount = loan.amount || loan.loanAmount || 0
       const status = loan.status || loan.currentStatus || ''
       const date = loan.date || loan.grantDate || ''
-      
+
       // 生成标题
       const title = `${date}-${bankName}-总额${loanAmount}元-${loanType}`
-      
+
       // 添加到贷款类逾期列表
       creditForm.loanOverdues.push({
         id,
         institution: title,
-        type: loanType
+        type: loanType,
       })
-      
+
       // 添加逾期详情
       creditForm.loanOverdueDetails[id] = {
         level: '1',
         amount: Math.round(loanAmount * 0.1).toString(),
-        repaid: status === '已结清' ? '是' : '否'
+        repaid: status === '已结清' ? '是' : '否',
       }
     })
   }
-  
+
   // 处理信用卡信息
   if (data.creditCards && Array.isArray(data.creditCards)) {
     data.creditCards.forEach((card, index) => {
       const id = `card${index + 1}`
-      
+
       // 尝试从不同字段获取数据
       const bankName = card.institution || card.bankName || card.bank || ''
       const cardAmount = card.amount || card.limit || 0
       const status = card.status || card.currentStatus || ''
       const date = card.date || card.grantDate || ''
-      
+
       // 生成标题
       const title = `${date}-${bankName}-总额${cardAmount}元-信用卡`
-      
+
       // 添加到贷记卡类逾期列表
       creditForm.cardOverdues.push({
         id,
         institution: title,
-        cardNo: `${bankName}信用卡`
+        cardNo: `${bankName}信用卡`,
       })
-      
+
       // 添加逾期详情
       creditForm.cardOverdueDetails[id] = {
         level: '1',
         amount: Math.round(cardAmount * 0.2).toString(),
-        repaid: status === '当前无逾期' || status === '正常' ? '是' : '否'
+        repaid: status === '当前无逾期' || status === '正常' ? '是' : '否',
       }
     })
   }
@@ -653,7 +656,7 @@ async function onUpload(file) {
     closeToast()
 
     // 只在解析失败时显示弹窗
-    if (false && code !== 0) {
+    if (code !== 0) {
       // 解析失败后将PDF文件置为空
       fileList.value = []
       // 设置解析失败状态
@@ -692,7 +695,7 @@ async function onUpload(file) {
         // 检查接口返回结果
         if (loanResult.code === 0 && loanResult.data) {
           console.warn('贷款逾期信息查询成功')
-          
+
           // 填充逾期信息到表单
           fillOverdueInformation(loanResult.data, reportType.value)
         }

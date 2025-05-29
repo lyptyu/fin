@@ -23,6 +23,10 @@ export function login(data: LoginData): Promise<any> {
   return request.post<LoginRes>('/v1/auth/login', data)
 }
 
+export function loginStatus(data: LoginData): Promise<any> {
+  return request.post<LoginRes>('/v1/auth/loginStatus', data)
+}
+
 export function logout() {
   return request.post('/user/logout')
 }
@@ -46,15 +50,15 @@ export function register(): Promise<any> {
 export function selectSimpleLoanOverdue(agentId?: string): Promise<any> {
   return request.post('/credit/selectSimpleLoanOverdue', {}, {
     headers: {
-      'Agent-Id': agentId || ''
-    }
+      'Agent-Id': agentId || '',
+    },
   })
 }
 
 export function selectDetailedLoanOverdue(agentId?: string): Promise<any> {
   return request.post('/credit/selectDetailedLoanOverdue', {}, {
     headers: {
-      'Agent-Id': agentId || ''
-    }
+      'Agent-Id': agentId || '',
+    },
   })
 }
