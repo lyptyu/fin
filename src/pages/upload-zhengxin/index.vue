@@ -896,9 +896,9 @@ async function submitForm() {
       analysisType,
       ...formData,
     }
-
+    const agentId = userStore.getAgentId()
     // 调用保存接口
-    const { code, msg } = await saveAndExecutionRules(submitData)
+    const { code, msg } = await saveAndExecutionRules(agentId, submitData)
 
     // 关闭加载提示
     closeToast()
