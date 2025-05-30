@@ -23,8 +23,8 @@ export function login(data: LoginData): Promise<any> {
   return request.post<LoginRes>('/v1/auth/login', data)
 }
 
-export function loginStatus(data: LoginData): Promise<any> {
-  return request.post<LoginRes>('/v1/auth/loginStatus', data)
+export function loginStatus(): Promise<any> {
+  return request.post<LoginRes>('/v1/auth/loginStatus')
 }
 
 export function logout() {

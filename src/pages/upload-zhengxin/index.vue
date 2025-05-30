@@ -43,15 +43,11 @@ const creditForm = reactive({
   hasOverdue: '', // 是否有新增逾期
 
   // 贷款类逾期
-  loanOverdues: [
-    { id: 'loan1', institution: '中国建设银行', type: '个人住房贷款' },
-  ] as any[], // 贷款类逾期数组
+  loanOverdues: [] as any[], // 贷款类逾期数组
   loanOverdueDetails: {} as Record<string, any>, // 贷款类逾期详情
 
   // 贷记卡类逾期
-  cardOverdues: [
-    { id: 'card1', institution: '中国工商银行', cardNo: '6222 **** **** 1234' },
-  ] as any[], // 贷记卡类逾期数组
+  cardOverdues: [] as any[], // 贷记卡类逾期数组
   cardOverdueDetails: {} as Record<string, any>, // 贷记卡类逾期详情
 })
 
@@ -98,19 +94,11 @@ const loanTypeOptions = [
   { text: '信用卡', value: '信用卡' },
 ]
 
-// 逾期级别选项
-const overdueLevelOptions = [
-  { text: '1级', value: '1' },
-  { text: '2级', value: '2' },
-  { text: '3级', value: '3' },
-  { text: '4级', value: '4' },
-  { text: '5级', value: '5' },
-]
+// 逾期级别选项已移除
 
 // 选择器控制
 const currentSelectingIndex = ref(-1)
-const currentOverdueType = ref('') // loan 或 card
-const currentOverdueId = ref('') // 逾期项目的ID
+// 逾期类型和ID变量已移除
 
 // 查询相关选择器
 const showQueryTypePicker = ref(false)
@@ -121,8 +109,7 @@ const showQueryInstitutionPicker = ref(false)
 const showLoanTypePicker = ref(false)
 const showLoanInstitutionPicker = ref(false)
 
-// 逃期相关选择器
-const showOverdueLevelPicker = ref(false)
+// 逾期相关选择器已移除
 
 // 机构搜索相关
 const filteredInstitutions = ref([...creditInstitutions])
@@ -234,74 +221,36 @@ function handleLoanTimeClick(index: number) {
   showDatePicker.value = true
 }
 
-// 处理逃期级别选择
-function handleOverdueLevelClick(type: string, id: string) {
-  currentOverdueType.value = type // loan 或 card
-  currentOverdueId.value = id
-  showOverdueLevelPicker.value = true
-}
-
-function onOverdueLevelConfirm(value: any) {
-  if (currentOverdueType.value && currentOverdueId.value) {
-    const type = currentOverdueType.value
-    const id = currentOverdueId.value
-
-    // 设置逾期级别
-    if (type === 'loan') {
-      if (!creditForm.loanOverdueDetails[id]) {
-        creditForm.loanOverdueDetails[id] = {
-          level: '',
-          amount: '',
-          repaid: '否',
-        }
-      }
-      creditForm.loanOverdueDetails[id].level = value.selectedValues[0]
-    }
-    else if (type === 'card') {
-      if (!creditForm.cardOverdueDetails[id]) {
-        creditForm.cardOverdueDetails[id] = {
-          level: '',
-          amount: '',
-          repaid: '否',
-        }
-      }
-      creditForm.cardOverdueDetails[id].level = value.selectedValues[0]
-    }
-  }
-  showOverdueLevelPicker.value = false
-}
-
 // 处理逾期项目选择
 function toggleOverdueItem(type: string, id: string) {
-  // 检查当前状态并切换
-  const isChecked = type === 'loan'
-    ? !!creditForm.loanOverdueDetails[id]
-    : !!creditForm.cardOverdueDetails[id]
-
-  if (!isChecked) {
-    // 初始化逾期详情
-    if (type === 'loan') {
-      creditForm.loanOverdueDetails[id] = {
-        level: '',
-        amount: '',
-        repaid: '否',
-      }
+  if (type === 'loan') {
+    if (creditForm.loanOverdueDetails[id]) {
+      // 如果已经存在，则删除
+      delete creditForm.loanOverdueDetails[id]
     }
-    else if (type === 'card') {
-      creditForm.cardOverdueDetails[id] = {
-        level: '',
-        amount: '',
-        repaid: '否',
+    else {
+      // 如果不存在，则创建
+      if (!creditForm.loanOverdueDetails[id]) {
+        creditForm.loanOverdueDetails[id] = {
+          amount: '',
+          repaid: '否',
+        }
       }
     }
   }
-  else {
-    // 移除逾期详情
-    if (type === 'loan') {
-      delete creditForm.loanOverdueDetails[id]
-    }
-    else if (type === 'card') {
+  else if (type === 'card') {
+    if (creditForm.cardOverdueDetails[id]) {
+      // 如果已经存在，则删除
       delete creditForm.cardOverdueDetails[id]
+    }
+    else {
+      // 如果不存在，则创建
+      if (!creditForm.cardOverdueDetails[id]) {
+        creditForm.cardOverdueDetails[id] = {
+          amount: '',
+          repaid: '否',
+        }
+      }
     }
   }
 }
@@ -358,7 +307,7 @@ function onDateConfirm(value: { selectedValues: string[] }) {
 }
 
 // 为了兼容性，保留原来的函数名
-function onQueryTimeConfirm(value: { selectedValues: string[] }) {
+function _onQueryTimeConfirm(value: { selectedValues: string[] }) {
   return onDateConfirm(value)
 }
 
@@ -413,7 +362,13 @@ const userStore = useUserStore()
 
 // 处理逾期信息并填充到表单
 function fillOverdueInformation(data: any, reportType: string) {
-  // 首先设置是否有新增逾期
+  // 如果数据为null，则设置为没有新增逾期
+  if (!data) {
+    creditForm.hasOverdue = '否'
+    return
+  }
+
+  // 设置是否有新增逾期
   creditForm.hasOverdue = '是'
 
   // 清空原有的逾期数据
@@ -555,25 +510,19 @@ function handleDetailedReportData(data: any) {
     return
   }
 
-  // 如果数据结构不同，需要特殊处理
-  // 这里先做一个占位处理，待实际数据结构确定后再补充
-
-  // 假设详版数据中可能有以下字段：
-  // loans: 贷款列表
-  // creditCards: 信用卡列表
-  // overdueRecords: 逾期记录
-
-  // 处理贷款信息
-  if (data.loans && Array.isArray(data.loans)) {
-    data.loans.forEach((loan, index) => {
+  // 处理循环贷款信息（revolvingLoan）
+  if (data.revolvingLoan && Array.isArray(data.revolvingLoan)) {
+    // 只处理状态为正常的贷款，已结清的不处理
+    const activeLoans = data.revolvingLoan
+    activeLoans.forEach((loan, index) => {
       const id = `loan${index + 1}`
 
-      // 尝试从不同字段获取数据
-      const bankName = loan.institution || loan.bankName || loan.bank || ''
-      const loanType = loan.type || loan.loanType || ''
-      const loanAmount = loan.amount || loan.loanAmount || 0
-      const status = loan.status || loan.currentStatus || ''
-      const date = loan.date || loan.grantDate || ''
+      // 获取数据
+      const bankName = loan.managingInstitution || loan.cardIssuingInstitution || ''
+      const loanType = loan.businessType || '个人贷款'
+      const loanAmount = loan.loanAmount || loan.accountCreditLimit || 0
+      // 不再使用status变量
+      const date = loan.openingDate || ''
 
       // 生成标题
       const title = `${date}-${bankName}-总额${loanAmount}元-${loanType}`
@@ -585,43 +534,65 @@ function handleDetailedReportData(data: any) {
         type: loanType,
       })
 
+      // 判断是否有逾期
+      const hasOverdue = loan.currentOverduePeriods > 0 || loan.currentOverdueAmount > 0
+
       // 添加逾期详情
-      creditForm.loanOverdueDetails[id] = {
-        level: '1',
-        amount: Math.round(loanAmount * 0.1).toString(),
-        repaid: status === '已结清' ? '是' : '否',
+      if (hasOverdue) {
+        creditForm.loanOverdueDetails[id] = {
+          amount: loan.currentOverdueAmount ? loan.currentOverdueAmount.toString() : '0',
+          repaid: '否',
+        }
       }
     })
   }
 
-  // 处理信用卡信息
-  if (data.creditCards && Array.isArray(data.creditCards)) {
-    data.creditCards.forEach((card, index) => {
+  // 处理信用卡信息（creditCardAccount）
+  if (data.creditCardAccount && Array.isArray(data.creditCardAccount)) {
+    // 只处理状态为正常的信用卡，销户的不处理
+    const activeCards = data.creditCardAccount.filter(card =>
+      card.accountStatus === '正常'
+      || card.accountStatus === '当前无逾期'
+      || card.accountStatus === '当前逾期',
+    )
+
+    activeCards.forEach((card, index) => {
       const id = `card${index + 1}`
 
-      // 尝试从不同字段获取数据
-      const bankName = card.institution || card.bankName || card.bank || ''
-      const cardAmount = card.amount || card.limit || 0
-      const status = card.status || card.currentStatus || ''
-      const date = card.date || card.grantDate || ''
+      // 获取数据
+      const bankName = card.cardIssuingInstitution || card.managingInstitution || ''
+      const cardAmount = card.creditLimit || card.accountCreditLimit || 0
+      // 不再使用status变量
+      const date = card.openingDate || ''
 
       // 生成标题
       const title = `${date}-${bankName}-总额${cardAmount}元-信用卡`
+      const maskedCardNo = `${bankName}信用卡`
 
       // 添加到贷记卡类逾期列表
       creditForm.cardOverdues.push({
         id,
         institution: title,
-        cardNo: `${bankName}信用卡`,
+        cardNo: maskedCardNo,
       })
 
+      // 判断是否有逾期
+      const hasOverdue = card.currentOverduePeriods > 0 || card.currentOverdueAmount > 0
+
       // 添加逾期详情
-      creditForm.cardOverdueDetails[id] = {
-        level: '1',
-        amount: Math.round(cardAmount * 0.2).toString(),
-        repaid: status === '当前无逾期' || status === '正常' ? '是' : '否',
+      if (hasOverdue) {
+        creditForm.cardOverdueDetails[id] = {
+          amount: card.currentOverdueAmount ? card.currentOverdueAmount.toString() : '0',
+          repaid: '否',
+        }
       }
     })
+  }
+
+  // 如果没有逾期记录，则设置为没有新增逾期
+  if (Object.keys(creditForm.loanOverdueDetails).length === 0
+    && Object.keys(creditForm.cardOverdueDetails).length === 0) {
+    creditForm.hasOverdue = '否'
   }
 }
 
@@ -637,7 +608,6 @@ async function onUpload(file) {
   })
 
   try {
-    console.log('file: ', file)
     // 先上传PDF文件
     const { data: uploadResult } = await fileUpload({ file: file.file })
 
@@ -647,7 +617,7 @@ async function onUpload(file) {
 
     // 调用征信解析接口
     const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
-    const { code, data, msg } = await creditAnalysis({
+    const { code, msg } = await creditAnalysis({
       url: uploadResult.url,
       analysisType,
     })
@@ -693,18 +663,20 @@ async function onUpload(file) {
         }
 
         // 检查接口返回结果
-        if (loanResult.code === 0 && loanResult.data) {
-          console.warn('贷款逾期信息查询成功')
+        if (loanResult.code === 0) {
+          // 贷款逾期信息查询成功
 
-          // 填充逾期信息到表单
+          // 填充逾期信息到表单，即使data为null也传入
           fillOverdueInformation(loanResult.data, reportType.value)
         }
         else {
-          console.warn('贷款逾期信息查询失败:', loanResult.msg)
+          // 贷款逾期信息查询失败
+          // 默认设置为没有新增逾期
+          creditForm.hasOverdue = '否'
         }
       }
       catch (error) {
-        console.warn('贷款逾期信息查询异常:', error)
+        // 贷款逾期信息查询异常
       }
 
       showSuccessToast({
@@ -721,7 +693,7 @@ async function onUpload(file) {
     // 状态已在各自分支中设置，这里不需要重复设置
   }
   catch (error) {
-    console.error(error)
+    console.error('上传文件错误:', error)
     // 标记上传失败状态
     analysisComplete.value = false
     uploadFailed.value = true
@@ -898,8 +870,7 @@ function submitForm() {
     }
   }
 
-  // 打印表单数据
-  console.log('提交的表单数据:', JSON.stringify(creditForm, null, 2))
+  // 表单数据已准备好可以提交
 
   // 提交成功提示
   showSuccessToast('提交成功')
@@ -1230,14 +1201,7 @@ function resetForm() {
                     {{ creditForm.loanOverdues.find(item => item.id === id)?.type }}
                   </div>
 
-                  <van-field
-                    v-model="detail.level"
-                    readonly
-                    clickable
-                    label="逾期级别"
-                    placeholder="请选择逾期级别"
-                    @click="handleOverdueLevelClick('loan', id)"
-                  />
+                  <!-- 逾期级别字段已移除 -->
 
                   <van-field
                     v-model="detail.amount"
@@ -1302,14 +1266,7 @@ function resetForm() {
                     {{ creditForm.cardOverdues.find(item => item.id === id)?.cardNo }}
                   </div>
 
-                  <van-field
-                    v-model="detail.level"
-                    readonly
-                    clickable
-                    label="逾期级别"
-                    placeholder="请选择逾期级别"
-                    @click="handleOverdueLevelClick('card', id)"
-                  />
+                  <!-- 逾期级别字段已移除 -->
 
                   <van-field
                     v-model="detail.amount"
@@ -1347,7 +1304,6 @@ function resetForm() {
       <!-- 表单提交按钮 -->
       <div class="form-actions">
         <van-button
-          type="primary"
           block
           :loading="uploading"
           :disabled="uploadFailed ? false : !analysisComplete"
@@ -1466,16 +1422,7 @@ function resetForm() {
       </div>
     </van-popup>
 
-    <!-- 逾期级别选择器 -->
-    <van-popup v-model:show="showOverdueLevelPicker" position="bottom">
-      <van-picker
-        :columns="overdueLevelOptions"
-        show-toolbar
-        title="选择逾期级别"
-        @confirm="onOverdueLevelConfirm"
-        @cancel="showOverdueLevelPicker = false"
-      />
-    </van-popup>
+    <!-- 逾期级别选择器已移除 -->
   </div>
 </template>
 

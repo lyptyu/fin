@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { sendCode as apiSendCode } from '@/api/utils'
+import { loginStatus } from '@/api/user'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -73,20 +74,20 @@ async function onSubmit() {
   try {
     // 构建登录参数，包含agentId
     const loginParams: {
-      phone: string;
-      code: string;
-      agentId?: string;
+      phone: string
+      code: string
+      agentId?: string
     } = {
       phone: phone.value,
       code: code.value,
     }
-    
+
     // 如果有agentId，添加到登录参数中
     const agentId = userStore.getAgentId()
     if (agentId) {
       loginParams.agentId = agentId
     }
-    
+
     // 调用登录接口
     await userStore.login(loginParams)
 
@@ -96,6 +97,14 @@ async function onSubmit() {
 
     showToast('登录成功')
     // 登录成功后跳id-card-upload页面
+    // const statusRes = await loginStatus()
+    // if (statusRes.code !== 0) {
+    //   showToast(statusRes.msg)
+    // }
+    // else {
+    //   console.log(statusRes.data)
+    // }
+    // return
     router.push({ name: '/id-card-upload/' })
   }
   catch (error) {
