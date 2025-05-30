@@ -534,15 +534,10 @@ function handleDetailedReportData(data: any) {
         type: loanType,
       })
 
-      // 判断是否有逾期
-      const hasOverdue = loan.currentOverduePeriods > 0 || loan.currentOverdueAmount > 0
-
-      // 添加逾期详情
-      if (hasOverdue) {
-        creditForm.loanOverdueDetails[id] = {
-          amount: loan.currentOverdueAmount ? loan.currentOverdueAmount.toString() : '0',
-          repaid: '否',
-        }
+      // 添加逾期详情 - 无论是否有逾期都添加
+      creditForm.loanOverdueDetails[id] = {
+        amount: loan.currentOverdueAmount ? loan.currentOverdueAmount.toString() : '0',
+        repaid: loan.currentOverduePeriods > 0 ? '否' : '是',
       }
     })
   }
@@ -576,15 +571,10 @@ function handleDetailedReportData(data: any) {
         cardNo: maskedCardNo,
       })
 
-      // 判断是否有逾期
-      const hasOverdue = card.currentOverduePeriods > 0 || card.currentOverdueAmount > 0
-
-      // 添加逾期详情
-      if (hasOverdue) {
-        creditForm.cardOverdueDetails[id] = {
-          amount: card.currentOverdueAmount ? card.currentOverdueAmount.toString() : '0',
-          repaid: '否',
-        }
+      // 添加逾期详情 - 无论是否有逾期都添加
+      creditForm.cardOverdueDetails[id] = {
+        amount: card.currentOverdueAmount ? card.currentOverdueAmount.toString() : '0',
+        repaid: card.currentOverduePeriods > 0 ? '否' : '是',
       }
     })
   }
