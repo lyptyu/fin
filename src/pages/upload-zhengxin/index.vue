@@ -2,7 +2,7 @@
 import { reactive, ref } from 'vue'
 import { closeToast, showDialog, showLoadingToast, showSuccessToast } from 'vant'
 import { creditAnalysis, fileUpload } from '@/api/utils'
-import { selectDetailedLoanOverdue, selectSimpleLoanOverdue } from '@/api/user'
+import { saveAndExecutionRules, selectDetailedLoanOverdue, selectSimpleLoanOverdue } from '@/api/user'
 import { useUserStore } from '@/stores'
 
 // 报告类型
@@ -700,7 +700,7 @@ async function onUpload(file) {
 }
 
 // 提交表单
-function submitForm() {
+async function submitForm() {
   // 如果征信解析未完成，不允许提交
   if (!analysisComplete.value) {
     if (uploadFailed.value) {
@@ -831,11 +831,11 @@ function submitForm() {
       for (const id of cardOverdueIds) {
         const detail = creditForm.cardOverdueDetails[id]
         if (!detail.amount) {
-          showDialog({ title: '提示', message: '请填写贷记卡类逾期金额' })
+          showDialog({ title: '提示', message: '请填写贷记卡类逃期金额' })
           return
         }
         if (!detail.repaid) {
-          showDialog({ title: '提示', message: '请选择贷记卡类逾期是否已还' })
+          showDialog({ title: '提示', message: '请选择贷记卡类逃期是否已还' })
           return
         }
       }
@@ -844,11 +844,93 @@ function submitForm() {
 
   // 表单数据已准备好可以提交
 
-  // 提交成功提示
-  showSuccessToast('提交成功')
+  // 显示加载提示
+  showLoadingToast({
+    message: '正在提交...',
+    forbidClick: true,
+    duration: 0,
+  })
 
-  // 重置表单
-  resetForm()
+  try {
+    // 准备提交的数据
+    const analysisType = reportType.value === 'simple' ? '简版征信' : '详版征信'
+
+    // 将逾期详情从对象格式转换为数组格式
+    const formData = { ...creditForm }
+
+    // 处理贷款类逾期详情
+    const loanOverdueDetailsArray = []
+    for (const id of Object.keys(formData.loanOverdueDetails)) {
+      const detail = formData.loanOverdueDetails[id]
+      const loan = formData.loanOverdues.find(item => item.id === id)
+      if (loan && detail) {
+        loanOverdueDetailsArray.push({
+          id,
+          institution: loan.institution,
+          type: loan.type,
+          amount: detail.amount,
+          repaid: detail.repaid,
+        })
+      }
+    }
+    formData.loanOverdueDetails = loanOverdueDetailsArray
+
+    // 处理贷记卡类逾期详情
+    const cardOverdueDetailsArray = []
+    for (const id of Object.keys(formData.cardOverdueDetails)) {
+      const detail = formData.cardOverdueDetails[id]
+      const card = formData.cardOverdues.find(item => item.id === id)
+      if (card && detail) {
+        cardOverdueDetailsArray.push({
+          id,
+          institution: card.institution,
+          cardNo: card.cardNo,
+          amount: detail.amount,
+          repaid: detail.repaid,
+        })
+      }
+    }
+    formData.cardOverdueDetails = cardOverdueDetailsArray
+
+    const submitData = {
+      analysisType,
+      ...formData,
+    }
+
+    // 调用保存接口
+    const { code, msg } = await saveAndExecutionRules(submitData)
+
+    // 关闭加载提示
+    closeToast()
+
+    if (code === 0) {
+      // 提交成功提示
+      showSuccessToast('提交成功')
+
+      // 重置表单
+      resetForm()
+    }
+    else {
+      // 提交失败提示
+      showDialog({
+        title: '提示',
+        message: msg || '提交失败，请重试',
+        confirmButtonText: '确定',
+      })
+    }
+  }
+  catch (err) {
+    // 关闭加载提示
+    closeToast()
+
+    // 错误提示
+    console.error('提交表单错误:', err)
+    showDialog({
+      title: '提示',
+      message: '系统错误，请重试',
+      confirmButtonText: '确定',
+    })
+  }
 }
 
 // 重置表单

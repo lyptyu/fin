@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import type { ApiResponse } from '@/api/utils'
 
 export interface LoginData {
   phone: string
@@ -57,6 +58,14 @@ export function selectSimpleLoanOverdue(agentId?: string): Promise<any> {
 
 export function selectDetailedLoanOverdue(agentId?: string): Promise<any> {
   return request.post('/credit/selectDetailedLoanOverdue', {}, {
+    headers: {
+      'Agent-Id': agentId || '',
+    },
+  })
+}
+
+export function saveAndExecutionRules(agentId?: string, data: any): Promise<ApiResponse> {
+  return request.post(`/credit/saveAndExecutionRules`, data, {
     headers: {
       'Agent-Id': agentId || '',
     },

@@ -71,6 +71,3 @@ export function sendCode(data: { phone: string }): Promise<ApiResponse> {
 
 // 手动新增
 
-export function saveAndExecutionRules(data: { analysisType: string, creditReportDetailDTO: any }): Promise<ApiResponse> {
-  return request.post(`/credit/saveAndExecutionRules`, data)
-}
