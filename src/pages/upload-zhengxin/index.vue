@@ -418,26 +418,21 @@ function handleSimpleReportData(data: any) {
       })
 
       // 根据状态设置逾期详情
-      let level = '0' // 简版征信默认0级
       let amount = '0' // 默认金额
       let repaid = '是' // 默认已还
 
-      // 简版征信中，只有0和4级，如果有m4_overdue则为4级，否则为0级
+      // 根据逾期情况设置金额和还款状态
       if (loan.m4_overdue) {
-        level = '4'
         amount = loan.grant_amount ? Math.round(loan.grant_amount * 0.1).toString() : '1000'
         repaid = loan.current_status === '已结清' ? '是' : '否'
       }
       else if (loan.current_status === '当前逾期') {
-        // 如果是当前逾期，即使没有m4_overdue，也设置为4级
-        level = '4'
         amount = loan.grant_amount ? Math.round(loan.grant_amount * 0.05).toString() : '500'
         repaid = '否'
       }
 
       // 添加逾期详情
       creditForm.loanOverdueDetails[id] = {
-        level,
         amount,
         repaid,
       }
@@ -474,26 +469,21 @@ function handleSimpleReportData(data: any) {
       })
 
       // 根据状态设置逾期详情
-      let level = '0' // 简版征信默认0级
       let amount = '0' // 默认金额
       let repaid = '是' // 默认已还
 
-      // 简版征信中，只有0和4级，如果有m4_overdue则为4级，否则为0级
+      // 根据逾期情况设置金额和还款状态
       if (card.m4_overdue) {
-        level = '4'
         amount = card.grant_amount ? Math.round(card.grant_amount * 0.2).toString() : '500'
         repaid = card.current_status === '当前无逾期' || card.current_status === '正常' ? '是' : '否'
       }
       else if (card.current_status === '当前逾期') {
-        // 如果是当前逾期，即使没有m4_overdue，也设置为4级
-        level = '4'
         amount = card.grant_amount ? Math.round(card.grant_amount * 0.1).toString() : '200'
         repaid = '否'
       }
 
       // 添加逾期详情
       creditForm.cardOverdueDetails[id] = {
-        level,
         amount,
         repaid,
       }
@@ -820,23 +810,19 @@ function submitForm() {
       const cardOverdueIds = Object.keys(creditForm.cardOverdueDetails)
 
       if (loanOverdueIds.length === 0 && cardOverdueIds.length === 0) {
-        showDialog({ title: '提示', message: '请至少选择一项逃期记录' })
+        showDialog({ title: '提示', message: '请至少选择一项逾期记录' })
         return
       }
 
-      // 检查每个贷款类逃期详情
+      // 检查每个贷款类逾期详情
       for (const id of loanOverdueIds) {
         const detail = creditForm.loanOverdueDetails[id]
-        if (!detail.level) {
-          showDialog({ title: '提示', message: '请选择贷款类逃期级别' })
-          return
-        }
         if (!detail.amount) {
-          showDialog({ title: '提示', message: '请填写贷款类逃期金额' })
+          showDialog({ title: '提示', message: '请填写贷款类逾期金额' })
           return
         }
         if (!detail.repaid) {
-          showDialog({ title: '提示', message: '请选择贷款类逃期是否已还' })
+          showDialog({ title: '提示', message: '请选择贷款类逾期是否已还' })
           return
         }
       }
@@ -844,16 +830,12 @@ function submitForm() {
       // 检查每个贷记卡类逃期详情
       for (const id of cardOverdueIds) {
         const detail = creditForm.cardOverdueDetails[id]
-        if (!detail.level) {
-          showDialog({ title: '提示', message: '请选择贷记卡类逃期级别' })
-          return
-        }
         if (!detail.amount) {
-          showDialog({ title: '提示', message: '请填写贷记卡类逃期金额' })
+          showDialog({ title: '提示', message: '请填写贷记卡类逾期金额' })
           return
         }
         if (!detail.repaid) {
-          showDialog({ title: '提示', message: '请选择贷记卡类逃期是否已还' })
+          showDialog({ title: '提示', message: '请选择贷记卡类逾期是否已还' })
           return
         }
       }
