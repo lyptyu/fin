@@ -1,20 +1,3 @@
-<template>
-  <div class="submit-success-container">
-    <div class="success-card">
-      <div class="icon-container">
-        <van-icon name="success" class="success-icon" />
-      </div>
-      <div class="success-title">提交成功</div>
-      <div class="success-message">您的信息已成功提交，我们将尽快处理您的申请</div>
-      <div class="button-container">
-        <van-button type="primary" round block class="back-button" @click="goHome">
-          返回首页
-        </van-button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
@@ -25,6 +8,22 @@ function goHome() {
   router.replace('/')
 }
 </script>
+
+<template>
+  <div class="submit-success-container">
+    <div class="success-card">
+      <div class="icon-container">
+        <van-icon name="success" class="success-icon" />
+      </div>
+      <div class="success-title">
+        提交成功
+      </div>
+      <div class="success-message">
+        您的信息已成功提交，我们将尽快处理您的申请
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .submit-success-container {
