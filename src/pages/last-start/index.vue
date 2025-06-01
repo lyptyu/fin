@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { showFailToast, showSuccessToast } from 'vant'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
+// 存储键名
+const LAST_START_STORAGE_KEY = 'financing_mes_data'
 
 // 表单数据
 const formData = reactive({
@@ -147,6 +150,46 @@ function onRepaymentSourceConfirm(value: any) {
   showRepaymentSourcePicker.value = false
 }
 
+// 保存表单数据到本地存储
+function saveFormDataToStorage() {
+  try {
+    // 将表单数据保存为 financingMes 格式
+    const financingMes = {
+      financingAmount: formData.financingAmount,
+      financingPurpose: formData.financingPurpose,
+      repaymentSource: formData.repaymentSource,
+      specialNotes: formData.specialNotes,
+      realMaritalStatus: formData.realMaritalStatus,
+      creditMaritalStatus: formData.creditMaritalStatus,
+      spouseAware: formData.spouseAware,
+      spouseCanSign: formData.spouseCanSign,
+      hasDrivingLicense: formData.hasDrivingLicense,
+      spouseHasDrivingLicense: formData.spouseHasDrivingLicense
+    }
+    localStorage.setItem(LAST_START_STORAGE_KEY, JSON.stringify(financingMes))
+  } catch (e) {
+    console.error('保存表单数据失败:', e)
+  }
+}
+
+// 从本地存储恢复表单数据
+function restoreFormDataFromStorage() {
+  try {
+    const savedData = localStorage.getItem(LAST_START_STORAGE_KEY)
+    if (savedData) {
+      const parsedData = JSON.parse(savedData)
+      Object.assign(formData, parsedData)
+    }
+  } catch (e) {
+    console.error('恢复表单数据失败:', e)
+  }
+}
+
+// 页面加载时恢复数据
+onMounted(() => {
+  restoreFormDataFromStorage()
+})
+
 // 提交表单
 function submitForm() {
   // 表单验证
@@ -191,14 +234,13 @@ function submitForm() {
     }
   }
 
-  // 提交成功后的操作
-  // showSuccessToast('提交成功')
-
-  // 这里可以添加提交到后端的代码
-  console.log('提交的表单数据:', formData)
-
-  // 跳转到下一页，例如跳转到last-examine页面
-  // router.push('/last-examine/')
+  // 保存表单数据到本地存储
+  saveFormDataToStorage()
+  
+  showSuccessToast('保存成功')
+  
+  // 跳转到下一页
+  router.push('/last-examine/')
 }
 
 // 返回上一页
@@ -341,7 +383,7 @@ function goBack() {
         </div>
 
         <!-- 驾驶证情况 -->
-        <div v-if="formData.realMaritalStatus && formData.realMaritalStatus !== '已婚'" class="section">
+        <div class="section">
           <div class="section-header">
             <div class="section-title">
               驾驶证情况
@@ -352,11 +394,23 @@ function goBack() {
           <div class="form-group">
             <div class="form-item">
               <div class="form-label required">
-                是否有驾驶证
+                本人驾驶证情况
               </div>
               <div class="form-input" @click="handleHasDrivingLicenseClick">
                 <div class="selected-value" :class="{ placeholder: !formData.hasDrivingLicense }">
                   {{ formData.hasDrivingLicense || '请选择是否有驾驶证' }}
+                </div>
+                <van-icon name="arrow" class="arrow-icon" />
+              </div>
+            </div>
+            
+            <div v-if="formData.realMaritalStatus === '已婚'" class="form-item">
+              <div class="form-label required">
+                配偶驾驶证情况
+              </div>
+              <div class="form-input" @click="handleSpouseHasDrivingLicenseClick">
+                <div class="selected-value" :class="{ placeholder: !formData.spouseHasDrivingLicense }">
+                  {{ formData.spouseHasDrivingLicense || '请选择配偶是否有驾驶证' }}
                 </div>
                 <van-icon name="arrow" class="arrow-icon" />
               </div>
@@ -451,16 +505,15 @@ function goBack() {
 <style lang="less" scoped>
 .last-start {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
-  background-attachment: fixed;
+  background: linear-gradient(180deg, #f0f2f5 0%, #ffffff 100%);
 
   .custom-nav {
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(90deg, #1976d2 0%, #2196f3 100%);
 
     :deep(.van-nav-bar__title) {
       color: #fff;
-      font-weight: bold;
+      font-size: 18px;
+      font-weight: 500;
     }
 
     :deep(.van-icon) {
@@ -469,39 +522,46 @@ function goBack() {
   }
 
   .content {
-    padding: 20px;
+    padding: 16px;
   }
 
   .form-container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    border-radius: 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
   }
 
   .section {
-    margin-bottom: 20px;
-    padding: 20px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
 
-    &:not(:last-child) {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    &:last-child {
+      margin-bottom: 0;
     }
   }
 
   .section-header {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .section-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
     position: relative;
-    padding-left: 15px;
+    padding-left: 12px;
 
     &:before {
       content: '';
@@ -509,35 +569,36 @@ function goBack() {
       left: 0;
       top: 50%;
       transform: translateY(-50%);
-      width: 5px;
-      height: 20px;
-      background: linear-gradient(to bottom, #00f2fe, #4facfe);
-      border-radius: 3px;
+      width: 4px;
+      height: 16px;
+      background: #1976d2;
+      border-radius: 2px;
     }
   }
 
   .section-line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0.3), transparent);
-    margin-left: 15px;
+    background: #f0f0f0;
+    margin-left: 12px;
   }
 
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
   }
 
   .form-item {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
   .form-label {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #333;
 
     &.required:after {
       content: '*';
@@ -550,44 +611,44 @@ function goBack() {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(255, 255, 255, 0.1);
+    background: #f8f9fa;
     border-radius: 8px;
     padding: 12px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #e8e8e8;
     transition: all 0.3s;
 
     &:active {
-      background: rgba(255, 255, 255, 0.15);
+      background: #f0f0f0;
     }
   }
 
   .selected-value {
-    color: #fff;
+    color: #333;
 
     &.placeholder {
-      color: rgba(255, 255, 255, 0.5);
+      color: #999;
     }
   }
 
   .arrow-icon {
-    color: rgba(255, 255, 255, 0.7);
+    color: #999;
   }
 
   .tech-field {
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: #f8f9fa !important;
     border-radius: 8px !important;
     overflow: hidden;
 
     :deep(.van-field__label) {
-      color: rgba(255, 255, 255, 0.9);
+      color: #333;
     }
 
     :deep(.van-field__control) {
-      color: #fff;
+      color: #333;
     }
 
     :deep(.van-field__control::placeholder) {
-      color: rgba(255, 255, 255, 0.5);
+      color: #999;
     }
 
     :deep(.van-cell) {
@@ -601,24 +662,53 @@ function goBack() {
   }
 
   .unit {
-    color: rgba(255, 255, 255, 0.7);
+    color: #666;
     font-size: 14px;
   }
 
   .submit-container {
-    padding: 20px;
+    margin-top: 32px;
+    padding: 0 16px 20px;
   }
 
   .submit-button {
     height: 44px;
     font-size: 16px;
-    font-weight: bold;
-    background: linear-gradient(to right, #00f2fe, #4facfe);
-    border: none;
-    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+    font-weight: 500;
+    border-radius: 22px;
+    background: linear-gradient(90deg, #1976d2 0%, #2196f3 100%);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
 
     &:active {
-      opacity: 0.9;
+      transform: scale(0.98);
+    }
+  }
+
+  // 添加动画效果
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .section {
+    animation: fadeIn 0.5s ease-out forwards;
+
+    &:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.3s;
     }
   }
 
@@ -639,7 +729,7 @@ function goBack() {
   }
 
   :deep(.van-picker__cancel, .van-picker__confirm) {
-    color: #1989fa;
+    color: #1976d2;
   }
 
   :deep(.van-picker-column__item) {
@@ -648,7 +738,7 @@ function goBack() {
 
   :deep(.van-picker-column__item--selected) {
     color: #323233;
-    font-weight: bold;
+    font-weight: 500;
   }
 }
 </style>

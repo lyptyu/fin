@@ -472,7 +472,19 @@ async function submitAll() {
       module1Data.rejectReasons = newRejectReasons
     }
 
-    // 所有必填项已填写，打印JSON结果
+    // 获取last-start页面保存的融资信息数据
+    try {
+      const savedData = localStorage.getItem('financing_mes_data')
+      if (savedData && savedData !== 'undefined') {
+        // 将融资信息数据直接赋值给module1Data.financingMes
+        module1Data.financingMes = JSON.parse(savedData)
+        console.warn('已加载融资信息数据:', module1Data.financingMes)
+      }
+    } catch (e) {
+      console.error('获取融资信息数据失败:', e)
+    }
+
+    // 所有必填项已填写，合并数据
     const formData = {
       module1Data,
       module2Data,
@@ -480,7 +492,7 @@ async function submitAll() {
       module3CarData,
       module3AssetData,
       module3FlowData,
-      module4Data,
+      module4Data
     }
 
     console.log('Form data JSON:', JSON.stringify(formData, null, 2))
