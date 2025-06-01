@@ -68,10 +68,10 @@ const module1Data = reactive({
   ],
   // 黑灰名单机构
   blacklistOrgs: [],
-  blacklistReasons: {},
+  blacklistReasons: [], // 改为数组格式 [{black: '机构名', reasons: '原因'}]
   // 被拒记录机构
   rejectedOrgs: [],
-  rejectReasons: {},
+  rejectReasons: [], // 改为数组格式 [{black: '机构名', reasons: '原因'}]
 })
 
 // 贷款类型选项
@@ -484,6 +484,32 @@ async function submitAll() {
     }
     catch (e) {
       console.error('获取 financingMes 数据失败', e)
+    }
+    
+    // 确保 blacklistReasons 和 rejectReasons 是数组格式
+    // 如果还有使用对象格式的数据，转换为数组格式
+    if (!Array.isArray(module1Data.blacklistReasons)) {
+      const newBlacklistReasons = []
+      const blacklistReasonsObj = module1Data.blacklistReasons || {}
+      
+      // 将对象格式转换为数组格式
+      for (const [black, reasons] of Object.entries(blacklistReasonsObj)) {
+        newBlacklistReasons.push({ black, reasons })
+      }
+      
+      module1Data.blacklistReasons = newBlacklistReasons
+    }
+    
+    if (!Array.isArray(module1Data.rejectReasons)) {
+      const newRejectReasons = []
+      const rejectReasonsObj = module1Data.rejectReasons || {}
+      
+      // 将对象格式转换为数组格式
+      for (const [black, reasons] of Object.entries(rejectReasonsObj)) {
+        newRejectReasons.push({ black, reasons })
+      }
+      
+      module1Data.rejectReasons = newRejectReasons
     }
 
     // 所有必填项已填写，打印JSON结果
