@@ -3,8 +3,10 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { showFailToast, showSuccessToast } from 'vant'
 import { useRouter } from 'vue-router'
 import { updateFinalReview } from '@/api/user'
+import { useUserStore } from '@/stores'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 // 模块1的数据
 const module1Data = reactive({
@@ -485,30 +487,30 @@ async function submitAll() {
     catch (e) {
       console.error('获取 financingMes 数据失败', e)
     }
-    
+
     // 确保 blacklistReasons 和 rejectReasons 是数组格式
     // 如果还有使用对象格式的数据，转换为数组格式
     if (!Array.isArray(module1Data.blacklistReasons)) {
       const newBlacklistReasons = []
       const blacklistReasonsObj = module1Data.blacklistReasons || {}
-      
+
       // 将对象格式转换为数组格式
       for (const [black, reasons] of Object.entries(blacklistReasonsObj)) {
         newBlacklistReasons.push({ black, reasons })
       }
-      
+
       module1Data.blacklistReasons = newBlacklistReasons
     }
-    
+
     if (!Array.isArray(module1Data.rejectReasons)) {
       const newRejectReasons = []
       const rejectReasonsObj = module1Data.rejectReasons || {}
-      
+
       // 将对象格式转换为数组格式
       for (const [black, reasons] of Object.entries(rejectReasonsObj)) {
         newRejectReasons.push({ black, reasons })
       }
-      
+
       module1Data.rejectReasons = newRejectReasons
     }
 
@@ -524,14 +526,18 @@ async function submitAll() {
     }
 
     console.log('Form data JSON:', JSON.stringify(formData, null, 2))
-    
-    // 调用updateFinalReview API提交数据
-    const response = await updateFinalReview(undefined, formData)
+
+    // 获取用户的agent_id
+    const agentId = userStore.getAgentId()
+
+    // 调用updateFinalReview API提交数据，并传入 agent_id
+    const response = await updateFinalReview(agentId, formData)
     if (response && response.code === 200) {
       showSuccessToast('提交成功')
       // 可以根据需要跳转到其他页面
       // router.push('/success-page')
-    } else {
+    }
+    else {
       showFailToast(response?.message || '提交失败')
     }
   }
