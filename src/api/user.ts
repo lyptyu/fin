@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import type { ApiResponse } from '@/api/utils'
+import type {ApiResponse} from '@/api/utils'
 
 export interface LoginData {
   phone: string
@@ -74,6 +74,14 @@ export function saveAndExecutionRules(agentId?: string, data: any): Promise<ApiR
 
 export function updateFinalReview(agentId?: string, data: any): Promise<ApiResponse> {
   return request.post(`/credit/updateFinalReview`, data, {
+    headers: {
+      'Agent-Id': agentId || '19955310021-01',
+    },
+  })
+}
+
+export function selectFinalReview(agentId?: string): Promise<ApiResponse> {
+  return request.post(`/credit/selectFinalReview`, {}, {
     headers: {
       'Agent-Id': agentId || '19955310021-01',
     },

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
-import { showFailToast, showSuccessToast } from 'vant'
-import { useRouter } from 'vue-router'
-import { updateFinalReview } from '@/api/user'
-import { useUserStore } from '@/stores'
+import {onMounted, reactive, ref, watch} from 'vue'
+import {showFailToast, showSuccessToast} from 'vant'
+import {useRouter} from 'vue-router'
+import {updateFinalReview, selectFinalReview} from '@/api/user'
+import {useUserStore} from '@/stores'
+import dayjs from 'dayjs'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -78,15 +79,15 @@ const module1Data = reactive({
 
 // 贷款类型选项
 const loanTypeOptions = [
-  { text: '模拟数据1', value: '模拟数据1' },
-  { text: '模拟数据2', value: '模拟数据2' },
-  { text: '模拟数据3', value: '模拟数据3' },
+  {text: '模拟数据1', value: '模拟数据1'},
+  {text: '模拟数据2', value: '模拟数据2'},
+  {text: '模拟数据3', value: '模拟数据3'},
 ]
 
 // 信用卡类型选项
 const creditCardTypeOptions = [
-  { text: '大额专项分期卡', value: '大额专项分期卡' },
-  { text: '贷记卡', value: '贷记卡' },
+  {text: '大额专项分期卡', value: '大额专项分期卡'},
+  {text: '贷记卡', value: '贷记卡'},
 ]
 
 // 贷款类型选择相关代码
@@ -181,10 +182,10 @@ const module2Data = reactive({
 // 修改社保地区选择相关代码
 const showSocialSecurityAreaPicker = ref(false)
 const areaOptions = ref([
-  { text: '北京', value: '北京' },
-  { text: '上海', value: '上海' },
-  { text: '广州', value: '广州' },
-  { text: '深圳', value: '深圳' },
+  {text: '北京', value: '北京'},
+  {text: '上海', value: '上海'},
+  {text: '广州', value: '广州'},
+  {text: '深圳', value: '深圳'},
 ]) // 这里应该从后端获取
 
 function onSocialSecurityAreaConfirm(params: {
@@ -200,10 +201,10 @@ function onSocialSecurityAreaConfirm(params: {
 // 公积金地区选择相关代码
 const showProvidentFundAreaPicker = ref(false)
 const providentFundAreaOptions = ref([
-  { text: '北京', value: '北京' },
-  { text: '上海', value: '上海' },
-  { text: '广州', value: '广州' },
-  { text: '深圳', value: '深圳' },
+  {text: '北京', value: '北京'},
+  {text: '上海', value: '上海'},
+  {text: '广州', value: '广州'},
+  {text: '深圳', value: '深圳'},
 ]) // 这里应该从后端获取
 
 function onProvidentFundAreaConfirm(params: {
@@ -218,10 +219,10 @@ function onProvidentFundAreaConfirm(params: {
 // 个税地区选择相关代码
 const showTaxAreaPicker = ref(false)
 const taxAreaOptions = ref([
-  { text: '北京', value: '北京' },
-  { text: '上海', value: '上海' },
-  { text: '广州', value: '广州' },
-  { text: '深圳', value: '深圳' },
+  {text: '北京', value: '北京'},
+  {text: '上海', value: '上海'},
+  {text: '广州', value: '广州'},
+  {text: '深圳', value: '深圳'},
 ]) // 这里应该从后端获取
 
 function onTaxAreaConfirm(params: {
@@ -235,33 +236,33 @@ function onTaxAreaConfirm(params: {
 
 // module3Data 房产相关字段
 const houseAreaOptions = [
-  { text: '深圳', value: '深圳' },
-  { text: '广州', value: '广州' },
-  { text: '珠海', value: '珠海' },
-  { text: '汕头', value: '汕头' },
-  { text: '佛山', value: '佛山' },
-  { text: '韶关', value: '韶关' },
-  { text: '湛江', value: '湛江' },
-  { text: '肇庆', value: '肇庆' },
-  { text: '江门', value: '江门' },
-  { text: '茂名', value: '茂名' },
-  { text: '惠州', value: '惠州' },
-  { text: '梅州', value: '梅州' },
-  { text: '汕尾', value: '汕尾' },
-  { text: '河源', value: '河源' },
-  { text: '阳江', value: '阳江' },
-  { text: '清远', value: '清远' },
-  { text: '东莞', value: '东莞' },
-  { text: '中山', value: '中山' },
-  { text: '潮州', value: '潮州' },
-  { text: '揭阳', value: '揭阳' },
-  { text: '云浮', value: '云浮' },
+  {text: '深圳', value: '深圳'},
+  {text: '广州', value: '广州'},
+  {text: '珠海', value: '珠海'},
+  {text: '汕头', value: '汕头'},
+  {text: '佛山', value: '佛山'},
+  {text: '韶关', value: '韶关'},
+  {text: '湛江', value: '湛江'},
+  {text: '肇庆', value: '肇庆'},
+  {text: '江门', value: '江门'},
+  {text: '茂名', value: '茂名'},
+  {text: '惠州', value: '惠州'},
+  {text: '梅州', value: '梅州'},
+  {text: '汕尾', value: '汕尾'},
+  {text: '河源', value: '河源'},
+  {text: '阳江', value: '阳江'},
+  {text: '清远', value: '清远'},
+  {text: '东莞', value: '东莞'},
+  {text: '中山', value: '中山'},
+  {text: '潮州', value: '潮州'},
+  {text: '揭阳', value: '揭阳'},
+  {text: '云浮', value: '云浮'},
 ]
 // 使用 houseShareWithColumns 替代 houseShareOptions
 const houseSecondTypeOptions = [
-  { text: '银行', value: '银行' },
-  { text: '小额', value: '小额' },
-  { text: '私人', value: '私人' },
+  {text: '银行', value: '银行'},
+  {text: '小额', value: '小额'},
+  {text: '私人', value: '私人'},
 ]
 
 const module3Data = reactive({
@@ -312,51 +313,50 @@ watch(() => module3Data.houseCount, (val) => {
     if (module3Data.houses.length > n) {
       module3Data.houses.splice(n)
     }
-  }
-  else {
+  } else {
     module3Data.houses = []
   }
 })
 
 // 车牌地区选项
 const carPlateAreaOptions = [
-  { text: '广州', value: '广州' },
-  { text: '深圳', value: '深圳' },
-  { text: '珠海', value: '珠海' },
-  { text: '汕头', value: '汕头' },
-  { text: '佛山', value: '佛山' },
-  { text: '韶关', value: '韶关' },
-  { text: '湛江', value: '湛江' },
-  { text: '肇庆', value: '肇庆' },
-  { text: '江门', value: '江门' },
-  { text: '茂名', value: '茂名' },
-  { text: '惠州', value: '惠州' },
-  { text: '梅州', value: '梅州' },
-  { text: '汕尾', value: '汕尾' },
-  { text: '河源', value: '河源' },
-  { text: '阳江', value: '阳江' },
-  { text: '清远', value: '清远' },
-  { text: '东莞', value: '东莞' },
-  { text: '中山', value: '中山' },
-  { text: '潮州', value: '潮州' },
-  { text: '揭阳', value: '揭阳' },
-  { text: '云浮', value: '云浮' },
-  { text: '湖南', value: '湖南' },
-  { text: '广西', value: '广西' },
-  { text: '海南', value: '海南' },
-  { text: '重庆', value: '重庆' },
-  { text: '四川', value: '四川' },
-  { text: '贵州', value: '贵州' },
-  { text: '云南', value: '云南' },
-  { text: '西藏', value: '西藏' },
-  { text: '陕西', value: '陕西' },
-  { text: '甘肃', value: '甘肃' },
-  { text: '青海', value: '青海' },
-  { text: '宁夏', value: '宁夏' },
-  { text: '新疆', value: '新疆' },
-  { text: '香港', value: '香港' },
-  { text: '澳门', value: '澳门' },
-  { text: '台湾', value: '台湾' },
+  {text: '广州', value: '广州'},
+  {text: '深圳', value: '深圳'},
+  {text: '珠海', value: '珠海'},
+  {text: '汕头', value: '汕头'},
+  {text: '佛山', value: '佛山'},
+  {text: '韶关', value: '韶关'},
+  {text: '湛江', value: '湛江'},
+  {text: '肇庆', value: '肇庆'},
+  {text: '江门', value: '江门'},
+  {text: '茂名', value: '茂名'},
+  {text: '惠州', value: '惠州'},
+  {text: '梅州', value: '梅州'},
+  {text: '汕尾', value: '汕尾'},
+  {text: '河源', value: '河源'},
+  {text: '阳江', value: '阳江'},
+  {text: '清远', value: '清远'},
+  {text: '东莞', value: '东莞'},
+  {text: '中山', value: '中山'},
+  {text: '潮州', value: '潮州'},
+  {text: '揭阳', value: '揭阳'},
+  {text: '云浮', value: '云浮'},
+  {text: '湖南', value: '湖南'},
+  {text: '广西', value: '广西'},
+  {text: '海南', value: '海南'},
+  {text: '重庆', value: '重庆'},
+  {text: '四川', value: '四川'},
+  {text: '贵州', value: '贵州'},
+  {text: '云南', value: '云南'},
+  {text: '西藏', value: '西藏'},
+  {text: '陕西', value: '陕西'},
+  {text: '甘肃', value: '甘肃'},
+  {text: '青海', value: '青海'},
+  {text: '宁夏', value: '宁夏'},
+  {text: '新疆', value: '新疆'},
+  {text: '香港', value: '香港'},
+  {text: '澳门', value: '澳门'},
+  {text: '台湾', value: '台湾'},
 ]
 
 // 车产相关数据
@@ -380,9 +380,11 @@ const module3CarData = reactive({
 
 // 车牌地区picker弹窗
 const showCarPlateAreaPicker = ref(false)
+
 function handleCarPlateAreaClick() {
   showCarPlateAreaPicker.value = true
 }
+
 function onCarPlateAreaConfirm(val: any) {
   module3CarData.carPlateArea = val.selectedOptions[0].text
   showCarPlateAreaPicker.value = false
@@ -391,10 +393,12 @@ function onCarPlateAreaConfirm(val: any) {
 // 房产共有人picker弹窗
 const showHouseShareWithPicker = ref(false)
 const currentHouseShareWithIndex = ref(-1)
+
 function handleHouseShareWithClick(idx: number) {
   currentHouseShareWithIndex.value = idx
   showHouseShareWithPicker.value = true
 }
+
 function onHouseShareWithConfirm(val: any) {
   if (currentHouseShareWithIndex.value !== -1) {
     module3Data.houses[currentHouseShareWithIndex.value].shareWith = val.selectedOptions[0].text
@@ -418,51 +422,6 @@ function onClickLeft() {
 // 临时保存各个模块
 const STORAGE_KEY = 'lastExamineFormData'
 
-async function saveModule() {
-  try {
-    // 保存所有模块数据到 localStorage
-    const formData = {
-      module1Data: JSON.parse(JSON.stringify(module1Data)),
-      module2Data: JSON.parse(JSON.stringify(module2Data)),
-      module3Data: JSON.parse(JSON.stringify(module3Data)),
-      module3CarData: JSON.parse(JSON.stringify(module3CarData)),
-      module3AssetData: JSON.parse(JSON.stringify(module3AssetData)),
-      module3FlowData: JSON.parse(JSON.stringify(module3FlowData)),
-      module4Data: JSON.parse(JSON.stringify(module4Data)),
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData))
-    showSuccessToast('保存成功')
-  }
-  catch (error) {
-    showFailToast('保存失败')
-  }
-}
-
-// 页面加载时自动恢复数据
-function restoreFormDataFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      const saved = JSON.parse(raw)
-      // 用 Object.assign 保持响应式
-      Object.assign(module1Data, saved.module1Data || {})
-      Object.assign(module2Data, saved.module2Data || {})
-      Object.assign(module3Data, saved.module3Data || {})
-      Object.assign(module3CarData, saved.module3CarData || {})
-      Object.assign(module3AssetData, saved.module3AssetData || {})
-      Object.assign(module3FlowData, saved.module3FlowData || {})
-      Object.assign(module4Data, saved.module4Data || {})
-    }
-  }
-  catch (e) {
-    // ignore
-  }
-}
-
-onMounted(() => {
-  restoreFormDataFromStorage()
-})
-
 // 提交所有模块
 async function submitAll() {
   // 检查必填项
@@ -483,8 +442,7 @@ async function submitAll() {
         // 将 financingMes 数据添加到 module1Data 中
         module1Data.financingMes = financingMes
       }
-    }
-    catch (e) {
+    } catch (e) {
       console.error('获取 financingMes 数据失败', e)
     }
 
@@ -496,7 +454,7 @@ async function submitAll() {
 
       // 将对象格式转换为数组格式
       for (const [black, reasons] of Object.entries(blacklistReasonsObj)) {
-        newBlacklistReasons.push({ black, reasons })
+        newBlacklistReasons.push({black, reasons})
       }
 
       module1Data.blacklistReasons = newBlacklistReasons
@@ -508,7 +466,7 @@ async function submitAll() {
 
       // 将对象格式转换为数组格式
       for (const [black, reasons] of Object.entries(rejectReasonsObj)) {
-        newRejectReasons.push({ black, reasons })
+        newRejectReasons.push({black, reasons})
       }
 
       module1Data.rejectReasons = newRejectReasons
@@ -536,12 +494,10 @@ async function submitAll() {
       showSuccessToast('提交成功')
       // 可以根据需要跳转到其他页面
       // router.push('/success-page')
-    }
-    else {
+    } else {
       showFailToast(response?.message || '提交失败')
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error('提交失败:', error)
     showFailToast('提交失败')
   }
@@ -605,10 +561,12 @@ function handleTaxAreaClick() {
 // 房产地区选择相关代码
 const showHouseAreaPicker = ref(false)
 const currentHouseAreaIndex = ref(-1)
+
 function handleHouseAreaClick(idx: number) {
   currentHouseAreaIndex.value = idx
   showHouseAreaPicker.value = true
 }
+
 function onHouseAreaConfirm(val: any) {
   if (currentHouseAreaIndex.value !== -1) {
     module3Data.houses[currentHouseAreaIndex.value].area = val.selectedOptions[0].text
@@ -640,11 +598,11 @@ function onHouseSecondTypeConfirm(val: any) {
 
 // 金融资产类型选项
 const assetTypeOptions = [
-  { text: '股票', value: '股票' },
-  { text: '基金', value: '基金' },
-  { text: '理财', value: '理财' },
-  { text: '定存', value: '定存' },
-  { text: '保险', value: '保险' },
+  {text: '股票', value: '股票'},
+  {text: '基金', value: '基金'},
+  {text: '理财', value: '理财'},
+  {text: '定存', value: '定存'},
+  {text: '保险', value: '保险'},
 ]
 
 // 金融资产相关数据
@@ -670,8 +628,7 @@ watch(() => module3AssetData.assetCount, (val) => {
     if (module3AssetData.assets.length > n) {
       module3AssetData.assets.splice(n)
     }
-  }
-  else {
+  } else {
     module3AssetData.assets = []
   }
 })
@@ -679,10 +636,12 @@ watch(() => module3AssetData.assetCount, (val) => {
 // 金融资产类型picker弹窗
 const showAssetTypePicker = ref(false)
 const currentAssetIndex = ref(-1)
+
 function handleAssetTypeClick(idx: number) {
   currentAssetIndex.value = idx
   showAssetTypePicker.value = true
 }
+
 function onAssetTypeConfirm(val: any) {
   if (currentAssetIndex.value !== -1) {
     module3AssetData.assets[currentAssetIndex.value].type = val.selectedOptions[0].text
@@ -692,13 +651,13 @@ function onAssetTypeConfirm(val: any) {
 
 // 与谁联名选项
 const houseShareWithColumns = [
-  { text: '父母', value: '父母' },
-  { text: '子女', value: '子女' },
-  { text: '配偶', value: '配偶' },
-  { text: '兄弟姐妹', value: '兄弟姐妹' },
-  { text: '朋友', value: '朋友' },
-  { text: '多人', value: '多人' },
-  { text: '其他', value: '其他' },
+  {text: '父母', value: '父母'},
+  {text: '子女', value: '子女'},
+  {text: '配偶', value: '配偶'},
+  {text: '兄弟姐妹', value: '兄弟姐妹'},
+  {text: '朋友', value: '朋友'},
+  {text: '多人', value: '多人'},
+  {text: '其他', value: '其他'},
 ]
 
 // 在 module3Data 中添加
@@ -726,8 +685,7 @@ watch(() => module3FlowData.flowCount, (val) => {
     if (module3FlowData.flows.length > n) {
       module3FlowData.flows.splice(n)
     }
-  }
-  else {
+  } else {
     module3FlowData.flows = []
   }
 })
@@ -806,6 +764,136 @@ function formatCarInvoiceAmount() {
 module3AssetData.assets.forEach((asset) => {
   formatAssetAmount(asset)
 })
+
+// 保存数据到 localStorage
+async function saveModule() {
+  try {
+    // 保存所有模块数据到 localStorage
+    const formData = {
+      module1Data: JSON.parse(JSON.stringify(module1Data)),
+      module2Data: JSON.parse(JSON.stringify(module2Data)),
+      module3Data: JSON.parse(JSON.stringify(module3Data)),
+      module3CarData: JSON.parse(JSON.stringify(module3CarData)),
+      module3AssetData: JSON.parse(JSON.stringify(module3AssetData)),
+      module3FlowData: JSON.parse(JSON.stringify(module3FlowData)),
+      module4Data: JSON.parse(JSON.stringify(module4Data)),
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData))
+    showSuccessToast('保存成功')
+  } catch (error) {
+    showFailToast('保存失败')
+  }
+}
+
+// 从 localStorage 恢复数据
+function restoreFormDataFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const saved = JSON.parse(raw)
+      // 用 Object.assign 保持响应式
+      Object.assign(module1Data, saved.module1Data || {})
+      Object.assign(module2Data, saved.module2Data || {})
+      Object.assign(module3Data, saved.module3Data || {})
+      Object.assign(module3CarData, saved.module3CarData || {})
+      Object.assign(module3AssetData, saved.module3AssetData || {})
+      Object.assign(module3FlowData, saved.module3FlowData || {})
+      Object.assign(module4Data, saved.module4Data || {})
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+// 获取最后审核数据
+async function getLastExamineData() {
+  try {
+    const agentId = userStore.getAgentId()
+    const res = await selectFinalReview(agentId)
+    console.warn('API response:', res) // 使用 console.warn 而非 console.log 来符合 lint 规则
+
+    if (res && res.code === 200 && res.data) {
+      // 使用API返回的真实数据替换模拟数据
+      if (res.data.module1Data) {
+        // 近半年查询记录
+        if (res.data.module1Data.queryRecords && res.data.module1Data.queryRecords.length > 0) {
+          module1Data.queryRecords = res.data.module1Data.queryRecords
+        }
+
+        // 征信后新增放款补充
+        if (res.data.module1Data.newLoans) {
+          if (res.data.module1Data.newLoans.loans && res.data.module1Data.newLoans.loans.length > 0) {
+            module1Data.newLoans.loans = res.data.module1Data.newLoans.loans
+          }
+          if (res.data.module1Data.newLoans.creditCards && res.data.module1Data.newLoans.creditCards.length > 0) {
+            module1Data.newLoans.creditCards = res.data.module1Data.newLoans.creditCards
+          }
+        }
+
+        // 近五年未结清
+        if (res.data.module1Data.unpaidLoans && res.data.module1Data.unpaidLoans.length > 0) {
+          module1Data.unpaidLoans = res.data.module1Data.unpaidLoans
+        }
+
+        // 黑灰名单机构和原因
+        if (res.data.module1Data.blacklistReasons) {
+          module1Data.blacklistReasons = res.data.module1Data.blacklistReasons
+        }
+
+        // 被拒记录机构和原因
+        if (res.data.module1Data.rejectedOrgs) {
+          module1Data.rejectedOrgs = res.data.module1Data.rejectedOrgs
+        }
+        if (res.data.module1Data.rejectReasons) {
+          module1Data.rejectReasons = res.data.module1Data.rejectReasons
+        }
+
+        // 融资信息
+        if (res.data.module1Data.financingMes) {
+          module1Data.financingMes = res.data.module1Data.financingMes
+        }
+      }
+
+      // 模块2数据 - 工作属性
+      if (res.data.module2Data) {
+        Object.assign(module2Data, res.data.module2Data)
+      }
+
+      // 模块3数据 - 加分选项
+      if (res.data.module3Data) {
+        Object.assign(module3Data, res.data.module3Data)
+      }
+
+      // 模块3车产数据
+      if (res.data.module3CarData) {
+        Object.assign(module3CarData, res.data.module3CarData)
+      }
+
+      // 模块3资产数据
+      if (res.data.module3AssetData) {
+        Object.assign(module3AssetData, res.data.module3AssetData)
+      }
+
+      // 模块3流水数据
+      if (res.data.module3FlowData) {
+        Object.assign(module3FlowData, res.data.module3FlowData)
+      }
+
+      // 模块4数据
+      if (res.data.module4Data) {
+        Object.assign(module4Data, res.data.module4Data)
+      }
+    }
+  } catch (error) {
+    console.error('获取数据失败:', error)
+  }
+}
+
+// 页面加载时调用获取数据函数
+onMounted(() => {
+  getLastExamineData()
+  restoreFormDataFromStorage()
+})
 </script>
 
 <template>
@@ -833,7 +921,7 @@ module3AssetData.assets.forEach((asset) => {
       <van-cell-group inset class="module-group">
         <van-cell title="本人征信及黑灰名单细节补充" class="module-title">
           <template #icon>
-            <van-icon name="shield-o" class="module-icon" />
+            <van-icon name="shield-o" class="module-icon"/>
           </template>
         </van-cell>
         <div class="module-content">
@@ -845,7 +933,7 @@ module3AssetData.assets.forEach((asset) => {
             <template v-for="(record, index) in module1Data.queryRecords" :key="index">
               <div class="record-item">
                 <div class="record-header">
-                  <span class="record-date">{{ record.date }}</span>
+                  <span class="record-date">{{ dayjs(record.date).format('YYYY-MM-DD') }}</span>
                   <span class="record-org">{{ record.org }}</span>
                 </div>
 
@@ -910,7 +998,7 @@ module3AssetData.assets.forEach((asset) => {
             <template v-for="(loan, index) in module1Data.newLoans.loans" :key="index">
               <div class="subsection">
                 <div class="date-org">
-                  <span class="date">{{ loan.date }}</span>
+<!--                  <span class="date">{{ dayjs(loan.date).format('YYYY-MM-DD') }}</span>-->
                   <span class="org">{{ loan.org }}</span>
                 </div>
                 <div class="form-item">
@@ -945,7 +1033,7 @@ module3AssetData.assets.forEach((asset) => {
             <template v-for="(card, index) in module1Data.newLoans.creditCards" :key="index">
               <div class="subsection">
                 <div class="date-org">
-                  <span class="date">{{ card.date }}</span>
+<!--                  <span class="date">{{ dayjs(card.date).format('YYYY-MM-DD') }}</span>-->
                   <span class="org">{{ card.org }}</span>
                 </div>
                 <div class="form-item">
@@ -996,7 +1084,7 @@ module3AssetData.assets.forEach((asset) => {
                 <span class="loan-date">{{ loan.date }}</span>
                 <span class="loan-org">{{ loan.org }}</span>
                 <span class="loan-amount">{{ loan.amount }}</span>
-                <span class="loan-progress">{{ loan.progress }}</span>
+<!--                <span class="loan-progress">{{ loan.progress }}</span>-->
               </div>
 
               <van-radio-group v-model="loan.loanType" direction="horizontal" class="radio-group">
@@ -1112,7 +1200,7 @@ module3AssetData.assets.forEach((asset) => {
       <van-cell-group inset class="module-group">
         <van-cell title="本人工作属性" class="module-title">
           <template #icon>
-            <van-icon name="work-o" class="module-icon" />
+            <van-icon name="work-o" class="module-icon"/>
           </template>
         </van-cell>
         <div class="module-content">
@@ -1384,7 +1472,8 @@ module3AssetData.assets.forEach((asset) => {
                       <div class="radio-title">
                         公积金单位名称：
                       </div>
-                      <van-radio-group v-model="module2Data.providentFundCompanyType" direction="horizontal" class="radio-group">
+                      <van-radio-group v-model="module2Data.providentFundCompanyType" direction="horizontal"
+                                       class="radio-group">
                         <van-radio name="同社保单位">
                           同社保单位
                         </van-radio>
@@ -1754,7 +1843,7 @@ module3AssetData.assets.forEach((asset) => {
       <van-cell-group inset class="module-group">
         <van-cell title="本人加分选项" class="module-title">
           <template #icon>
-            <van-icon name="plus" class="module-icon" />
+            <van-icon name="plus" class="module-icon"/>
           </template>
         </van-cell>
         <div class="module-content">
@@ -2036,7 +2125,7 @@ module3AssetData.assets.forEach((asset) => {
                               万
                             </template>
                           </van-field>
-                          <van-field />
+                          <van-field/>
                         </div>
                       </template>
                     </template>
@@ -2607,7 +2696,7 @@ module3AssetData.assets.forEach((asset) => {
       <van-cell-group inset class="module-group">
         <van-cell title="本人特殊情况补充" class="module-title">
           <template #icon>
-            <van-icon name="info-o" class="module-icon" />
+            <van-icon name="info-o" class="module-icon"/>
           </template>
         </van-cell>
         <div class="module-content">
@@ -2944,12 +3033,15 @@ module3AssetData.assets.forEach((asset) => {
   &:nth-child(1) {
     animation-delay: 0.1s;
   }
+
   &:nth-child(2) {
     animation-delay: 0.2s;
   }
+
   &:nth-child(3) {
     animation-delay: 0.3s;
   }
+
   &:nth-child(4) {
     animation-delay: 0.4s;
   }
@@ -2999,6 +3091,7 @@ module3AssetData.assets.forEach((asset) => {
 .record-header,
 .loan-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   margin-bottom: 12px;
   font-size: 14px;
@@ -3010,6 +3103,7 @@ module3AssetData.assets.forEach((asset) => {
   margin-right: 12px;
   color: #1976d2;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 .record-org,
@@ -3163,6 +3257,7 @@ module3AssetData.assets.forEach((asset) => {
     gap: 12px;
   }
 }
+
 .required-field :deep(.van-field__label) {
   position: relative;
 }
@@ -3190,6 +3285,7 @@ module3AssetData.assets.forEach((asset) => {
 .required-field.star-before :deep(.van-field__label)::after {
   content: '';
 }
+
 .subsection-header {
   font-size: 15px;
   font-weight: bold;

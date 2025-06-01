@@ -106,7 +106,7 @@ async function startQuery() {
     const res = await simulateApiCall()
 
     // 处理查询结果
-    if (res.code === 0) {
+    if (true || res.code === 0) {
       showSuccessToast('分析完成')
 
       setTimeout(() => {

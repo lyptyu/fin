@@ -41,7 +41,7 @@ function onFileChange(event: Event) {
         message: '图片大小不能超过5MB',
         theme: 'round-button',
         confirmButtonText: '我知道了',
-        confirmButtonColor: '#1989fa'
+        confirmButtonColor: '#1989fa',
       })
       return
     }
@@ -82,8 +82,9 @@ async function handleSubmit() {
       fileUpload({ file: frontFile.value }),
       fileUpload({ file: backFile.value }),
     ])
-
-    const res = await ocrIdCard({
+    const agentId = userStore.getAgentId()
+    console.log('agnet', agentId)
+    const res = await ocrIdCard(agentId, {
       frontImageUrl: res1.data.url,
       backImageUrl: res2.data.url,
     })
@@ -94,12 +95,12 @@ async function handleSubmit() {
         // 存储到store
         userStore.setName(res.data.name)
         userStore.setIdCard(res.data.idNumber)
-        
+
         // 存储到localStorage
         localStorage.setItem('userName', res.data.name)
         localStorage.setItem('userIdCard', res.data.idNumber)
       }
-      
+
       // 接下来的步骤:进入支付页面
       router.push('/pay')
     }
@@ -111,7 +112,7 @@ async function handleSubmit() {
         theme: 'round-button',
         confirmButtonText: '我知道了',
         confirmButtonColor: '#1989fa',
-        overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' }
+        overlayStyle: { background: 'rgba(0, 0, 0, 0.7)' },
       })
     }
   }
@@ -121,7 +122,7 @@ async function handleSubmit() {
       message: '请重试',
       theme: 'round-button',
       confirmButtonText: '确定',
-      confirmButtonColor: '#1989fa'
+      confirmButtonColor: '#1989fa',
     })
   }
   finally {

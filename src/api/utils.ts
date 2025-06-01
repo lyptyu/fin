@@ -49,8 +49,12 @@ export function fileUpload(data: { file: File }): Promise<ApiResponse<{ url: str
     },
   })
 }
-export function ocrIdCard(data: { frontImageUrl: string, backImageUrl: string }): Promise<ApiResponse> {
-  return request.post('/v1/ocr/idCard', data)
+export function ocrIdCard(agentId?: string, data: { frontImageUrl: string, backImageUrl: string }): Promise<ApiResponse> {
+  return request.post('/v1/ocr/idCard', data, {
+    headers: {
+      'Agent-Id': agentId || '',
+    },
+  })
 }
 
 // 大数据风控查询接口
@@ -70,4 +74,3 @@ export function sendCode(data: { phone: string }): Promise<ApiResponse> {
 }
 
 // 手动新增
-
