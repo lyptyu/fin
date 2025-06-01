@@ -38,7 +38,7 @@ const module1Data = reactive({
         org: '机构B-30万',
         loanType: '',
         monthlyPayment: '',
-      }
+      },
     ],
     creditCards: [
       {
@@ -52,8 +52,8 @@ const module1Data = reactive({
         org: '机构B-30万',
         cardType: '贷记卡',
         usedLimit: '',
-      }
-    ]
+      },
+    ],
   },
   // 近五年未结清
   unpaidLoans: [
@@ -159,11 +159,20 @@ const module2Data = reactive({
   taxCompanyName: '',
 
   // 企业信息
+  hasCompany: '',
   companyName: '',
-  companyAge: '',
-  companyIncome: '',
-  companyStaff: '',
-  companyNote: '',
+  businessInfo: [] as string[],
+  legalPersonMonths: '',
+  shareholderMonths: '',
+  shareholderPercentage: '',
+  registeredCapital: '',
+  registeredMonths: '',
+  businessAbnormal: '',
+  hasEntity: '',
+  businessIndustry: '',
+  businessScale: '',
+  businessStaff: '',
+  businessArea: '',
 })
 
 // 修改社保地区选择相关代码
@@ -742,7 +751,6 @@ function formatCarInvoiceAmount() {
 module3AssetData.assets.forEach((asset) => {
   formatAssetAmount(asset)
 })
-
 </script>
 
 <template>
@@ -839,9 +847,11 @@ module3AssetData.assets.forEach((asset) => {
             <div class="section-title">
               02征信后新增放款补充
             </div>
-            
+
             <!-- 贷款类 -->
-            <div class="subsection-header">贷款类</div>
+            <div class="subsection-header">
+              贷款类
+            </div>
             <template v-for="(loan, index) in module1Data.newLoans.loans" :key="index">
               <div class="subsection">
                 <div class="date-org">
@@ -874,7 +884,9 @@ module3AssetData.assets.forEach((asset) => {
             </template>
 
             <!-- 信用卡类 -->
-            <div class="subsection-header">信用卡类</div>
+            <div class="subsection-header">
+              信用卡类
+            </div>
             <template v-for="(card, index) in module1Data.newLoans.creditCards" :key="index">
               <div class="subsection">
                 <div class="date-org">
@@ -891,7 +903,7 @@ module3AssetData.assets.forEach((asset) => {
                     @click="handleCreditCardTypeClick(index)"
                   />
                 </div>
-                <div class="form-item" v-if="card.cardType === '大额专项分期卡'">
+                <div v-if="card.cardType === '大额专项分期卡'" class="form-item">
                   <van-field
                     v-model="card.monthlyPayment"
                     label="还款月供"
@@ -903,7 +915,7 @@ module3AssetData.assets.forEach((asset) => {
                     </template>
                   </van-field>
                 </div>
-                <div class="form-item" v-if="card.cardType === '贷记卡'">
+                <div v-if="card.cardType === '贷记卡'" class="form-item">
                   <van-field
                     v-model="card.usedLimit"
                     label="已用额度"
@@ -1428,7 +1440,7 @@ module3AssetData.assets.forEach((asset) => {
                         placeholder="请输入单位名称"
                       />
                     </div>
-                    <div class="form-item" v-if="module2Data.taxCompanyType !== '同社保单位'">
+                    <div v-if="module2Data.taxCompanyType !== '同社保单位'" class="form-item">
                       <van-field
                         v-model="module2Data.taxArea"
                         label="个税地区"
@@ -1490,63 +1502,195 @@ module3AssetData.assets.forEach((asset) => {
             </div>
           </div>
 
-          <!-- 03企业信息，仅企业主显示 -->
-          <div v-if="module2Data.workType === '企业主'" class="section">
+          <!-- 02企业情况 -->
+          <div class="section">
             <div class="section-title">
-              03企业信息
+              02企业情况
             </div>
-            <div class="form-item">
-              <van-field
-                v-model="module2Data.companyName"
-                label="企业名称"
-                placeholder="请输入企业名称"
-              />
+            <div class="form-item required">
+              <div class="radio-title">
+                是否有企业
+              </div>
+              <van-radio-group v-model="module2Data.hasCompany" direction="horizontal" class="radio-group">
+                <van-radio name="否">
+                  否
+                </van-radio>
+                <van-radio name="是">
+                  是
+                </van-radio>
+              </van-radio-group>
             </div>
-            <div class="form-item">
-              <van-field
-                v-model="module2Data.companyAge"
-                label="企业成立年限"
-                type="number"
-                placeholder="请输入年数"
-              >
-                <template #right-icon>
-                  年
-                </template>
-              </van-field>
-            </div>
-            <div class="form-item">
-              <van-field
-                v-model="module2Data.companyIncome"
-                label="企业年流水"
-                type="number"
-                placeholder="请输入金额"
-              >
-                <template #right-icon>
-                  万元
-                </template>
-              </van-field>
-            </div>
-            <div class="form-item">
-              <van-field
-                v-model="module2Data.companyStaff"
-                label="企业员工人数"
-                type="number"
-                placeholder="请输入人数"
-              >
-                <template #right-icon>
-                  人
-                </template>
-              </van-field>
-            </div>
-            <div class="form-item">
-              <van-field
-                v-model="module2Data.companyNote"
-                label="企业补充说明"
-                type="textarea"
-                placeholder="如有特殊情况请补充"
-                rows="2"
-              />
-            </div>
+
+            <template v-if="module2Data.hasCompany === '是'">
+              <!-- 企业明细 -->
+              <div class="form-item">
+                <div class="section-subtitle">
+                  企业明细
+                </div>
+                <van-field
+                  v-model="module2Data.companyName"
+                  label="企业全称"
+                  placeholder="请输入企业全称"
+                />
+              </div>
+
+              <!-- 工商信息 -->
+              <div class="form-item required">
+                <div class="checkbox-title">
+                  工商信息
+                </div>
+                <van-checkbox-group v-model="module2Data.businessInfo" direction="horizontal" class="checkbox-group">
+                  <van-checkbox name="法人">
+                    法人
+                  </van-checkbox>
+                  <van-checkbox name="股东">
+                    股东
+                  </van-checkbox>
+                  <van-checkbox name="监事">
+                    监事
+                  </van-checkbox>
+                </van-checkbox-group>
+              </div>
+
+              <!-- 法人扩展选项 -->
+              <template v-if="module2Data.businessInfo.includes('法人')">
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.legalPersonMonths"
+                    label="法人名下"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>
+                      个月
+                    </template>
+                  </van-field>
+                </div>
+              </template>
+
+              <!-- 股东扩展选项 -->
+              <template v-if="module2Data.businessInfo.includes('股东')">
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.shareholderMonths"
+                    label="股东名下"
+                    type="digit"
+                    placeholder="请输入月数"
+                    :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                  >
+                    <template #right-icon>
+                      个月
+                    </template>
+                  </van-field>
+                  <van-field
+                    v-model="module2Data.shareholderPercentage"
+                    label="占股"
+                    type="digit"
+                    placeholder="请输入百分比"
+                    :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }, { validator: (val) => Number(val) <= 100, message: '占比不能超过100%' }]"
+                  >
+                    <template #right-icon>
+                      %
+                    </template>
+                  </van-field>
+                </div>
+              </template>
+
+              <!-- 工商信息通用扩展选项 -->
+              <div class="form-item">
+                <van-field
+                  v-model="module2Data.registeredCapital"
+                  label="注册资金"
+                  type="digit"
+                  placeholder="请输入金额"
+                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                >
+                  <template #right-icon>
+                    万
+                  </template>
+                </van-field>
+                <van-field
+                  v-model="module2Data.registeredMonths"
+                  label="注册"
+                  type="digit"
+                  placeholder="请输入月数"
+                  :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                >
+                  <template #right-icon>
+                    个月
+                  </template>
+                </van-field>
+              </div>
+
+              <div class="form-item">
+                <div class="radio-title">
+                  工商是否经营异常
+                </div>
+                <van-radio-group v-model="module2Data.businessAbnormal" direction="horizontal" class="radio-group">
+                  <van-radio name="否">
+                    否
+                  </van-radio>
+                  <van-radio name="是">
+                    是
+                  </van-radio>
+                </van-radio-group>
+              </div>
+
+              <div class="form-item required">
+                <div class="radio-title">
+                  是否实体
+                </div>
+                <van-radio-group v-model="module2Data.hasEntity" direction="horizontal" class="radio-group">
+                  <van-radio name="否">
+                    否
+                  </van-radio>
+                  <van-radio name="是">
+                    是
+                  </van-radio>
+                </van-radio-group>
+              </div>
+
+              <!-- 实体扩展选项 -->
+              <template v-if="module2Data.hasEntity === '是'">
+                <div class="form-item">
+                  <van-field
+                    v-model="module2Data.businessIndustry"
+                    label="经营行业"
+                    placeholder="请输入行业"
+                  />
+                  <div class="field-group">
+                    <div class="field-group-title">
+                      企业规模
+                    </div>
+                    <div class="field-group-content">
+                      <van-field
+                        v-model="module2Data.businessStaff"
+                        label="人数"
+                        type="digit"
+                        placeholder="请输入人数"
+                        :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                      >
+                        <template #right-icon>
+                          人
+                        </template>
+                      </van-field>
+                      <van-field
+                        v-model="module2Data.businessArea"
+                        label="面积"
+                        type="digit"
+                        placeholder="请输入面积"
+                        :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                      >
+                        <template #right-icon>
+                          m²
+                        </template>
+                      </van-field>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </template>
           </div>
         </div>
       </van-cell-group>
@@ -2768,11 +2912,20 @@ module3AssetData.assets.forEach((asset) => {
 }
 
 .section-title {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  padding-left: 8px;
-  border-left: 3px solid #1976d2;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
+  margin-top: 5px;
 }
 
 .record-item,
@@ -2840,7 +2993,7 @@ module3AssetData.assets.forEach((asset) => {
 }
 
 :deep(.van-field) {
-  padding: 8px 0;
+  padding: 8px;
 }
 
 :deep(.van-field__label) {
@@ -2881,10 +3034,25 @@ module3AssetData.assets.forEach((asset) => {
 }
 
 .form-item {
-  margin-bottom: 16px;
-  background: #fff;
-  border-radius: 8px;
-  padding: 12px;
+  margin-bottom: 15px;
+}
+
+.field-group {
+  margin-top: 10px;
+  border-left: 3px solid #ebedf0;
+  padding-left: 10px;
+}
+
+.field-group-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.field-group-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .checkbox-title {
