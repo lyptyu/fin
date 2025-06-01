@@ -29,6 +29,7 @@ declare module 'vue-router/auto-routes' {
     '/last-start/': RouteRecordInfo<'/last-start/', '/last-start', Record<never, never>, Record<never, never>>,
     '/pay/': RouteRecordInfo<'/pay/', '/pay', Record<never, never>, Record<never, never>>,
     '/phone-login/': RouteRecordInfo<'/phone-login/', '/phone-login', Record<never, never>, Record<never, never>>,
+    '/submit-success/': RouteRecordInfo<'/submit-success/', '/submit-success', Record<never, never>, Record<never, never>>,
     'upload-zhengxin': RouteRecordInfo<'upload-zhengxin', '/upload-zhengxin', Record<never, never>, Record<never, never>>,
   }
 }

@@ -4,6 +4,9 @@ import { closeToast, showDialog, showLoadingToast, showSuccessToast } from 'vant
 import { creditAnalysis, fileUpload } from '@/api/utils'
 import { saveAndExecutionRules, selectDetailedLoanOverdue, selectSimpleLoanOverdue } from '@/api/user'
 import { useUserStore } from '@/stores'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // 报告类型
 const reportType = ref('simple') // simple: 简版, detail: 详版
@@ -906,9 +909,9 @@ async function submitForm() {
     if (code === 0) {
       // 提交成功提示
       showSuccessToast('提交成功')
-
-      // 重置表单
-      resetForm()
+      
+      // 跳转到提交成功页面
+      router.push('/submit-success')
     }
     else {
       // 提交失败提示

@@ -508,8 +508,8 @@ async function submitAll() {
     const response = await updateFinalReview(agentId, formData)
     if (response && response.code === 200) {
       showSuccessToast('提交成功')
-      // 可以根据需要跳转到其他页面
-      // router.push('/success-page')
+      // 跳转到提交成功页面
+      router.push('/submit-success')
     } else {
       showFailToast(response?.message || '提交失败')
     }
