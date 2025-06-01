@@ -79,9 +79,13 @@ const module1Data = reactive({
 
 // 贷款类型选项
 const loanTypeOptions = [
-  {text: '模拟数据1', value: '模拟数据1'},
-  {text: '模拟数据2', value: '模拟数据2'},
-  {text: '模拟数据3', value: '模拟数据3'},
+  {text: '个人经营性贷款', value: '个人经营性贷款'},
+  {text: '其它个人消费贷款', value: '其它个人消费贷款'},
+  {text: '个人汽车消费贷款', value: '个人汽车消费贷款'},
+  {text: '个人住房商业贷款', value: '个人住房商业贷款'},
+  {text: '个人住房公积金贷款', value: '个人住房公积金贷款'},
+  {text: '经营性农户贷款', value: '经营性农户贷款'},
+  {text: '消费性农户贷款', value: '消费性农户贷款'},
 ]
 
 // 信用卡类型选项
