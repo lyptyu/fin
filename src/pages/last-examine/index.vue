@@ -2125,7 +2125,6 @@ onMounted(() => {
                               万
                             </template>
                           </van-field>
-                          <van-field/>
                         </div>
                       </template>
                     </template>
