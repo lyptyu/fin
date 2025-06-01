@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import { showFailToast, showSuccessToast } from 'vant'
 import { useRouter } from 'vue-router'
+import { updateFinalReview } from '@/api/user'
 
 const router = useRouter()
 
@@ -472,6 +473,19 @@ async function submitAll() {
   }
 
   try {
+    // 从 localStorage 获取 financingMes 数据并添加到 module1Data 中
+    try {
+      const financingMesRaw = localStorage.getItem('financingMes')
+      if (financingMesRaw) {
+        const financingMes = JSON.parse(financingMesRaw)
+        // 将 financingMes 数据添加到 module1Data 中
+        module1Data.financingMes = financingMes
+      }
+    }
+    catch (e) {
+      console.error('获取 financingMes 数据失败', e)
+    }
+
     // 所有必填项已填写，打印JSON结果
     const formData = {
       module1Data,
@@ -484,10 +498,19 @@ async function submitAll() {
     }
 
     console.log('Form data JSON:', JSON.stringify(formData, null, 2))
-    // TODO: 调用API提交所有数据
-    showSuccessToast('提交成功')
+    
+    // 调用updateFinalReview API提交数据
+    const response = await updateFinalReview(undefined, formData)
+    if (response && response.code === 200) {
+      showSuccessToast('提交成功')
+      // 可以根据需要跳转到其他页面
+      // router.push('/success-page')
+    } else {
+      showFailToast(response?.message || '提交失败')
+    }
   }
   catch (error) {
+    console.error('提交失败:', error)
     showFailToast('提交失败')
   }
 }
@@ -860,10 +883,10 @@ module3AssetData.assets.forEach((asset) => {
                 </div>
                 <div class="form-item">
                   <van-field
+                    v-model="loan.loanType"
                     readonly
                     clickable
                     label="贷款类型"
-                    :value="loan.loanType"
                     placeholder="请选择贷款类型"
                     @click="handleLoanTypeClick(index)"
                   />
@@ -895,10 +918,10 @@ module3AssetData.assets.forEach((asset) => {
                 </div>
                 <div class="form-item">
                   <van-field
+                    v-model="card.cardType"
                     readonly
                     clickable
                     label="贷款类型"
-                    :value="card.cardType"
                     placeholder="请选择贷款类型"
                     @click="handleCreditCardTypeClick(index)"
                   />

@@ -21,6 +21,7 @@ declare module 'vue-router/auto-routes' {
     'home': RouteRecordInfo<'home', '/', Record<never, never>, Record<never, never>>,
     '404': RouteRecordInfo<'404', '/:all(.*)', { all: ParamValue<true> }, { all: ParamValue<false> }>,
     '/authbook/': RouteRecordInfo<'/authbook/', '/authbook', Record<never, never>, Record<never, never>>,
+    '/base-need/': RouteRecordInfo<'/base-need/', '/base-need', Record<never, never>, Record<never, never>>,
     '/ca-auth/': RouteRecordInfo<'/ca-auth/', '/ca-auth', Record<never, never>, Record<never, never>>,
     '/gama-bigData/': RouteRecordInfo<'/gama-bigData/', '/gama-bigData', Record<never, never>, Record<never, never>>,
     '/id-card-upload/': RouteRecordInfo<'/id-card-upload/', '/id-card-upload', Record<never, never>, Record<never, never>>,

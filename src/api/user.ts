@@ -71,3 +71,11 @@ export function saveAndExecutionRules(agentId?: string, data: any): Promise<ApiR
     },
   })
 }
+
+export function updateFinalReview(agentId?: string, data: any): Promise<ApiResponse> {
+  return request.post(`/credit/updateFinalReview`, data, {
+    headers: {
+      'Agent-Id': agentId || '',
+    },
+  })
+}
