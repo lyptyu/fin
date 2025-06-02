@@ -81,6 +81,48 @@ onMounted(async () => {
       <div class="glass-card">
         <div class="card-header">
           <div class="header-decoration" />
+          <h2>条件概要</h2>
+        </div>
+        <div class="card-content">
+          <div class="condition-summary">
+            <div class="summary-item">
+              <div class="summary-label">▶ 条件汇总：</div>
+              <div class="summary-content">深圳商品房・住宅 & 社保36个月（当前24个月） | 企业21个月 | 本人驾照</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">▶ 基本属性：</div>
+              <div class="summary-content">男 | 38岁 | 湖北/农村(合村组) | 已婚(征信:不显示) | 本科/学信网可查/全日制</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">▶ 是否可考察：</div>
+              <div class="summary-content">企业主 | <span class="checked-box">☑</span>家里 <span class="checked-box">☑</span>企业</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">▶ 配偶配合情况：</div>
+              <div class="summary-content">配偶可知情/可共签</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">▶ 驾驶证情况：</div>
+              <div class="summary-content">本人有驾照</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">▶ 大数据情况：</div>
+              <div class="summary-content">伽马大数据30分（补充说明：有被告民事已结案，结案时间2023年06月）</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">▶ 特别说明：</div>
+              <div class="summary-content">
+                <span class="checked-box">☑</span>有银行黑/灰名单情况 - 建行； <span class="checked-box">☑</span>近半年有疑似车贷机构查询记录 - 农行；
+                <span class="checked-box">☑</span>历史征信(含五年前和已结清)有疑似车贷机构被拒记录 - 工行； <span class="checked-box">☑</span>普通话和粤语都不会； <span class="checked-box">☑</span>不会写字； <span class="checked-box">☑</span>身体有疾病但不明显
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="header-decoration" />
           <h2>基本条件</h2>
         </div>
         <div class="card-content">
@@ -707,6 +749,68 @@ onMounted(async () => {
   border: solid #4776e6;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+.condition-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 120px;
+  margin-right: 12px;
+}
+
+.summary-content {
+  flex: 1;
+  color: #555;
+  line-height: 1.6;
+}
+
+.checked-box {
+  display: inline-block;
+  color: #4776e6;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.condition-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 120px;
+  margin-right: 12px;
+}
+
+.summary-content {
+  flex: 1;
+  color: #555;
+  line-height: 1.6;
+}
+
+.checked-box {
+  display: inline-block;
+  color: #4776e6;
+  font-weight: bold;
+  margin-right: 4px;
 }
 
 @media (max-width: 768px) {
