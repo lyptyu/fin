@@ -102,9 +102,24 @@ async function onSubmit() {
       if (statusRes.data.status === '-1') {
         router.push({ name: '/id-card-upload/' })
       }
+      else if (statusRes.data.approvalstatus == '1' && statusRes.data.status == '0') {
+        showToast(statusRes.data.message)
+      }
+      else if (statusRes.data.approvalstatus == '1' && statusRes.data.status == '1') {
+        router.push({ name: 'upload-zhengxin' })
+      }
+      else if (statusRes.data.approvalstatus == '2') {
+        router.push({ name: '/last-start/' })
+      }
+      else if (statusRes.data.approvalstatus == '3' && statusRes.data.status == '0') {
+        showToast(statusRes.data.message)
+      }
+      else if (statusRes.data.approvalstatus == '3' && statusRes.data.status == '1') {
+        router.push({ name: '/submit-success/' })
+      }
     }
     else {
-     showToast('error')
+      showToast('error')
     }
   }
   catch (error) {

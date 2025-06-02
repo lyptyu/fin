@@ -906,10 +906,10 @@ async function submitForm() {
     // 关闭加载提示
     closeToast()
 
-    if (code === 0) {
+    if (code === 200) {
       // 提交成功提示
       showSuccessToast('提交成功')
-      
+
       // 跳转到提交成功页面
       router.push('/submit-success')
     }
