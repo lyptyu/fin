@@ -16,12 +16,12 @@ export default {
     'autoprefixer': {},
 
     // https://github.com/wswmsword/postcss-mobile-forever
-    'postcss-mobile-forever': {
-      appSelector: '#app',
-      viewportWidth: 375,
-      maxDisplayWidth: 600,
-      border: true,
-      rootContainingBlockSelectorList,
-    },
+    // 'postcss-mobile-forever': {
+    //   appSelector: '#app',
+    //   viewportWidth: 375,
+    //   maxDisplayWidth: 600,
+    //   border: true,
+    //   rootContainingBlockSelectorList,
+    // },
   },
 }
