@@ -97,15 +97,15 @@ async function onSubmit() {
 
     showToast('登录成功')
     // 登录成功后跳id-card-upload页面
-    // const statusRes = await loginStatus()
-    // if (statusRes.code !== 0) {
-    //   showToast(statusRes.msg)
-    // }
-    // else {
-    //   console.log(statusRes.data)
-    // }
-    // return
-    router.push({ name: '/id-card-upload/' })
+    const statusRes = await loginStatus()
+    if (statusRes.code === 0) {
+      if (statusRes.data.status === '-1') {
+        router.push({ name: '/id-card-upload/' })
+      }
+    }
+    else {
+     showToast('error')
+    }
   }
   catch (error) {
     console.warn(error)
@@ -165,7 +165,10 @@ async function onSubmit() {
           </van-cell-group>
 
           <div class="submit-btn">
-            <van-button round block type="primary" native-type="submit" :loading="loading" :disabled="!hasRequestedCode || !code">
+            <van-button
+              round block type="primary" native-type="submit" :loading="loading"
+              :disabled="!hasRequestedCode || !code"
+            >
               {{ !hasRequestedCode ? '请先获取验证码' : !code ? '请输入验证码' : '登录' }}
             </van-button>
           </div>

@@ -10,7 +10,8 @@ export interface ApiResponse<T = any> {
 }
 // 上传征信报告
 export function uploadCreditReport(data: FormData) {
-  console.log('data', data)
+  // 使用允许的console方法
+  console.warn('Upload credit report data:', data)
   return Promise.resolve({ code: 0, message: '上传成功' })
 }
 
@@ -50,11 +51,9 @@ export function fileUpload(data: { file: File }): Promise<ApiResponse<{ url: str
   })
 }
 export function ocrIdCard(agentId?: string, data: { frontImageUrl: string, backImageUrl: string }): Promise<ApiResponse> {
-  return request.post('/v1/ocr/idCard', data, {
-    headers: {
-      'Agent-Id': agentId || '',
-    },
-  })
+  // If agentId is provided, store it in localStorage before making the request
+  if (agentId) localStorage.setItem('userAgentId', agentId)
+  return request.post('/v1/ocr/idCard', data)
 }
 
 // 大数据风控查询接口

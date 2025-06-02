@@ -49,41 +49,31 @@ export function register(): Promise<any> {
 }
 
 export function selectSimpleLoanOverdue(agentId?: string): Promise<any> {
-  return request.post('/credit/selectSimpleLoanOverdue', {}, {
-    headers: {
-      'Agent-Id': agentId || '',
-    },
-  })
+  // If agentId is provided, store it in localStorage before making the request
+  if (agentId) localStorage.setItem('userAgentId', agentId)
+  return request.post('/credit/selectSimpleLoanOverdue', {})
 }
 
 export function selectDetailedLoanOverdue(agentId?: string): Promise<any> {
-  return request.post('/credit/selectDetailedLoanOverdue', {}, {
-    headers: {
-      'Agent-Id': agentId || '',
-    },
-  })
+  // If agentId is provided, store it in localStorage before making the request
+  if (agentId) localStorage.setItem('userAgentId', agentId)
+  return request.post('/credit/selectDetailedLoanOverdue', {})
 }
 
 export function saveAndExecutionRules(agentId?: string, data: any): Promise<ApiResponse> {
-  return request.post(`/credit/saveAndExecutionRules`, data, {
-    headers: {
-      'Agent-Id': agentId || '',
-    },
-  })
+  // If agentId is provided, store it in localStorage before making the request
+  if (agentId) localStorage.setItem('userAgentId', agentId)
+  return request.post(`/credit/saveAndExecutionRules`, data)
 }
 
 export function updateFinalReview(agentId?: string, data: any): Promise<ApiResponse> {
-  return request.post(`/credit/updateFinalReview`, data, {
-    headers: {
-      'Agent-Id': agentId || '19955310021-01',
-    },
-  })
+  // If agentId is provided, store it in localStorage before making the request
+  if (agentId) localStorage.setItem('userAgentId', agentId || '19955310021-01')
+  return request.post(`/credit/updateFinalReview`, data)
 }
 
 export function selectFinalReview(agentId?: string): Promise<ApiResponse> {
-  return request.post(`/credit/selectFinalReview`, {}, {
-    headers: {
-      'Agent-Id': agentId || '19955310021-01',
-    },
-  })
+  // If agentId is provided, store it in localStorage before making the request
+  if (agentId) localStorage.setItem('userAgentId', agentId || '19955310021-01')
+  return request.post(`/credit/selectFinalReview`, {})
 }

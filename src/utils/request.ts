@@ -49,10 +49,15 @@ function errorHandler(error: RequestError): Promise<any> {
 // 请求拦截器
 function requestHandler(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig> {
   const savedToken = localStorage.getItem(STORAGE_TOKEN_KEY)
+  const agentId = localStorage.getItem('userAgentId') || ''
+  
   // 如果 token 存在
   // 让每个请求携带自定义 token, 请根据实际情况修改
   if (savedToken)
     config.headers[REQUEST_TOKEN_KEY] = savedToken
+  
+  // 为所有请求添加 Agent-Id 头
+  config.headers['Agent-Id'] = agentId
 
   return config
 }
