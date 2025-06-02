@@ -1,15 +1,30 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { searchAssessmentReport } from '@/api/user'
+
+const route = useRoute()
+const reportData = ref(null)
 
 onMounted(async () => {
-
+  try {
+    const phone = route.query.phone as string
+    const agentId = route.query.agent_id as string
+    const res = await searchAssessmentReport(phone, agentId, '')
+    reportData.value = res.data
+  }
+  catch (error) {
+    console.error('Failed to fetch assessment report:', error)
+  }
 })
 </script>
 
 <template>
   <div class="evaluation-report-container">
     <div class="report-header">
-      <h1 class="report-title">UA001-张三-评估文档</h1>
+      <h1 class="report-title">
+        {{ reportData?.basicInform?.agentId || 'null' }}-{{ reportData?.basicInform?.userName || 'null' }}-评估文档
+      </h1>
     </div>
 
     <div class="report-content">
@@ -22,11 +37,11 @@ onMounted(async () => {
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">评估时间</span>
-              <span class="info-value">2025/03/22</span>
+              <span class="info-value">{{ reportData?.basicInform?.orderTime || 'null' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">订单来源</span>
-              <span class="info-value">来源XXX</span>
+              <span class="info-value">{{ reportData?.basicInform?.orderNo || 'null' }}</span>
             </div>
           </div>
         </div>
@@ -41,23 +56,23 @@ onMounted(async () => {
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">客户要求</span>
-              <span class="info-value">要求XX</span>
+              <span class="info-value">{{ reportData?.basicInform?.financingMes?.account || 'null' }}</span>
             </div>
           </div>
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">大数据级别</span>
-              <span class="info-value level-badge level-a">A</span>
+              <span class="info-value level-badge level-a">{{ reportData?.bgLeave || 'null' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">征信级别</span>
-              <span class="info-value level-badge level-a">A</span>
+              <span class="info-value level-badge level-a">{{ reportData?.leave || 'null' }}</span>
             </div>
           </div>
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">客户标签</span>
-              <span class="info-value tag">标签XX</span>
+              <span class="info-value tag">{{ reportData?.userLabel || 'null' }}</span>
             </div>
           </div>
         </div>
@@ -70,9 +85,13 @@ onMounted(async () => {
         </div>
         <div class="card-content">
           <div class="condition-item">
-            <div class="condition-number">01</div>
+            <div class="condition-number">
+              01
+            </div>
             <div class="condition-content">
-              <div class="condition-title">房产情况 (共1套):</div>
+              <div class="condition-title">
+                房产情况 (共1套):
+              </div>
               <div class="condition-detail">
                 深圳商品房・住宅房1（名下18个月；86㎡；共同共有 [占50%与配偶联名]；评500万；按揭350万供18个月；二押金额50万-小额-XXX）
               </div>
@@ -80,9 +99,13 @@ onMounted(async () => {
           </div>
 
           <div class="condition-item">
-            <div class="condition-number">02</div>
+            <div class="condition-number">
+              02
+            </div>
             <div class="condition-content">
-              <div class="condition-title">车产情况:</div>
+              <div class="condition-title">
+                车产情况:
+              </div>
               <div class="condition-detail">
                 车产（二手车 [广州牌 | 32000KM | 评20万]；名下13个月；按揭 [20万供13个月-平安银行]）
               </div>
@@ -90,9 +113,13 @@ onMounted(async () => {
           </div>
 
           <div class="condition-item">
-            <div class="condition-number">03</div>
+            <div class="condition-number">
+              03
+            </div>
             <div class="condition-content">
-              <div class="condition-title">金融资产:</div>
+              <div class="condition-title">
+                金融资产:
+              </div>
               <div class="condition-detail">
                 股票（12个月；当前价值50万）
               </div>
@@ -100,9 +127,13 @@ onMounted(async () => {
           </div>
 
           <div class="condition-item">
-            <div class="condition-number">04</div>
+            <div class="condition-number">
+              04
+            </div>
             <div class="condition-content">
-              <div class="condition-title">社保|公积金|个税:</div>
+              <div class="condition-title">
+                社保|公积金|个税:
+              </div>
               <div class="condition-detail">
                 社保汇总：连36个月；当前24个月；医疗8333元 | 养老2030元<br>
                 社保单位：深圳市XXX
@@ -111,9 +142,13 @@ onMounted(async () => {
           </div>
 
           <div class="condition-item">
-            <div class="condition-number">05</div>
+            <div class="condition-number">
+              05
+            </div>
             <div class="condition-content">
-              <div class="condition-title">企业情况:</div>
+              <div class="condition-title">
+                企业情况:
+              </div>
               <div class="condition-detail">
                 企业汇总：注册21个月；法人股东[占50%]；名下14个月；注册资金500万<br>
                 企业名称：深圳市XXX<br>
@@ -123,9 +158,13 @@ onMounted(async () => {
           </div>
 
           <div class="condition-item">
-            <div class="condition-number">06</div>
+            <div class="condition-number">
+              06
+            </div>
             <div class="condition-content">
-              <div class="condition-title">流水情况:</div>
+              <div class="condition-title">
+                流水情况:
+              </div>
               <div class="condition-detail">
                 平安流水（固代发工资[8000元]固结息大进账[近6个月平均20万，近12个月平均16万]；结息[56元，26元，38元，69元]）
               </div>
@@ -141,7 +180,9 @@ onMounted(async () => {
         </div>
         <div class="card-content">
           <div class="credit-section">
-            <div class="credit-title">【征信负债汇总】</div>
+            <div class="credit-title">
+              【征信负债汇总】
+            </div>
             <ul class="credit-list">
               <li>
                 <span class="credit-label">总负债：</span>
@@ -159,20 +200,30 @@ onMounted(async () => {
           </div>
 
           <div class="credit-section">
-            <div class="credit-title">【征信贷款明细（总2笔）】</div>
+            <div class="credit-title">
+              【征信贷款明细（总2笔）】
+            </div>
             <div class="condition-item">
-              <div class="condition-number">01</div>
+              <div class="condition-number">
+                01
+              </div>
               <div class="condition-content">
-                <div class="condition-title">信用卡小额类（总1笔）：</div>
+                <div class="condition-title">
+                  信用卡小额类（总1笔）：
+                </div>
                 <div class="condition-detail">
                   20XX-XX XX机构（总_万余_万-递减方式供_个月）
                 </div>
               </div>
             </div>
             <div class="condition-item">
-              <div class="condition-number">02</div>
+              <div class="condition-number">
+                02
+              </div>
               <div class="condition-content">
-                <div class="condition-title">担保类（总1笔）：</div>
+                <div class="condition-title">
+                  担保类（总1笔）：
+                </div>
                 <div class="condition-detail">
                   20XX-XX XX机构（为个人/为企业-贷款性质-总_万余_万）
                 </div>
@@ -181,27 +232,43 @@ onMounted(async () => {
           </div>
 
           <div class="credit-section">
-            <div class="credit-title">【征信查询情况】</div>
+            <div class="credit-title">
+              【征信查询情况】
+            </div>
             <div class="condition-item">
-              <div class="condition-number">01</div>
+              <div class="condition-number">
+                01
+              </div>
               <div class="condition-content">
-                <div class="condition-title">最近1次本人查询：</div>
-                <div class="condition-detail">2025-03-21</div>
+                <div class="condition-title">
+                  最近1次本人查询：
+                </div>
+                <div class="condition-detail">
+                  2025-03-21
+                </div>
               </div>
             </div>
             <div class="condition-item">
-              <div class="condition-number">02</div>
+              <div class="condition-number">
+                02
+              </div>
               <div class="condition-content">
-                <div class="condition-title">查询汇总（含他人查询）</div>
+                <div class="condition-title">
+                  查询汇总（含他人查询）
+                </div>
                 <div class="condition-detail">
                   近1个月1次；近3个月3次；近6个月5次；近12个月9次；近24个月11次
                 </div>
               </div>
             </div>
             <div class="condition-item">
-              <div class="condition-number">03</div>
+              <div class="condition-number">
+                03
+              </div>
               <div class="condition-content">
-                <div class="condition-title">查询汇总（不含他人查询）</div>
+                <div class="condition-title">
+                  查询汇总（不含他人查询）
+                </div>
                 <div class="condition-detail">
                   近1个月1次；近3个月3次；近6个月4次；近12个月8次；近24个月10次
                 </div>
@@ -210,7 +277,9 @@ onMounted(async () => {
           </div>
 
           <div class="credit-section">
-            <div class="credit-title">【征信逾期情况】</div>
+            <div class="credit-title">
+              【征信逾期情况】
+            </div>
             <ul class="credit-list">
               <li>
                 <span class="credit-label">逾期汇总：</span>
@@ -221,9 +290,13 @@ onMounted(async () => {
               </li>
             </ul>
             <div class="condition-item">
-              <div class="condition-number">01</div>
+              <div class="condition-number">
+                01
+              </div>
               <div class="condition-content">
-                <div class="condition-title">贷记卡（总1次）：</div>
+                <div class="condition-title">
+                  贷记卡（总1次）：
+                </div>
                 <div class="condition-detail">
                   20XX-XX-XX XX机构逾期级别_金额_元
                 </div>
@@ -241,33 +314,55 @@ onMounted(async () => {
         <div class="card-content">
           <div class="special-section">
             <div class="special-item">
-              <div class="special-icon"><i class="arrow-icon" /></div>
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
               <div class="special-content">
-                <div class="special-title">黑/灰名单情况：</div>
-                <div class="special-detail">建行黑/灰名单（原因： 2022年用建行洗钱）</div>
+                <div class="special-title">
+                  黑/灰名单情况：
+                </div>
+                <div class="special-detail">
+                  建行黑/灰名单（原因： 2022年用建行洗钱）
+                </div>
               </div>
             </div>
 
             <div class="special-item">
-              <div class="special-icon"><i class="arrow-icon" /></div>
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
               <div class="special-content">
-                <div class="special-title">疑似年贷机构查询（近半年）：</div>
-                <div class="special-detail">20XX-XX-XX XX机构-查询原因-目标贷款类别（被拒[原因： _]/批款-放款[放款时间： 20XX-XX-XX]/未放款[原因： _]）</div>
+                <div class="special-title">
+                  疑似年贷机构查询（近半年）：
+                </div>
+                <div class="special-detail">
+                  20XX-XX-XX XX机构-查询原因-目标贷款类别（被拒[原因： _]/批款-放款[放款时间： 20XX-XX-XX]/未放款[原因： _]）
+                </div>
               </div>
             </div>
 
             <div class="special-item">
-              <div class="special-icon"><i class="arrow-icon" /></div>
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
               <div class="special-content">
-                <div class="special-title">疑似年贷机构被拒（含五年前）：</div>
-                <div class="special-detail">2008-03 工商银行被拒-装修贷（被拒原因： 虚假资料）</div>
+                <div class="special-title">
+                  疑似年贷机构被拒（含五年前）：
+                </div>
+                <div class="special-detail">
+                  2008-03 工商银行被拒-装修贷（被拒原因： 虚假资料）
+                </div>
               </div>
             </div>
 
             <div class="special-item">
-              <div class="special-icon"><i class="arrow-icon" /></div>
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
               <div class="special-content">
-                <div class="special-title">普通话/粤语：</div>
+                <div class="special-title">
+                  普通话/粤语：
+                </div>
                 <div class="special-detail">
                   <div class="checkbox-item">
                     <span>普通话和粤语都不会</span>
@@ -277,9 +372,13 @@ onMounted(async () => {
             </div>
 
             <div class="special-item">
-              <div class="special-icon"><i class="arrow-icon" /></div>
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
               <div class="special-content">
-                <div class="special-title">写字能力：</div>
+                <div class="special-title">
+                  写字能力：
+                </div>
                 <div class="special-detail">
                   <div class="checkbox-item">
                     <span>不会写字</span>
@@ -289,9 +388,13 @@ onMounted(async () => {
             </div>
 
             <div class="special-item">
-              <div class="special-icon"><i class="arrow-icon" /></div>
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
               <div class="special-content">
-                <div class="special-title">身体缺陷：</div>
+                <div class="special-title">
+                  身体缺陷：
+                </div>
                 <div class="special-detail">
                   <div class="checkbox-item">
                     <span>身体有疾病但不明显</span>
@@ -337,7 +440,7 @@ onMounted(async () => {
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: linear-gradient(90deg, #4776E6, #8E54E9);
+  background: linear-gradient(90deg, #4776e6, #8e54e9);
   border-radius: 3px;
 }
 
@@ -373,7 +476,7 @@ onMounted(async () => {
 .header-decoration {
   width: 4px;
   height: 20px;
-  background: linear-gradient(180deg, #4776E6, #8E54E9);
+  background: linear-gradient(180deg, #4776e6, #8e54e9);
   margin-right: 12px;
   border-radius: 2px;
 }
@@ -455,7 +558,7 @@ onMounted(async () => {
 .condition-number {
   font-size: 18px;
   font-weight: 700;
-  color: #4776E6;
+  color: #4776e6;
   margin-right: 16px;
   min-width: 30px;
   display: flex;
@@ -508,7 +611,7 @@ onMounted(async () => {
   left: 0;
   width: 60px;
   height: 2px;
-  background: linear-gradient(90deg, #4776E6, #8E54E9);
+  background: linear-gradient(90deg, #4776e6, #8e54e9);
 }
 
 .credit-list {
@@ -558,7 +661,7 @@ onMounted(async () => {
   height: 0;
   border-style: solid;
   border-width: 6px 0 6px 10px;
-  border-color: transparent transparent transparent #4776E6;
+  border-color: transparent transparent transparent #4776e6;
 }
 
 .special-content {
@@ -601,7 +704,7 @@ onMounted(async () => {
   left: 6px;
   width: 5px;
   height: 10px;
-  border: solid #4776E6;
+  border: solid #4776e6;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
