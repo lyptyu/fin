@@ -270,7 +270,6 @@ onMounted(async () => {
                 <div class="special-title">普通话/粤语：</div>
                 <div class="special-detail">
                   <div class="checkbox-item">
-                    <div class="checkbox checked" />
                     <span>普通话和粤语都不会</span>
                   </div>
                 </div>
@@ -283,7 +282,6 @@ onMounted(async () => {
                 <div class="special-title">写字能力：</div>
                 <div class="special-detail">
                   <div class="checkbox-item">
-                    <div class="checkbox checked" />
                     <span>不会写字</span>
                   </div>
                 </div>
@@ -296,7 +294,6 @@ onMounted(async () => {
                 <div class="special-title">身体缺陷：</div>
                 <div class="special-detail">
                   <div class="checkbox-item">
-                    <div class="checkbox checked" />
                     <span>身体有疾病但不明显</span>
                   </div>
                 </div>
