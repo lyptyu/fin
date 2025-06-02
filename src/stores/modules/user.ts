@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', () => {
   const getPhone = (): string | undefined => {
     return userInfo.value.phone
   }
-  
+
   // Get user's agent ID
   const getAgentId = (): string | undefined => {
     return userInfo.value.agentId
@@ -72,11 +72,11 @@ export const useUserStore = defineStore('user', () => {
 
   const login = async (loginForm: LoginData) => {
     try {
+      setToken(loginForm.phone)
       const { code, msg } = await userLogin(loginForm)
       if (code !== 0) {
         throw msg
       }
-      setToken(loginForm.phone)
     }
     catch (error) {
       clearToken()
@@ -110,7 +110,8 @@ export const useUserStore = defineStore('user', () => {
       const data = await getEmailCode()
       return data
     }
-    catch {}
+    catch {
+    }
   }
 
   const reset = async () => {
@@ -118,7 +119,8 @@ export const useUserStore = defineStore('user', () => {
       const data = await resetPassword()
       return data
     }
-    catch {}
+    catch {
+    }
   }
 
   const register = async () => {
@@ -126,7 +128,8 @@ export const useUserStore = defineStore('user', () => {
       const data = await userRegister()
       return data
     }
-    catch {}
+    catch {
+    }
   }
 
   return {

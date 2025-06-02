@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import type {ApiResponse} from '@/api/utils'
+import type { ApiResponse } from '@/api/utils'
 
 export interface LoginData {
   phone: string
@@ -50,30 +50,40 @@ export function register(): Promise<any> {
 
 export function selectSimpleLoanOverdue(agentId?: string): Promise<any> {
   // If agentId is provided, store it in localStorage before making the request
-  if (agentId) localStorage.setItem('userAgentId', agentId)
+  if (agentId)
+    localStorage.setItem('userAgentId', agentId)
   return request.post('/credit/selectSimpleLoanOverdue', {})
 }
 
 export function selectDetailedLoanOverdue(agentId?: string): Promise<any> {
   // If agentId is provided, store it in localStorage before making the request
-  if (agentId) localStorage.setItem('userAgentId', agentId)
+  if (agentId)
+    localStorage.setItem('userAgentId', agentId)
   return request.post('/credit/selectDetailedLoanOverdue', {})
 }
 
 export function saveAndExecutionRules(agentId?: string, data: any): Promise<ApiResponse> {
   // If agentId is provided, store it in localStorage before making the request
-  if (agentId) localStorage.setItem('userAgentId', agentId)
+  if (agentId)
+    localStorage.setItem('userAgentId', agentId)
   return request.post(`/credit/saveAndExecutionRules`, data)
 }
 
 export function updateFinalReview(agentId?: string, data: any): Promise<ApiResponse> {
   // If agentId is provided, store it in localStorage before making the request
-  if (agentId) localStorage.setItem('userAgentId', agentId || '19955310021-01')
+  if (agentId)
+    localStorage.setItem('userAgentId', agentId || '19955310021-01')
   return request.post(`/credit/updateFinalReview`, data)
 }
 
 export function selectFinalReview(agentId?: string): Promise<ApiResponse> {
   // If agentId is provided, store it in localStorage before making the request
-  if (agentId) localStorage.setItem('userAgentId', agentId || '19955310021-01')
+  if (agentId)
+    localStorage.setItem('userAgentId', agentId || '19955310021-01')
   return request.post(`/credit/selectFinalReview`, {})
+}
+export function searchAssessmentReport(phone: string, agentId: string, analysisType: string): Promise<ApiResponse> {
+  return request.post(`/credit/searchAssessmentReport?phone=${phone}&agentId=${agentId}&analysisType=${analysisType}`,
+
+  )
 }
