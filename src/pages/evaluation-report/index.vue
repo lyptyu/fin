@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { searchAssessmentReport } from '@/api/user'
+import {mockData} from "@/pages/evaluation-report/mock";
 
 const route = useRoute()
 const reportData = ref(null)
@@ -11,7 +12,8 @@ onMounted(async () => {
     const phone = route.query.phone as string
     const agentId = route.query.agent_id as string
     const res = await searchAssessmentReport(phone, agentId, '')
-    reportData.value = res.data
+    // reportData.value = res.data
+    reportData.value = mockData
   }
   catch (error) {
     console.error('Failed to fetch assessment report:', error)
