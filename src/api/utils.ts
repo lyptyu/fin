@@ -52,7 +52,8 @@ export function fileUpload(data: { file: File }): Promise<ApiResponse<{ url: str
 }
 export function ocrIdCard(agentId?: string, data: { frontImageUrl: string, backImageUrl: string }): Promise<ApiResponse> {
   // If agentId is provided, store it in localStorage before making the request
-  if (agentId) localStorage.setItem('userAgentId', agentId)
+  if (agentId)
+    localStorage.setItem('userAgentId', agentId)
   return request.post('/v1/ocr/idCard', data)
 }
 
@@ -72,4 +73,13 @@ export function sendCode(data: { phone: string }): Promise<ApiResponse> {
   return request.post(`/sms/sendCode?phone=${data.phone}`)
 }
 
-// 手动新增
+// 支付
+export function alipayAppPayRequest(): Promise<ApiResponse> {
+  return request.post(`/alipay/h5`, {
+    alipayAppPayRequest: '2m',
+  })
+}
+
+export function queryTradeNo(data: { outTradeNo: string }): Promise<ApiResponse> {
+  return request.post(`/alipay/queryTradeNo?outTradeNo=${data.outTradeNo}`)
+}
