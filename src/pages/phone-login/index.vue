@@ -119,7 +119,7 @@ async function onSubmit() {
       }
     }
     else {
-      showToast('error')
+      showToast(statusRes.msg)
     }
   }
   catch (error) {

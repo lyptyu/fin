@@ -3,10 +3,12 @@ import { onMounted, ref, watch } from 'vue'
 import { alipayAppPayRequest } from '@/api/utils.js'
 
 const payUrl = ref('')
+const outTradeNo = ref('')
 onMounted(async () => {
   const res = await alipayAppPayRequest()
   console.log('res', res)
-  payUrl.value = res.data
+  payUrl.value = res.data.html
+  outTradeNo.value = res.data.outTradeNo
 })
 
 // 自动提交表单
@@ -16,21 +18,25 @@ function autoSubmitForm() {
     setTimeout(() => {
       // 查找表单元素并自动提交
       const formElement = document.querySelector('.payment-container form')
-      if (formElement) formElement.submit()
+      if (formElement)
+        formElement.submit()
     }, 100)
   }
 }
 
 // 监听payUrl变化，当表单内容加载后自动提交
 watch(() => payUrl.value, (newVal) => {
-  if (newVal) autoSubmitForm()
+  if (newVal)
+    autoSubmitForm()
 })
 </script>
 
 <template>
   <div class="payment-container">
-    <div v-if="!payUrl" class="loading">加载支付页面中...</div>
-    <div v-else v-html="payUrl" class="form-container" />
+    <div v-if="!payUrl" class="loading">
+      加载支付页面中...
+    </div>
+    <div v-else class="form-container" v-html="payUrl" />
   </div>
 </template>
 
