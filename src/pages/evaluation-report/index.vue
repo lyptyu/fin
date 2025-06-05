@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { searchAssessmentReport } from '@/api/user'
-import {mockData} from "@/pages/evaluation-report/mock";
+import { mockData } from '@/pages/evaluation-report/mock'
 
 const route = useRoute()
 const reportData = ref(null)
@@ -88,31 +88,57 @@ onMounted(async () => {
         <div class="card-content">
           <div class="condition-summary">
             <div class="summary-item">
-              <div class="summary-label">条件汇总：</div>
-              <div class="summary-content">深圳商品房・住宅 & 社保36个月（当前24个月） | 企业21个月 | 本人驾照</div>
+              <div class="summary-label">
+                条件汇总：
+              </div>
+              <div class="summary-content">
+                {{ reportData?.basicConditions?.housesConditions?.hasHouse }} | {{ reportData?.basicConditions?.housesConditions?.houseCount }} | {{ reportData?.basicConditions?.housesConditions?.houses?.area }} | {{ reportData?.basicConditions?.housesConditions?.houses?.type }} | {{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }} | {{ reportData?.summaryConditions?.conditionAggregation?.companyAge }} | {{ reportData?.summaryConditions?.conditionAggregation?.companyAge }} | {{reportData?.summaryConditions?.conditionAggregation?.driverLicense}} | {{reportData?.basicInform?.financingMes?.ydriver}}
+              </div>
             </div>
             <div class="summary-item">
-              <div class="summary-label">基本属性：</div>
-              <div class="summary-content">男 | 38岁 | 湖北/农村(合村组) | 已婚(征信:不显示) | 本科/学信网可查/全日制</div>
+              <div class="summary-label">
+                基本属性：
+              </div>
+              <div class="summary-content">
+                {{ reportData?.summaryConditions?.basicAttribute?.sex || 'null' }} | 38岁 | 湖北/农村(合村组) | 已婚(征信:不显示) | 本科/学信网可查/全日制
+              </div>
             </div>
             <div class="summary-item">
-              <div class="summary-label">是否可考察：</div>
-              <div class="summary-content">企业主 | <span class="checked-box">☑</span>家里 <span class="checked-box">☑</span>企业</div>
+              <div class="summary-label">
+                是否可考察：
+              </div>
+              <div class="summary-content">
+                企业主 | <span class="checked-box">☑</span>家里 <span class="checked-box">☑</span>企业
+              </div>
             </div>
             <div class="summary-item">
-              <div class="summary-label">配偶配合情况：</div>
-              <div class="summary-content">配偶可知情/可共签</div>
+              <div class="summary-label">
+                配偶配合情况：
+              </div>
+              <div class="summary-content">
+                配偶可知情/可共签
+              </div>
             </div>
             <div class="summary-item">
-              <div class="summary-label">驾驶证情况：</div>
-              <div class="summary-content">本人有驾照</div>
+              <div class="summary-label">
+                驾驶证情况：
+              </div>
+              <div class="summary-content">
+                本人有驾照
+              </div>
             </div>
             <div class="summary-item">
-              <div class="summary-label">大数据情况：</div>
-              <div class="summary-content">伽马大数据30分（补充说明：有被告民事已结案，结案时间2023年06月）</div>
+              <div class="summary-label">
+                大数据情况：
+              </div>
+              <div class="summary-content">
+                伽马大数据30分（补充说明：有被告民事已结案，结案时间2023年06月）
+              </div>
             </div>
             <div class="summary-item">
-              <div class="summary-label">特别说明：</div>
+              <div class="summary-label">
+                特别说明：
+              </div>
               <div class="summary-content">
                 <span class="checked-box">☑</span>有银行黑/灰名单情况 - 建行； <span class="checked-box">☑</span>近半年有疑似车贷机构查询记录 - 农行；
                 <span class="checked-box">☑</span>历史征信(含五年前和已结清)有疑似车贷机构被拒记录 - 工行； <span class="checked-box">☑</span>普通话和粤语都不会； <span class="checked-box">☑</span>不会写字； <span class="checked-box">☑</span>身体有疾病但不明显
