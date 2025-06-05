@@ -1,14 +1,32 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import { alipayAppPayRequest } from '@/api/utils.js'
+import { alipayAppPayRequest, queryTradeNo } from '@/api/utils.js'
+import router from '@/router/index.js'
 
 const payUrl = ref('')
-const outTradeNo = ref('')
 onMounted(async () => {
-  const res = await alipayAppPayRequest()
-  console.log('res', res)
-  payUrl.value = res.data.html
-  outTradeNo.value = res.data.outTradeNo
+  // 如果route.query.out_trade_no存在，表示是支付回调，需要获取支付结果
+  if (route.query.out_trade_no) {
+    const res = await queryTradeNo({ outTradeNo: route.query.out_trade_no })
+    if (res.code === 0) {
+      // 支付成功，跳转到gama-bigdata页面
+      router.push('/gama-bigdata')
+    }
+    else {
+      // 支付失败，提示用户重新支付，重新获取支付页面
+      payUrl.value = ''
+      showToast('支付失败，请重新支付')
+      const res = await alipayAppPayRequest()
+      console.log('res', res)
+      payUrl.value = res.data
+    }
+  }
+  else {
+    // 如果route.query.out_trade_no不存在，表示是支付页面，需要获取支付页
+    const res = await alipayAppPayRequest()
+    console.log('res', res)
+    payUrl.value = res.data
+  }
 })
 
 // 自动提交表单
@@ -34,7 +52,7 @@ watch(() => payUrl.value, (newVal) => {
 <template>
   <div class="payment-container">
     <div v-if="!payUrl" class="loading">
-      加载支付页面中...
+      加载中...
     </div>
     <div v-else class="form-container" v-html="payUrl" />
   </div>
