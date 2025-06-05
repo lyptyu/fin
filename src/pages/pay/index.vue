@@ -3,32 +3,36 @@ import { onMounted, ref, watch } from 'vue'
 import { alipayAppPayRequest, queryTradeNo } from '@/api/utils.js'
 import router from '@/router/index.js'
 
+const route = useRoute()
 const payUrl = ref('')
+const isSuccess = ref(false)
 onMounted(async () => {
   // 如果route.query.out_trade_no存在，表示是支付回调，需要获取支付结果
-  if (route.query.out_trade_no) {
-    const res = await queryTradeNo({ outTradeNo: route.query.out_trade_no })
+  if (route.query.outTradeNo) {
+    const res = await queryTradeNo({ outTradeNo: route.query.outTradeNo })
     if (res.code === 0) {
       // 支付成功，跳转到gama-bigdata页面
       router.push('/gama-bigdata')
+      isSuccess.value = true
     }
     else {
       // 支付失败，提示用户重新支付，重新获取支付页面
       payUrl.value = ''
       showToast('支付失败，请重新支付')
-      const res = await alipayAppPayRequest()
-      console.log('res', res)
-      payUrl.value = res.data
+      getPayUrl()
+      isSuccess.value = false
     }
   }
   else {
-    // 如果route.query.out_trade_no不存在，表示是支付页面，需要获取支付页
-    const res = await alipayAppPayRequest()
-    console.log('res', res)
-    payUrl.value = res.data
+    // 如果route.query.outTradeNo，表示是支付页面，需要获取支付页
+    getPayUrl()
   }
 })
-
+async function getPayUrl() {
+  const res = await alipayAppPayRequest()
+  console.log('res', res)
+  payUrl.value = res.data.html
+}
 // 自动提交表单
 function autoSubmitForm() {
   // 确保表单已加载
@@ -52,7 +56,18 @@ watch(() => payUrl.value, (newVal) => {
 <template>
   <div class="payment-container">
     <div v-if="!payUrl" class="loading">
-      加载中...
+      <template v-if="isSuccess">
+        <van-loading type="spinner" color="#1989fa" />
+        <p>正在跳转到Gama大数据...</p>
+      </template>
+      <template v-else>
+        <van-loading type="spinner" color="#1989fa" />
+        <p>正在加载支付页面...</p>
+        <!-- 重新获取支付页面 -->
+        <van-button type="primary" @click="autoSubmitForm">
+          重新获取支付页面
+        </van-button>
+      </template>
     </div>
     <div v-else class="form-container" v-html="payUrl" />
   </div>
