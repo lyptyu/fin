@@ -92,7 +92,7 @@ onMounted(async () => {
                 条件汇总：
               </div>
               <div class="summary-content">
-                {{ reportData?.basicConditions?.housesConditions?.hasHouse }} | {{ reportData?.basicConditions?.housesConditions?.houseCount }} | {{ reportData?.basicConditions?.housesConditions?.houses?.area }} | {{ reportData?.basicConditions?.housesConditions?.houses?.type }} | {{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }} | {{ reportData?.summaryConditions?.conditionAggregation?.companyAge }} | {{ reportData?.summaryConditions?.conditionAggregation?.companyAge }} | {{reportData?.summaryConditions?.conditionAggregation?.driverLicense}} | {{reportData?.basicInform?.financingMes?.ydriver}}
+                {{ reportData?.basicConditions?.housesConditions?.hasHouse }} | {{ reportData?.basicConditions?.housesConditions?.houseCount }} | {{ reportData?.basicConditions?.housesConditions?.houses?.area }} | {{ reportData?.basicConditions?.housesConditions?.houses?.type }} | {{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }} | {{ reportData?.summaryConditions?.conditionAggregation?.companyAge }} | {{ reportData?.summaryConditions?.conditionAggregation?.companyAge }} | {{ reportData?.summaryConditions?.conditionAggregation?.driverLicense }} | {{ reportData?.basicInform?.financingMes?.ydriver }}
               </div>
             </div>
             <div class="summary-item">
@@ -100,7 +100,7 @@ onMounted(async () => {
                 基本属性：
               </div>
               <div class="summary-content">
-                {{ reportData?.summaryConditions?.basicAttribute?.sex || 'null' }} | 38岁 | 湖北/农村(合村组) | 已婚(征信:不显示) | 本科/学信网可查/全日制
+                {{ reportData?.summaryConditions?.basicAttribute?.sex || 'null' }} | {{ reportData?.summaryConditions?.basicAttribute?.age || '0' }}岁 | {{ reportData?.summaryConditions?.basicAttribute?.address || '无' }} | {{ reportData?.summaryConditions?.basicAttribute?.maritalStatus || '无' }} | {{ reportData?.summaryConditions?.basicAttribute?.education || '无' }}/{{ reportData?.summaryConditions?.basicAttribute?.educationCheck || '无' }}/{{ reportData?.summaryConditions?.basicAttribute?.educationFullTime || '无' }}
               </div>
             </div>
             <div class="summary-item">
@@ -108,7 +108,7 @@ onMounted(async () => {
                 是否可考察：
               </div>
               <div class="summary-content">
-                企业主 | <span class="checked-box">☑</span>家里 <span class="checked-box">☑</span>企业
+                {{ reportData?.summaryConditions?.investigate?.workType || '无' }} | <span v-for="(location, index) in reportData?.summaryConditions?.investigate?.investigateLocations" :key="index" class="location-item"><span class="checked-box">☑</span>{{ location }}</span>
               </div>
             </div>
             <div class="summary-item">
@@ -116,7 +116,7 @@ onMounted(async () => {
                 配偶配合情况：
               </div>
               <div class="summary-content">
-                配偶可知情/可共签
+                {{ reportData?.basicInform?.financingMes?.maritalStatus?.informable || '无' }} | {{ reportData?.basicInform?.financingMes?.maritalStatus?.signed || '无' }}
               </div>
             </div>
             <div class="summary-item">
@@ -124,7 +124,7 @@ onMounted(async () => {
                 驾驶证情况：
               </div>
               <div class="summary-content">
-                本人有驾照
+                {{ reportData?.basicInform?.financingMes?.idriver || '无' }} | {{ reportData?.basicInform?.financingMes?.ydriver || '无' }}
               </div>
             </div>
             <div class="summary-item">
@@ -140,8 +140,18 @@ onMounted(async () => {
                 特别说明：
               </div>
               <div class="summary-content">
-                <span class="checked-box">☑</span>有银行黑/灰名单情况 - 建行； <span class="checked-box">☑</span>近半年有疑似车贷机构查询记录 - 农行；
-                <span class="checked-box">☑</span>历史征信(含五年前和已结清)有疑似车贷机构被拒记录 - 工行； <span class="checked-box">☑</span>普通话和粤语都不会； <span class="checked-box">☑</span>不会写字； <span class="checked-box">☑</span>身体有疾病但不明显
+                <div v-if="reportData?.summaryConditions?.specialNote?.blacklistReasons && reportData?.summaryConditions?.specialNote?.blacklistReasons.length > 0" class="special-note-item">
+                  <span class="checked-box">☑</span>{{ reportData?.summaryConditions?.specialNote?.blacklistReasons[0]?.black || '无' }}
+                </div>
+                <div v-if="reportData?.summaryConditions?.specialNote?.queryRecords && reportData?.summaryConditions?.specialNote?.queryRecords.length > 0" class="special-note-item">
+                  <span class="checked-box">☑</span>近半年有{{ reportData?.summaryConditions?.specialNote?.queryRecords[0]?.loanType || '无' }}机构查询记录 - {{ reportData?.summaryConditions?.specialNote?.queryRecords[0]?.org || '无' }}
+                </div>
+                <div v-if="reportData?.summaryConditions?.specialNote?.queryRecords && reportData?.summaryConditions?.specialNote?.queryRecords.length > 0" class="special-note-item">
+                  <span class="checked-box">☑</span>历史征信有{{ reportData?.summaryConditions?.specialNote?.queryRecords[0]?.loanType || '无' }}机构{{ reportData?.summaryConditions?.specialNote?.queryRecords[0]?.progress || '无' }}记录 - {{ reportData?.summaryConditions?.specialNote?.queryRecords[0]?.org || '无' }}
+                </div>
+                <div class="special-note-item">
+                  <span class="checked-box">☑</span>{{ reportData?.summaryConditions?.specialNote?.language || '普通话和粤语情况' }} <span class="checked-box">☑</span>{{ reportData?.summaryConditions?.specialNote?.writing || '书写情况' }} <span class="checked-box">☑</span>{{ reportData?.summaryConditions?.specialNote?.physical || '身体情况' }}
+                </div>
               </div>
             </div>
           </div>
