@@ -14,6 +14,7 @@ onMounted(async () => {
     const res = await searchAssessmentReport(phone, agentId, '')
     // reportData.value = res.data
     reportData.value = mockData
+    console.log(reportData)
   }
   catch (error) {
     console.error('Failed to fetch assessment report:', error)
@@ -170,10 +171,10 @@ onMounted(async () => {
             </div>
             <div class="condition-content">
               <div class="condition-title">
-                房产情况 (共1套):
+                房产情况 (共{{ reportData?.basicConditions?.housesConditions?.houseCount || '0' }}套):
               </div>
               <div class="condition-detail">
-                深圳商品房・住宅房1（名下18个月；86㎡；共同共有 [占50%与配偶联名]；评500万；按揭350万供18个月；二押金额50万-小额-XXX）
+                {{ reportData?.basicConditions?.housesConditions?.hasHouse === 'yes' ? '有房产' : '无房产' }} | {{ reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0 ? (reportData?.basicConditions?.housesConditions?.houses[0]?.type || '未知类型') + '・' + (reportData?.basicConditions?.housesConditions?.houses[0]?.status || '未知状态') + '（名下' + (reportData?.basicConditions?.housesConditions?.houses[0]?.ownMonths || '0') + '个月；' + (reportData?.basicConditions?.housesConditions?.houses[0]?.area || '0') + '㎡；' + (reportData?.basicConditions?.housesConditions?.houses[0]?.shareType || '未知共有方式') + ' [占' + (reportData?.basicConditions?.housesConditions?.houses[0]?.sharePercent || '0') + '%与' + (reportData?.basicConditions?.housesConditions?.houses[0]?.shareWith || '未知') + ']；评' + (reportData?.basicConditions?.housesConditions?.houses[0]?.evalPrice || '0') + '万；按揭' + (reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageAmount || '0') + '万供' + (reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageMonths || '0') + '个月；' + ('二押金额' + (reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondAmount || '0') + '万-' + (reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondType || '') + '-' + (reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondOrg || '')) + '）' : '无房产信息' }}
               </div>
             </div>
           </div>
@@ -187,7 +188,7 @@ onMounted(async () => {
                 车产情况:
               </div>
               <div class="condition-detail">
-                车产（二手车 [广州牌 | 32000KM | 评20万]；名下13个月；按揭 [20万供13个月-平安银行]）
+                {{ reportData?.basicConditions?.module3CarData?.hasCar === 'yes' ? '有车产' : '无车产' }} {{ reportData?.basicConditions?.module3CarData?.hasCar === 'yes' ? '（' + (reportData?.basicConditions?.module3CarData?.carStatus || '未知状态') + ' [' + (reportData?.basicConditions?.module3CarData?.carPlateArea || '未知地区') + '牌 | ' + (reportData?.basicConditions?.module3CarData?.carMileage || '0') + 'KM | 评' + (reportData?.basicConditions?.module3CarData?.carEval || '0') + '万]；名下' + (reportData?.basicConditions?.module3CarData?.carOwnMonths || '0') + '个月；按揭 [' + (reportData?.basicConditions?.module3CarData?.carMortgageAmount || '0') + '万供' + (reportData?.basicConditions?.module3CarData?.carMortgageMonths || '0') + '个月-' + (reportData?.basicConditions?.module3CarData?.carMortgageOrg || '未知机构') + ']）' : '' }}
               </div>
             </div>
           </div>
@@ -201,7 +202,7 @@ onMounted(async () => {
                 金融资产:
               </div>
               <div class="condition-detail">
-                股票（12个月；当前价值50万）
+                {{ reportData?.basicConditions?.module3AssetData?.hasAsset === 'yes' ? (reportData?.basicConditions?.module3AssetData?.assets && reportData?.basicConditions?.module3AssetData?.assets.length > 0 ? reportData?.basicConditions?.module3AssetData?.assets.map(asset => asset.type + '（' + asset.months + '个月；当前价值' + asset.amount + '万）').join('，') : '有金融资产，但无详细信息') : '无金融资产' }}
               </div>
             </div>
           </div>
@@ -215,8 +216,8 @@ onMounted(async () => {
                 社保|公积金|个税:
               </div>
               <div class="condition-detail">
-                社保汇总：连36个月；当前24个月；医疗8333元 | 养老2030元<br>
-                社保单位：深圳市XXX
+                社保汇总：连{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths || '0' }}个月；当前{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths || '0' }}个月；医疗{{ reportData?.basicConditions?.securitySituation?.medicalBase || '0' }}元 | 养老{{ reportData?.basicConditions?.securitySituation?.pensionBase || '0' }}元<br>
+                社保单位：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '未知' }}
               </div>
             </div>
           </div>
@@ -230,9 +231,9 @@ onMounted(async () => {
                 企业情况:
               </div>
               <div class="condition-detail">
-                企业汇总：注册21个月；法人股东[占50%]；名下14个月；注册资金500万<br>
-                企业名称：深圳市XXX<br>
-                企业补充：实体，电子，30多个人，200多平
+                企业汇总：注册{{ reportData?.summaryConditions?.conditionAggregation?.companyAge || '0' }}个月；{{ reportData?.summaryConditions?.investigate?.workType || '未知类型' }}<br>
+                企业名称：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '未知' }}<br>
+                企业补充：{{ reportData?.summaryConditions?.investigate?.canInvestigate === 'yes' ? '可考察' : '不可考察' }}
               </div>
             </div>
           </div>
@@ -246,7 +247,7 @@ onMounted(async () => {
                 流水情况:
               </div>
               <div class="condition-detail">
-                平安流水（固代发工资[8000元]固结息大进账[近6个月平均20万，近12个月平均16万]；结息[56元，26元，38元，69元]）
+                {{ reportData?.basicConditions?.module3FlowData?.hasFlow === 'yes' ? (reportData?.basicConditions?.module3FlowData?.flows && reportData?.basicConditions?.module3FlowData?.flows.length > 0 ? reportData?.basicConditions?.module3FlowData?.flows.map(flow => flow.type + '（' + (flow.features && flow.features.length > 0 ? flow.features.join('，') : '无特点') + (flow.salaryAmount ? '工资[' + flow.salaryAmount + '元]' : '') + (flow.avgIncome6Months ? '近6个月平均' + flow.avgIncome6Months + '万' : '') + (flow.avgIncome12Months ? '，近12个月平均' + flow.avgIncome12Months + '万' : '') + (flow.interest && flow.interest.length > 0 ? '；结息[' + flow.interest.join('，') + ']' : '') + '）').join('<br>') : '有流水，但无详细信息') : '无流水记录' }}
               </div>
             </div>
           </div>
@@ -266,46 +267,50 @@ onMounted(async () => {
             <ul class="credit-list">
               <li>
                 <span class="credit-label">总负债：</span>
-                <span class="credit-value">总30万（不含担保）；余20万；供0.6万（不含担保）；担保10万</span>
+                <span class="credit-value">总{{ reportData?.creditSituation?.totalLiabilities?.grant_amount || '0' }}万（不含担保）；余{{ reportData?.creditSituation?.totalLiabilities?.balance_amount || '0' }}万；供{{ reportData?.creditSituation?.totalLiabilities?.average_repayment || '0' }}万（不含担保）；担保{{ reportData?.creditSituation?.totalLiabilities?.guarantee_amount || '0' }}万</span>
               </li>
               <li>
                 <span class="credit-label">信用卡：</span>
-                <span class="credit-value">总6家；总14.2万；平均6.9万（48.6%）；已用8.9万（62.7%）</span>
+                <span class="credit-value">总{{ reportData?.cardCount || '0' }}家；总{{ reportData?.creditSituation?.cardInfos?.grant_amount || '0' }}万；已用{{ reportData?.creditSituation?.cardInfos?.balance_amount || '0' }}万（{{ reportData?.creditSituation?.cardInfos?.usage_rate || '0' }}%）</span>
               </li>
               <li>
                 <span class="credit-label">负债月供：</span>
-                <span class="credit-value">1.2万</span>
+                <span class="credit-value">{{ reportData?.creditSituation?.monthlyDebtPayment?.averageRepaymentLast6Months || '0' }}万</span>
               </li>
             </ul>
           </div>
 
           <div class="credit-section">
             <div class="credit-title">
-              【征信贷款明细（总2笔）】
+              【征信贷款明细（总{{ reportData?.loanCount || '0' }}笔）】
             </div>
-            <div class="condition-item">
+            <!-- 这里可以遍历loanDetailsInfo对象来展示贷款明细 -->
+            <div class="condition-item" v-if="reportData?.loans && reportData?.loans.length > 0">
+              <div v-for="(loan, index) in reportData?.loans" :key="index" class="condition-item">
+                <div class="condition-number">
+                  {{ String(index + 1).padStart(2, '0') }}
+                </div>
+                <div class="condition-content">
+                  <div class="condition-title">
+                    {{ loan.type || '未分类贷款' }}（总{{ reportData?.loanCount && index === 0 ? reportData?.loanCount : '1' }}笔）：
+                  </div>
+                  <div class="condition-detail">
+                    {{ loan.time || '' }} {{ loan.institution || '未知机构' }}（总{{ loan.amount || '0' }}万）
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="condition-item" v-else>
               <div class="condition-number">
                 01
               </div>
               <div class="condition-content">
                 <div class="condition-title">
-                  信用卡小额类（总1笔）：
+                  暂无贷款记录
                 </div>
                 <div class="condition-detail">
-                  20XX-XX XX机构（总_万余_万-递减方式供_个月）
-                </div>
-              </div>
-            </div>
-            <div class="condition-item">
-              <div class="condition-number">
-                02
-              </div>
-              <div class="condition-content">
-                <div class="condition-title">
-                  担保类（总1笔）：
-                </div>
-                <div class="condition-detail">
-                  20XX-XX XX机构（为个人/为企业-贷款性质-总_万余_万）
+                  无贷款记录
                 </div>
               </div>
             </div>
@@ -324,7 +329,7 @@ onMounted(async () => {
                   最近1次本人查询：
                 </div>
                 <div class="condition-detail">
-                  2025-03-21
+                  {{ reportData?.creditSituation?.iqueryHistory?.queryDate || '无记录' }}
                 </div>
               </div>
             </div>
@@ -334,10 +339,10 @@ onMounted(async () => {
               </div>
               <div class="condition-content">
                 <div class="condition-title">
-                  查询汇总（含他人查询）
+                  查询汇总（含法人查询）
                 </div>
                 <div class="condition-detail">
-                  近1个月1次；近3个月3次；近6个月5次；近12个月9次；近24个月11次
+                  近1个月{{ reportData?.creditSituation?.legalQueryHistory?.m1 || '0' }}次；近3个月{{ reportData?.creditSituation?.legalQueryHistory?.m3 || '0' }}次；近6个月{{ reportData?.creditSituation?.legalQueryHistory?.m6 || '0' }}次；近12个月{{ reportData?.creditSituation?.legalQueryHistory?.m12 || '0' }}次；近24个月{{ reportData?.creditSituation?.legalQueryHistory?.m24 || '0' }}次
                 </div>
               </div>
             </div>
@@ -347,10 +352,10 @@ onMounted(async () => {
               </div>
               <div class="condition-content">
                 <div class="condition-title">
-                  查询汇总（不含他人查询）
+                  查询汇总（不含法人查询）
                 </div>
                 <div class="condition-detail">
-                  近1个月1次；近3个月3次；近6个月4次；近12个月8次；近24个月10次
+                  近1个月{{ reportData?.creditSituation?.noLegalQueryHistory?.m1 || '0' }}次；近3个月{{ reportData?.creditSituation?.noLegalQueryHistory?.m3 || '0' }}次；近6个月{{ reportData?.creditSituation?.noLegalQueryHistory?.m6 || '0' }}次；近12个月{{ reportData?.creditSituation?.noLegalQueryHistory?.m12 || '0' }}次；近24个月{{ reportData?.creditSituation?.noLegalQueryHistory?.m24 || '0' }}次
                 </div>
               </div>
             </div>
@@ -363,22 +368,57 @@ onMounted(async () => {
             <ul class="credit-list">
               <li>
                 <span class="credit-label">逾期汇总：</span>
-                <span class="credit-value">无当前 | 半年内0次 | 一年内0次 | 两年内1次 | 两年外0次</span>
+                <span class="credit-value">{{ reportData?.hasOverdue === 'yes' ? '有当前逾期' : '无当前逾期' }} | 半年内{{ reportData?.creditSituation?.overdueCount?.m6 || '0' }}次 | 一年内{{ reportData?.creditSituation?.overdueCount?.m12 || '0' }}次 | 两年内{{ reportData?.creditSituation?.overdueCount?.m24 || '0' }}次 | 两年外{{ reportData?.creditSituation?.overdueCount?.mOut || '0' }}次</span>
               </li>
               <li>
                 <span class="credit-label">逾期明细：</span>
               </li>
             </ul>
-            <div class="condition-item">
+            <!-- 贷记卡逾期明细 -->
+            <div class="condition-item" v-if="reportData?.cardOverdueDetails && reportData?.cardOverdueDetails.length > 0">
               <div class="condition-number">
                 01
               </div>
               <div class="condition-content">
                 <div class="condition-title">
-                  贷记卡（总1次）：
+                  贷记卡（总{{ reportData?.cardOverdueDetails.length }}次）：
                 </div>
                 <div class="condition-detail">
-                  20XX-XX-XX XX机构逾期级别_金额_元
+                  <div v-for="(overdue, index) in reportData?.cardOverdueDetails" :key="index">
+                    {{ overdue.time || '' }} {{ overdue.institution || '未知机构' }}逾期级别{{ overdue.level || '' }}金额{{ overdue.amount || '0' }}元
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 贷款逾期明细 -->
+            <div class="condition-item" v-if="reportData?.loanOverdueDetails && reportData?.loanOverdueDetails.length > 0">
+              <div class="condition-number">
+                {{ reportData?.cardOverdueDetails && reportData?.cardOverdueDetails.length > 0 ? '02' : '01' }}
+              </div>
+              <div class="condition-content">
+                <div class="condition-title">
+                  贷款（总{{ reportData?.loanOverdueDetails.length }}次）：
+                </div>
+                <div class="condition-detail">
+                  <div v-for="(overdue, index) in reportData?.loanOverdueDetails" :key="index">
+                    {{ overdue.time || '' }} {{ overdue.institution || '未知机构' }}逾期级别{{ overdue.level || '' }}金额{{ overdue.amount || '0' }}元
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 无逾期记录 -->
+            <div class="condition-item" v-if="(!reportData?.cardOverdueDetails || reportData?.cardOverdueDetails.length === 0) && (!reportData?.loanOverdueDetails || reportData?.loanOverdueDetails.length === 0)">
+              <div class="condition-number">
+                01
+              </div>
+              <div class="condition-content">
+                <div class="condition-title">
+                  无逾期记录
+                </div>
+                <div class="condition-detail">
+                  用户征信记录良好，无任何逾期记录
                 </div>
               </div>
             </div>
@@ -393,7 +433,8 @@ onMounted(async () => {
         </div>
         <div class="card-content">
           <div class="special-section">
-            <div class="special-item">
+            <!-- 黑/灰名单情况 -->
+            <div class="special-item" v-if="reportData?.exceptionalCase?.specialNote?.blacklistReasons && reportData?.exceptionalCase?.specialNote?.blacklistReasons.length > 0">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -402,12 +443,15 @@ onMounted(async () => {
                   黑/灰名单情况：
                 </div>
                 <div class="special-detail">
-                  建行黑/灰名单（原因： 2022年用建行洗钱）
+                  <div v-for="(blacklist, index) in reportData?.exceptionalCase?.specialNote?.blacklistReasons" :key="index">
+                    {{ blacklist.black || '未知机构' }}黑/灰名单（原因： {{ blacklist.reasons || '未知原因' }}）
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="special-item">
+            <!-- 疑似年贷机构查询（近半年） -->
+            <div class="special-item" v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.length > 0">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -416,12 +460,17 @@ onMounted(async () => {
                   疑似年贷机构查询（近半年）：
                 </div>
                 <div class="special-detail">
-                  20XX-XX-XX XX机构-查询原因-目标贷款类别（被拒[原因： _]/批款-放款[放款时间： 20XX-XX-XX]/未放款[原因： _]）
+                  <div v-for="(query, index) in reportData?.exceptionalCase?.specialNote?.queryRecords" :key="index">
+                    {{ query.date || '' }} {{ query.org || '未知机构' }}-查询原因-{{ query.loanType || '未知类型' }}（{{ query.progress === 'reject' ? '被拒[原因： ' + (query.rejectReason || '未知') + ']' : 
+                                                              query.progress === 'approve' ? '批款-放款[放款时间： ' + (query.date || '未知') + ']' : 
+                                                              query.progress === 'approve-non-loan' ? '批款-未放款[原因： ' + (query.rejectReason || '未知') + ']' : '未知进度' }}）
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="special-item">
+            <!-- 疑似年贷机构被拒（含五年前） - 可以基于同样的数据过滤显示被拒的记录 -->
+            <div class="special-item" v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.filter(q => q.progress === 'reject').length > 0">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -430,12 +479,15 @@ onMounted(async () => {
                   疑似年贷机构被拒（含五年前）：
                 </div>
                 <div class="special-detail">
-                  2008-03 工商银行被拒-装修贷（被拒原因： 虚假资料）
+                  <div v-for="(query, index) in reportData?.exceptionalCase?.specialNote?.queryRecords.filter(q => q.progress === 'reject')" :key="index">
+                    {{ query.date || '' }} {{ query.org || '未知机构' }}-{{ query.loanType || '未知类型' }}（被拒原因： {{ query.rejectReason || '未知原因' }}）
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="special-item">
+            <!-- 普通话/粤语 -->
+            <div class="special-item" v-if="reportData?.exceptionalCase?.specialNote?.language">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -445,13 +497,14 @@ onMounted(async () => {
                 </div>
                 <div class="special-detail">
                   <div class="checkbox-item">
-                    <span>普通话和粤语都不会</span>
+                    <span>{{ reportData?.exceptionalCase?.specialNote?.language || '无特殊情况' }}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="special-item">
+            <!-- 写字能力 -->
+            <div class="special-item" v-if="reportData?.exceptionalCase?.specialNote?.writing">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -461,13 +514,14 @@ onMounted(async () => {
                 </div>
                 <div class="special-detail">
                   <div class="checkbox-item">
-                    <span>不会写字</span>
+                    <span>{{ reportData?.exceptionalCase?.specialNote?.writing || '无特殊情况' }}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="special-item">
+            <!-- 身体缺陷 -->
+            <div class="special-item" v-if="reportData?.exceptionalCase?.specialNote?.physical">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -477,8 +531,27 @@ onMounted(async () => {
                 </div>
                 <div class="special-detail">
                   <div class="checkbox-item">
-                    <span>身体有疾病但不明显</span>
+                    <span>{{ reportData?.exceptionalCase?.specialNote?.physical || '无特殊情况' }}</span>
                   </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 当所有特殊情况都没有时，显示无特殊情况 -->
+            <div class="special-item" v-if="!reportData?.exceptionalCase?.specialNote?.blacklistReasons?.length && 
+                                          !reportData?.exceptionalCase?.specialNote?.queryRecords?.length && 
+                                          !reportData?.exceptionalCase?.specialNote?.language && 
+                                          !reportData?.exceptionalCase?.specialNote?.writing && 
+                                          !reportData?.exceptionalCase?.specialNote?.physical">
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
+              <div class="special-content">
+                <div class="special-title">
+                  特殊情况：
+                </div>
+                <div class="special-detail">
+                  无任何特殊情况记录
                 </div>
               </div>
             </div>
