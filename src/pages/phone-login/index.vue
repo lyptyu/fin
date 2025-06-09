@@ -112,10 +112,11 @@ async function onSubmit() {
         router.push({ name: '/last-start/' })
       }
       else if (statusRes.data.approvalstatus == '3' && statusRes.data.status == '0') {
-        showToast(statusRes.data.message)
+
+        router.push({ name: '/submit-success/' })
       }
       else if (statusRes.data.approvalstatus == '3' && statusRes.data.status == '1') {
-        router.push({ name: '/submit-success/' })
+        showToast(statusRes.data.message)
       }
     }
     else {
