@@ -861,39 +861,69 @@ async function submitForm() {
     // 将逾期详情从对象格式转换为数组格式
     const formData = { ...creditForm }
 
-    // 处理贷款类逾期详情
-    const loanOverdueDetailsArray = []
-    for (const id of Object.keys(formData.loanOverdueDetails)) {
-      const detail = formData.loanOverdueDetails[id]
-      const loan = formData.loanOverdues.find(item => item.id === id)
-      if (loan && detail) {
-        loanOverdueDetailsArray.push({
-          id,
-          institution: loan.institution,
-          type: loan.type,
-          amount: detail.amount,
-          repaid: detail.repaid,
-        })
+    // 如果用户选择"否"，确保相关数据为空数组
+    if (formData.hasNewInfo === '否') {
+      formData.queries = []
+      formData.loans = []
+      formData.loanOverdueDetails = []
+      formData.cardOverdueDetails = []
+      formData.loanOverdues = []
+      formData.cardOverdues = []
+      formData.queryCount = ''
+      formData.loanCount = ''
+    } else {
+      // 如果用户选择"是"，但某些子项选择"否"，确保对应数据为空数组
+      if (formData.hasNewQuery === '否') {
+        formData.queries = []
+        formData.queryCount = ''
       }
-    }
-    formData.loanOverdueDetails = loanOverdueDetailsArray
 
-    // 处理贷记卡类逾期详情
-    const cardOverdueDetailsArray = []
-    for (const id of Object.keys(formData.cardOverdueDetails)) {
-      const detail = formData.cardOverdueDetails[id]
-      const card = formData.cardOverdues.find(item => item.id === id)
-      if (card && detail) {
-        cardOverdueDetailsArray.push({
-          id,
-          institution: card.institution,
-          cardNo: card.cardNo,
-          amount: detail.amount,
-          repaid: detail.repaid,
-        })
+      if (formData.hasNewLoan === '否') {
+        formData.loans = []
+        formData.loanCount = ''
+      }
+
+      if (formData.hasOverdue === '否') {
+        formData.loanOverdueDetails = []
+        formData.cardOverdueDetails = []
+        formData.loanOverdues = []
+        formData.cardOverdues = []
+      } else {
+        // 处理贷款类逾期详情
+        const loanOverdueDetailsArray = []
+        for (const id of Object.keys(formData.loanOverdueDetails)) {
+          const detail = formData.loanOverdueDetails[id]
+          const loan = formData.loanOverdues.find(item => item.id === id)
+          if (loan && detail) {
+            loanOverdueDetailsArray.push({
+              id,
+              institution: loan.institution,
+              type: loan.type,
+              amount: detail.amount,
+              repaid: detail.repaid,
+            })
+          }
+        }
+        formData.loanOverdueDetails = loanOverdueDetailsArray
+
+        // 处理贷记卡类逾期详情
+        const cardOverdueDetailsArray = []
+        for (const id of Object.keys(formData.cardOverdueDetails)) {
+          const detail = formData.cardOverdueDetails[id]
+          const card = formData.cardOverdues.find(item => item.id === id)
+          if (card && detail) {
+            cardOverdueDetailsArray.push({
+              id,
+              institution: card.institution,
+              cardNo: card.cardNo,
+              amount: detail.amount,
+              repaid: detail.repaid,
+            })
+          }
+        }
+        formData.cardOverdueDetails = cardOverdueDetailsArray
       }
     }
-    formData.cardOverdueDetails = cardOverdueDetailsArray
 
     const submitData = {
       analysisType,
@@ -1467,15 +1497,13 @@ function resetForm() {
             </template>
           </van-field>
         </div>
-        <div class="search-body">
-          <van-picker
-            :columns="filteredInstitutions"
-            show-toolbar
-            title="选择机构"
-            @confirm="onLoanInstitutionConfirm"
-            @cancel="showLoanInstitutionPicker = false"
-          />
-        </div>
+        <van-picker
+          :columns="filteredInstitutions"
+          show-toolbar
+          title="选择机构"
+          @confirm="onLoanInstitutionConfirm"
+          @cancel="showLoanInstitutionPicker = false"
+        />
       </div>
     </van-popup>
 
