@@ -26,7 +26,7 @@ onMounted(() => {
 
 async function sendCode() {
   if (!/^1[3-9]\d{9}$/.test(phone.value)) {
-    showToast('请输入正确的手机号')
+    showToast('请输入正确的本人实名认证手机号码')
     return
   }
 
@@ -157,8 +157,8 @@ async function onSubmit() {
         <van-form @submit="onSubmit">
           <van-cell-group inset>
             <van-field
-              v-model="phone" label-width="auto" type="tel" label="手机号" placeholder="请输入手机号"
-              :rules="[{ required: true, message: '请输入手机号' }]"
+              v-model="phone" label-width="auto" type="tel" label="手机号" placeholder="请输入本人实名认证手机号码"
+              :rules="[{ required: true, message: '请输入本人实名认证手机号码' }]"
             >
               <template #left-icon>
                 <van-icon name="phone-o" class="field-icon" />
