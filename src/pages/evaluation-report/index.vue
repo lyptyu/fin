@@ -98,15 +98,15 @@ onMounted(async () => {
                 条件汇总：
               </div>
               <div class="summary-content">
-                {{ reportData?.basicConditions?.housesConditions?.hasHouse }} |
-                {{ reportData?.basicConditions?.housesConditions?.houseCount }} |
-                {{ reportData?.basicConditions?.housesConditions?.houses?.area }} |
-                {{ reportData?.basicConditions?.housesConditions?.houses?.type }} |
-                {{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }} |
-                {{ reportData?.summaryConditions?.conditionAggregation?.companyAge }} |
-                {{ reportData?.summaryConditions?.conditionAggregation?.companyAge }} |
-                {{ reportData?.summaryConditions?.conditionAggregation?.driverLicense }} |
-                {{ reportData?.basicInform?.financingMes?.ydriver }}
+                {{ reportData?.basicConditions?.housesConditions?.hasHouse ?? '无' }} |
+                {{ reportData?.basicConditions?.housesConditions?.houseCount || '0' }} |
+                {{ reportData?.basicConditions?.housesConditions?.houses?.area || '无' }} |
+                {{ reportData?.basicConditions?.housesConditions?.houses?.type || '无' }} |
+                {{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths || '无' }} |
+                {{ reportData?.summaryConditions?.conditionAggregation?.companyAge || '无' }} |
+                {{ reportData?.summaryConditions?.conditionAggregation?.companyAge || '无' }} |
+                {{ reportData?.summaryConditions?.conditionAggregation?.driverLicense || '无' }} |
+                {{ reportData?.basicInform?.financingMes?.ydriver || '无' }}
               </div>
             </div>
             <div class="summary-item">
@@ -193,11 +193,11 @@ onMounted(async () => {
                 </div>
                 <div class="special-note-item">
                   <span class="checked-box">☑</span>{{
-                    reportData?.summaryConditions?.specialNote?.language || '普通话和粤语情况'
+                    reportData?.summaryConditions?.specialNote?.language || '无普通话和粤语情况'
                   }} <span class="checked-box">☑</span>{{
-                    reportData?.summaryConditions?.specialNote?.writing || '书写情况'
+                    reportData?.summaryConditions?.specialNote?.writing || '无书写情况'
                   }} <span class="checked-box">☑</span>{{
-                    reportData?.summaryConditions?.specialNote?.physical || '身体情况'
+                    reportData?.summaryConditions?.specialNote?.physical || '无身体情况'
                   }}
                 </div>
               </div>
