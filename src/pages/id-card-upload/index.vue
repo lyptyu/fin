@@ -98,11 +98,14 @@ async function handleSubmit() {
 
         // 存储到localStorage
         localStorage.setItem('userName', res.data.name)
-        localStorage.setItem('userIdCard', res.data.idNumber)
+        localStorage.setItem('userIdCarFd', res.data.idNumber)
       }
 
+      if (res.data.signCustH5URL) {
+        window.open(res.data.signCustH5URL)
+      }
       // 接下来的步骤:进入支付页面
-      router.push('/pay')
+      // router.push('/pay')
     }
     else {
       // 使用弹窗显示拒绝原因
