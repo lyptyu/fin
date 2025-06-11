@@ -31,7 +31,7 @@ onMounted(async () => {
   <div class="evaluation-report-container">
     <div class="report-header">
       <h1 class="report-title">
-        {{ reportData?.basicInform?.agentId || 'null' }}-{{ reportData?.basicInform?.userName || 'null' }}-评估文档
+        {{ reportData?.basicInform?.agentId || '无' }}-{{ reportData?.basicInform?.userName || '无' }}-评估文档
       </h1>
     </div>
 
@@ -49,7 +49,7 @@ onMounted(async () => {
             </div>
             <div class="info-item">
               <span class="info-label">订单来源</span>
-              <span class="info-value">{{ reportData?.basicInform?.orderNo || 'null' }}</span>
+              <span class="info-value">{{ reportData?.basicInform?.orderNo || '无' }}</span>
             </div>
           </div>
         </div>
@@ -64,23 +64,23 @@ onMounted(async () => {
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">客户要求</span>
-              <span class="info-value">{{ reportData?.basicInform?.financingMes?.account || 'null' }}</span>
+              <span class="info-value">{{ reportData?.basicInform?.financingMes?.account || '无' }}</span>
             </div>
           </div>
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">大数据级别</span>
-              <span class="info-value level-badge level-a">{{ reportData?.bgLeave || 'null' }}</span>
+              <span class="info-value level-badge level-a">{{ reportData?.bgLeave || '无' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">征信级别</span>
-              <span class="info-value level-badge level-a">{{ reportData?.leave || 'null' }}</span>
+              <span class="info-value level-badge level-a">{{ reportData?.leave || '无' }}</span>
             </div>
           </div>
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">客户标签</span>
-              <span class="info-value tag">{{ reportData?.userLabel || 'null' }}</span>
+              <span class="info-value tag">{{ reportData?.userLabel || '无' }}</span>
             </div>
           </div>
         </div>
@@ -114,7 +114,7 @@ onMounted(async () => {
                 基本属性：
               </div>
               <div class="summary-content">
-                {{ reportData?.summaryConditions?.basicAttribute?.sex || 'null' }} |
+                {{ reportData?.summaryConditions?.basicAttribute?.sex || '无' }} |
                 {{ reportData?.summaryConditions?.basicAttribute?.age || '0' }}岁 |
                 {{ reportData?.summaryConditions?.basicAttribute?.address || '无' }} |
                 {{ reportData?.summaryConditions?.basicAttribute?.maritalStatus || '无' }} | {{
@@ -222,7 +222,7 @@ onMounted(async () => {
               </div>
               <div class="condition-detail">
                 {{ reportData?.basicConditions?.housesConditions?.hasHouse === 'yes' ? '有房产' : '无房产' }} | {{
-                  reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0 ? `${reportData?.basicConditions?.housesConditions?.houses[0]?.type || '未知类型'}・${reportData?.basicConditions?.housesConditions?.houses[0]?.status || '未知状态'}（名下${reportData?.basicConditions?.housesConditions?.houses[0]?.ownMonths || '0'}个月；${reportData?.basicConditions?.housesConditions?.houses[0]?.area || '0'}㎡；${reportData?.basicConditions?.housesConditions?.houses[0]?.shareType || '未知共有方式'} [占${reportData?.basicConditions?.housesConditions?.houses[0]?.sharePercent || '0'}%与${reportData?.basicConditions?.housesConditions?.houses[0]?.shareWith || '未知'}]；评${reportData?.basicConditions?.housesConditions?.houses[0]?.evalPrice || '0'}万；按揭${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageAmount || '0'}万供${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageMonths || '0'}个月；` + `二押金额${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondAmount || '0'}万-${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondType || ''}-${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondOrg || ''}` + `）` : '无房产信息'
+                  reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0 ? `${reportData?.basicConditions?.housesConditions?.houses[0]?.type || '无'}・${reportData?.basicConditions?.housesConditions?.houses[0]?.status || '无'}（名下${reportData?.basicConditions?.housesConditions?.houses[0]?.ownMonths || '0'}个月；${reportData?.basicConditions?.housesConditions?.houses[0]?.area || '0'}㎡；${reportData?.basicConditions?.housesConditions?.houses[0]?.shareType || '无'} [占${reportData?.basicConditions?.housesConditions?.houses[0]?.sharePercent || '0'}%与${reportData?.basicConditions?.housesConditions?.houses[0]?.shareWith || '无'}]；评${reportData?.basicConditions?.housesConditions?.houses[0]?.evalPrice || '0'}万；按揭${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageAmount || '0'}万供${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageMonths || '0'}个月；` + `二押金额${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondAmount || '0'}万-${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondType || '无'}-${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondOrg || '无'}` + `）` : '无房产信息'
                 }}
               </div>
             </div>
@@ -238,7 +238,7 @@ onMounted(async () => {
               </div>
               <div class="condition-detail">
                 {{ reportData?.basicConditions?.module3CarData?.hasCar === 'yes' ? '有车产' : '无车产' }} {{
-                  reportData?.basicConditions?.module3CarData?.hasCar === 'yes' ? `（${reportData?.basicConditions?.module3CarData?.carStatus || '未知状态'} [${reportData?.basicConditions?.module3CarData?.carPlateArea || '未知地区'}牌 | ${reportData?.basicConditions?.module3CarData?.carMileage || '0'}KM | 评${reportData?.basicConditions?.module3CarData?.carEval || '0'}万]；名下${reportData?.basicConditions?.module3CarData?.carOwnMonths || '0'}个月；按揭 [${reportData?.basicConditions?.module3CarData?.carMortgageAmount || '0'}万供${reportData?.basicConditions?.module3CarData?.carMortgageMonths || '0'}个月-${reportData?.basicConditions?.module3CarData?.carMortgageOrg || '未知机构'}]）` : ''
+                  reportData?.basicConditions?.module3CarData?.hasCar === 'yes' ? `（${reportData?.basicConditions?.module3CarData?.carStatus || '无'} [${reportData?.basicConditions?.module3CarData?.carPlateArea || '无'}牌 | ${reportData?.basicConditions?.module3CarData?.carMileage || '0'}KM | 评${reportData?.basicConditions?.module3CarData?.carEval || '0'}万]；名下${reportData?.basicConditions?.module3CarData?.carOwnMonths || '0'}个月；按揭 [${reportData?.basicConditions?.module3CarData?.carMortgageAmount || '0'}万供${reportData?.basicConditions?.module3CarData?.carMortgageMonths || '0'}个月-${reportData?.basicConditions?.module3CarData?.carMortgageOrg || '无'}]）` : ''
                 }}
               </div>
             </div>
@@ -275,7 +275,7 @@ onMounted(async () => {
                   reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths || '0'
                 }}个月；医疗{{ reportData?.basicConditions?.securitySituation?.medicalBase || '0' }}元 |
                 养老{{ reportData?.basicConditions?.securitySituation?.pensionBase || '0' }}元<br>
-                社保单位：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '未知' }}
+                社保单位：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }}
               </div>
             </div>
           </div>
@@ -291,8 +291,8 @@ onMounted(async () => {
               <div class="condition-detail">
                 企业汇总：注册{{
                   reportData?.summaryConditions?.conditionAggregation?.companyAge || '0'
-                }}个月；{{ reportData?.summaryConditions?.investigate?.workType || '未知类型' }}<br>
-                企业名称：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '未知' }}<br>
+                }}个月；{{ reportData?.summaryConditions?.investigate?.workType || '无' }}<br>
+                企业名称：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }}<br>
                 企业补充：{{
                   reportData?.summaryConditions?.investigate?.canInvestigate === 'yes' ? '可考察' : '不可考察'
                 }}
@@ -372,11 +372,11 @@ onMounted(async () => {
                 <div class="condition-content">
                   <div class="condition-title">
                     {{
-                      loan.type || '未分类贷款'
+                      loan.type || '无'
                     }}（总{{ reportData?.loanCount && index === 0 ? reportData?.loanCount : '1' }}笔）：
                   </div>
                   <div class="condition-detail">
-                    {{ loan.time || '' }} {{ loan.institution || '未知机构' }}（总{{ loan.amount || '0' }}万）
+                    {{ loan.time || '' }} {{ loan.institution || '无' }}（总{{ loan.amount || '0' }}万）
                   </div>
                 </div>
               </div>
@@ -493,7 +493,7 @@ onMounted(async () => {
                 </div>
                 <div class="condition-detail">
                   <div v-for="(overdue, index) in reportData?.cardOverdueDetails" :key="index">
-                    {{ overdue.time || '' }} {{ overdue.institution || '未知机构' }}逾期级别{{
+                    {{ overdue.time || '' }} {{ overdue.institution || '无' }}逾期级别{{
                       overdue.level || ''
                     }}金额{{ overdue.amount || '0' }}元
                   </div>
@@ -515,7 +515,7 @@ onMounted(async () => {
                 </div>
                 <div class="condition-detail">
                   <div v-for="(overdue, index) in reportData?.loanOverdueDetails" :key="index">
-                    {{ overdue.time || '' }} {{ overdue.institution || '未知机构' }}逾期级别{{
+                    {{ overdue.time || '' }} {{ overdue.institution || '无' }}逾期级别{{
                       overdue.level || ''
                     }}金额{{ overdue.amount || '0' }}元
                   </div>
