@@ -394,6 +394,59 @@ function onCarPlateAreaConfirm(val: any) {
   showCarPlateAreaPicker.value = false
 }
 
+// 格式化二手车评估金额，保留两位小数
+function formatCarEvalAmount() {
+  if (module3CarData.carEval && module3CarData.carEval !== '') {
+    const numVal = Number.parseFloat(module3CarData.carEval)
+    if (!Number.isNaN(numVal)) {
+      module3CarData.carEval = numVal.toFixed(2)
+    }
+  }
+}
+
+// 格式化一手车发票金额，保留两位小数
+function formatCarInvoiceAmount() {
+  if (module3CarData.carInvoice && module3CarData.carInvoice !== '') {
+    const numVal = Number.parseFloat(module3CarData.carInvoice)
+    if (!Number.isNaN(numVal)) {
+      module3CarData.carInvoice = numVal.toFixed(2)
+    }
+  }
+}
+
+// 格式化房产抵押金额为整数
+function formatHousePledgeAmount(house: any) {
+  if (house.pledgeAmount) {
+    const value = Number.parseInt(house.pledgeAmount);
+    if (!Number.isNaN(value)) {
+      house.pledgeAmount = value.toString();
+    }
+  }
+}
+
+// 在<script setup>中，所有顶级变量和函数都会自动暴露给模板
+// 无需创建formatters对象
+
+// 格式化车辆抵押金额为整数
+function formatCarPledgeAmount() {
+  if (module3CarData.carPledgeAmount && module3CarData.carPledgeAmount !== '') {
+    const numVal = Number.parseInt(module3CarData.carPledgeAmount)
+    if (!Number.isNaN(numVal)) {
+      module3CarData.carPledgeAmount = numVal.toString()
+    }
+  }
+}
+
+// 格式化流水均收入，保留两位小数
+function formatAvgIncome(flow: any, field: string) {
+  if (flow[field] && flow[field] !== '') {
+    const numVal = Number.parseFloat(flow[field])
+    if (!Number.isNaN(numVal)) {
+      flow[field] = numVal.toFixed(2)
+    }
+  }
+}
+
 // 房产共有人picker弹窗
 const showHouseShareWithPicker = ref(false)
 const currentHouseShareWithIndex = ref(-1)
@@ -716,15 +769,7 @@ function formatSalaryAmount(flow: any) {
   }
 }
 
-// 格式化月均进账，保留一位小数
-function formatAvgIncome(flow: any, field: 'avgIncome6Months' | 'avgIncome12Months') {
-  if (flow[field] && flow[field] !== '') {
-    const numVal = Number.parseFloat(flow[field])
-    if (!isNaN(numVal)) {
-      flow[field] = numVal.toFixed(1)
-    }
-  }
-}
+// 这些格式化函数已移到setup函数内部
 
 // 格式化结息，保留一位小数
 function formatInterest(flow: any, index: number) {
@@ -736,7 +781,7 @@ function formatInterest(flow: any, index: number) {
   }
 }
 
-// 格式化金融资产金额，保留两位小数
+// 格式化资产金额，保留两位小数
 function formatAssetAmount(asset: any) {
   if (asset.amount && asset.amount !== '') {
     const numVal = Number.parseFloat(asset.amount)
@@ -746,7 +791,7 @@ function formatAssetAmount(asset: any) {
   }
 }
 
-// 格式化车产按揭金额，保留两位小数
+// 格式化车辆按揭金额，保留两位小数
 function formatCarMortgageAmount() {
   if (module3CarData.carMortgageAmount && module3CarData.carMortgageAmount !== '') {
     const numVal = Number.parseFloat(module3CarData.carMortgageAmount)
@@ -756,25 +801,11 @@ function formatCarMortgageAmount() {
   }
 }
 
-// 格式化二手车评估金额，保留两位小数
-function formatCarEvalAmount() {
-  if (module3CarData.carEval && module3CarData.carEval !== '') {
-    const numVal = Number.parseFloat(module3CarData.carEval)
-    if (!Number.isNaN(numVal)) {
-      module3CarData.carEval = numVal.toFixed(2)
-    }
-  }
-}
+// 这些函数已移到setup函数内部
 
-// 格式化一手车发票金额，保留两位小数
-function formatCarInvoiceAmount() {
-  if (module3CarData.carInvoice && module3CarData.carInvoice !== '') {
-    const numVal = Number.parseFloat(module3CarData.carInvoice)
-    if (!Number.isNaN(numVal)) {
-      module3CarData.carInvoice = numVal.toFixed(2)
-    }
-  }
-}
+// 这些格式化函数已移到setup函数内部
+
+// 这些函数已移到setup函数内部
 
 // 格式化金融资产金额
 module3AssetData.assets.forEach((asset) => {
@@ -910,6 +941,9 @@ onMounted(() => {
   getLastExamineData()
   restoreFormDataFromStorage()
 })
+
+// 在<script setup>中，所有顶级变量和函数都会自动暴露给模板
+// 无需显式返回
 </script>
 
 <template>
@@ -2135,14 +2169,68 @@ onMounted(() => {
                             label="二押金额"
                             type="number"
                             placeholder="请输入金额"
-                            :rules="[{ pattern: /^\d+(\.\d+)?$/, message: '请输入数字' }]"
+                            :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
                           >
                             <template #right-icon>
                               万
                             </template>
                           </van-field>
+                          
+                          <div class="radio-title">
+                            机构类型
+                          </div>
+                          <van-radio-group v-model="house.mortgageSecondOrgType" direction="horizontal" class="radio-group">
+                            <van-radio name="银行">
+                              银行
+                            </van-radio>
+                            <van-radio name="小额">
+                              小额
+                            </van-radio>
+                            <van-radio name="私人">
+                              私人
+                            </van-radio>
+                          </van-radio-group>
+                          
+                          <van-field
+                            v-model="house.mortgageSecondOrgName"
+                            label="机构名称"
+                            placeholder="请输入机构名称"
+                          />
                         </div>
                       </template>
+                    </template>
+                    <!-- 抵押扩展 -->
+                    <template v-if="house.status === '抵押'">
+                      <div class="form-item">
+                        <van-field
+                          v-model="house.pledgeAmount"
+                          label="抵押金额"
+                          type="number"
+                          placeholder="请输入金额"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          @blur="formatHousePledgeAmount(house)"
+                        >
+                          <template #right-icon>
+                            万
+                          </template>
+                        </van-field>
+                        <van-field
+                          v-model="house.pledgeOrg"
+                          label="抵押机构名称"
+                          placeholder="请输入机构名称"
+                        />
+                        <van-field
+                          v-model="house.pledgeMonths"
+                          label="供"
+                          type="number"
+                          placeholder="请输入月数"
+                          :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                        >
+                          <template #right-icon>
+                            个月
+                          </template>
+                        </van-field>
+                      </div>
                     </template>
                   </template>
                 </div>
@@ -2335,9 +2423,10 @@ onMounted(() => {
                   <van-field
                     v-model="module3CarData.carPledgeAmount"
                     label="抵押金额"
-                    type="digit"
+                    type="number"
                     placeholder="请输入金额"
                     :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                    @blur="formatCarPledgeAmount()"
                   >
                     <template #right-icon>
                       万

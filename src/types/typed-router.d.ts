@@ -24,7 +24,7 @@ declare module 'vue-router/auto-routes' {
     '/base-need/': RouteRecordInfo<'/base-need/', '/base-need', Record<never, never>, Record<never, never>>,
     '/ca-auth/': RouteRecordInfo<'/ca-auth/', '/ca-auth', Record<never, never>, Record<never, never>>,
     '/evaluation-report/': RouteRecordInfo<'/evaluation-report/', '/evaluation-report', Record<never, never>, Record<never, never>>,
-    '/gama-bigData/': RouteRecordInfo<'/gama-bigData/', '/gama-bigData', Record<never, never>, Record<never, never>>,
+    '/gama-bigdata/': RouteRecordInfo<'/gama-bigdata/', '/gama-bigdata', Record<never, never>, Record<never, never>>,
     '/id-card-upload/': RouteRecordInfo<'/id-card-upload/', '/id-card-upload', Record<never, never>, Record<never, never>>,
     '/last-examine/': RouteRecordInfo<'/last-examine/', '/last-examine', Record<never, never>, Record<never, never>>,
     '/last-start/': RouteRecordInfo<'/last-start/', '/last-start', Record<never, never>, Record<never, never>>,
