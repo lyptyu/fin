@@ -102,7 +102,11 @@ async function handleSubmit() {
       }
 
       if (res.data.signCustH5URL) {
-        window.open(res.data.signCustH5URL)
+        // window.open(res.data.signCustH5URL)
+        // 跳转到res.data.signCustH5URL页面
+        window.location.href = res.data.signCustH5URL
+        // 把res.data.tid存在缓存
+        localStorage.setItem('tid', res.data.tid)
       }
       // 接下来的步骤:进入支付页面
       // router.push('/pay')
@@ -138,7 +142,9 @@ async function handleSubmit() {
   <div class="id-card-upload">
     <!-- 页面标题 -->
     <div class="title-section">
-      <h1 class="bg-gradient-to-r text-2xl text-transparent font-bold mb-8 text-center from-blue-500 to-cyan-500 bg-clip-text">
+      <h1
+        class="bg-gradient-to-r text-2xl text-transparent font-bold mb-8 text-center from-blue-500 to-cyan-500 bg-clip-text"
+      >
         身份证信息上传
       </h1>
     </div>
@@ -185,26 +191,15 @@ async function handleSubmit() {
     <!-- 提交按钮 -->
     <div class="submit-section">
       <van-button
-        type="primary"
-        block
-        :disabled="!isComplete"
-        class="submit-btn"
-        :loading="isLoading"
-        loading-text="提交中..."
-        @click="handleSubmit"
+        type="primary" block :disabled="!isComplete" class="submit-btn" :loading="isLoading"
+        loading-text="提交中..." @click="handleSubmit"
       >
         确认提交
       </van-button>
     </div>
 
     <!-- 隐藏的文件输入框 -->
-    <input
-      ref="fileInput"
-      type="file"
-      accept="image/*"
-      style="display: none"
-      @change="onFileChange"
-    >
+    <input ref="fileInput" type="file" accept="image/*" style="display: none" @change="onFileChange">
   </div>
 </template>
 

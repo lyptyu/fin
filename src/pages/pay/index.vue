@@ -1,12 +1,36 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import { alipayAppPayRequest, queryTradeNo } from '@/api/utils.js'
+import { alipayAppPayRequest, queryTradeNo, signQuery } from '@/api/utils.js'
 import router from '@/router/index.js'
 
 const route = useRoute()
 const payUrl = ref('')
 const isSuccess = ref(false)
 onMounted(async () => {
+  // 从缓存拿出tid，并提交给signQuery接口
+  const tid = localStorage.getItem('tid')
+  if (!tid) {
+    showToast('tid不存在')
+    return
+  }
+  const res = await signQuery(tid)
+  if (res.code === 0) {
+    showToast(res.data)
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, 1000)
+    })
+  } else {
+    showToast(res.msg)
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, 1000)
+    })
+    router.replace({ name: 'id-card-upload' })
+    return
+  }
   // 如果route.query.out_trade_no存在，表示是支付回调，需要获取支付结果
   if (route.query.outTradeNo) {
     const res = await queryTradeNo({ outTradeNo: route.query.outTradeNo })

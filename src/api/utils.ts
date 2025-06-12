@@ -57,8 +57,8 @@ export function ocrIdCard(agentId?: string, data: { frontImageUrl: string, backI
   return request.post('/v1/ocr/idCard', data)
 }
 
-export function signQuery(tid): Promise<ApiResponse> {
-  return request.post('/v1/ocr/signQuery', { tid })
+export function signQuery(tid: string): Promise<ApiResponse> {
+  return request.post(`/v1/ocr/signQuery?tid=${tid}`)
 }
 
 // 大数据风控查询接口
