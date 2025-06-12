@@ -98,21 +98,41 @@ onMounted(async () => {
                 条件汇总：
               </div>
               <div class="summary-content">
-                {{ reportData?.basicConditions?.housesConditions?.hasHouse === 'yes' ? '有房产' : '无房产' }} |
+                {{ reportData?.basicConditions?.housesConditions?.hasHouse === '是' ? '有房产' : '无房产' }} |
                 <template v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
                   {{ reportData?.basicConditions?.housesConditions?.houses[0]?.area || '无' }}・
                   {{ reportData?.basicConditions?.housesConditions?.houses[0]?.type || '无' }}
                 </template>
-                <template v-else>无房产</template> |
-                <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths">连续缴社保合计{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }}个月</template>
-                <template v-else>无社保</template> |
-                <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths">当前单位{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths }}个月</template>
-                <template v-else>无社保</template> |
-                <template v-if="reportData?.summaryConditions?.conditionAggregation?.companyAge">企业注册{{ reportData?.summaryConditions?.conditionAggregation?.companyAge }}个月</template>
-                <template v-else>无企业</template> |
-                <template v-if="reportData?.basicInform?.financingMes?.hasDrivingLicense === '是'">本人驾照</template>
-                <template v-else>本人无驾照</template>
-                <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense === '是'"> | 配偶驾照</template>
+                <template v-else>
+                  无房产
+                </template> |
+                <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths">
+                  连续缴社保合计{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }}个月
+                </template>
+                <template v-else>
+                  无社保
+                </template> |
+                <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths">
+                  当前单位{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths }}个月
+                </template>
+                <template v-else>
+                  无社保
+                </template> |
+                <template v-if="reportData?.summaryConditions?.conditionAggregation?.companyAge">
+                  企业注册{{ reportData?.summaryConditions?.conditionAggregation?.companyAge }}个月
+                </template>
+                <template v-else>
+                  无企业
+                </template> |
+                <template v-if="reportData?.basicInform?.financingMes?.hasDrivingLicense === '是'">
+                  本人驾照
+                </template>
+                <template v-else>
+                  本人无驾照
+                </template>
+                <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense === '是'">
+                  | 配偶驾照
+                </template>
               </div>
             </div>
             <div class="summary-item">
@@ -156,7 +176,9 @@ onMounted(async () => {
               </div>
               <div class="summary-content">
                 本人驾驶证情况：{{ reportData?.basicInform?.financingMes?.hasDrivingLicense || '无' }}
-                <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense"> | 配偶驾驶证情况：{{ reportData?.basicInform?.financingMes?.spouseHasDrivingLicense }}</template>
+                <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense">
+                  | 配偶驾驶证情况：{{ reportData?.basicInform?.financingMes?.spouseHasDrivingLicense }}
+                </template>
               </div>
             </div>
             <div class="summary-item">
@@ -182,7 +204,7 @@ onMounted(async () => {
                     {{ org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.blacklistOrgs.length - 1">, </template>
                   </span>
                 </div>
-                
+
                 <!-- 近半年查询记录 -->
                 <div
                   v-if="reportData?.summaryConditions?.specialNote?.queryRecords && reportData?.summaryConditions?.specialNote?.queryRecords.length > 0"
@@ -191,11 +213,13 @@ onMounted(async () => {
                   <span class="checked-box">☑</span>近半年以下查询记录的原因及细节：
                   <template v-for="(record, index) in reportData?.summaryConditions?.specialNote?.queryRecords" :key="index">
                     <template v-if="record.loanType === '车贷'">
-                      {{ record.org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.queryRecords.length - 1">, </template>
+                      {{ record.org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.queryRecords.length - 1">
+                        ,
+                      </template>
                     </template>
                   </template>
                 </div>
-                
+
                 <!-- 近五年未结清机构 -->
                 <div
                   v-if="reportData?.summaryConditions?.specialNote?.unpaidLoans && reportData?.summaryConditions?.specialNote?.unpaidLoans.length > 0"
@@ -204,11 +228,13 @@ onMounted(async () => {
                   <span class="checked-box">☑</span>近五年未结清的以下机构补充：
                   <template v-for="(loan, index) in reportData?.summaryConditions?.specialNote?.unpaidLoans" :key="index">
                     <template v-if="loan.loanType === '车贷'">
-                      {{ loan.org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.unpaidLoans.length - 1">, </template>
+                      {{ loan.org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.unpaidLoans.length - 1">
+                        ,
+                      </template>
                     </template>
                   </template>
                 </div>
-                
+
                 <!-- 本人特殊情况补充 -->
                 <div class="special-note-item">
                   <span class="checked-box">☑</span>语言能力：{{ reportData?.summaryConditions?.specialNote?.language || '无' }}
@@ -236,14 +262,34 @@ onMounted(async () => {
                 房产情况 (共{{ reportData?.basicConditions?.housesConditions?.houseCount || '0' }}套):
               </div>
               <div class="condition-detail">
+                {{ reportData?.basicConditions?.housesConditions?.hasHouse === '是' ? '有房产' : '无房产' }}
                 <template v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
-                  有房产 | 
                   <template v-for="(house, index) in reportData?.basicConditions?.housesConditions?.houses" :key="index">
-                    {{ house.area || '无' }}・{{ house.type || '无' }}
-                    <template v-if="index < reportData?.basicConditions?.housesConditions?.houses.length - 1">, </template>
+                    <div class="house-item">
+                      {{ house.area || '无' }}・{{ house.type || '无' }}・{{ house.status || '无' }}
+                      （名下{{ house.ownMonths || '0' }}个月；
+                      {{ house.size || '0' }}㎡；
+                      {{ house.shareType || '无' }}
+                      <template v-if="house.sharePercent && house.shareWith">
+                        [占{{ house.sharePercent }}%与{{ house.shareWith }}]
+                      </template>；
+                      评{{ house.evalPrice || '0' }}万；
+                      <template v-if="house.status === '按揭'">
+                        按揭{{ house.mortgageAmount || '0' }}万供{{ house.mortgageMonths || '0' }}个月-{{ house.mortgageOrg || '无' }}；
+                        <template v-if="house.mortgageSecond === '是'">
+                          二押金额{{ house.mortgageSecondAmount || '0' }}万-{{ house.mortgageSecondType || '无' }}-{{ house.mortgageSecondOrg || '无' }}
+                        </template>
+                      </template>
+                      <template v-if="house.status === '抵押'">
+                        抵押{{ house.pledgeAmount || '0' }}万供{{ house.pledgeMonths || '0' }}个月-{{ house.pledgeOrg || '无' }}；
+                        <template v-if="house.pledgeSecond === '是'">
+                          二押金额{{ house.pledgeSecondAmount || '0' }}万-{{ house.pledgeSecondType || '无' }}-{{ house.pledgeSecondOrg || '无' }}
+                        </template>
+                      </template>
+                      ）
+                    </div>
                   </template>
                 </template>
-                <template v-else>无房产</template>
               </div>
             </div>
           </div>
@@ -257,9 +303,28 @@ onMounted(async () => {
                 车产情况:
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.module3CarData?.hasCar === 'yes' ? '有车产' : '无车产' }} {{
-                  reportData?.basicConditions?.module3CarData?.hasCar === 'yes' ? `（${reportData?.basicConditions?.module3CarData?.carStatus || '无'} [${reportData?.basicConditions?.module3CarData?.carPlateArea || '无'}牌 | ${reportData?.basicConditions?.module3CarData?.carMileage || '0'}KM | 评${reportData?.basicConditions?.module3CarData?.carEval || '0'}万]；名下${reportData?.basicConditions?.module3CarData?.carOwnMonths || '0'}个月；按揭 [${reportData?.basicConditions?.module3CarData?.carMortgageAmount || '0'}万供${reportData?.basicConditions?.module3CarData?.carMortgageMonths || '0'}个月-${reportData?.basicConditions?.module3CarData?.carMortgageOrg || '无'}]）` : ''
-                }}
+                {{ reportData?.basicConditions?.module3CarData?.hasCar === '是' ? '有车产' : '无车产' }}
+                <template v-if="reportData?.basicConditions?.module3CarData?.hasCar === '是'">
+                  （{{ reportData?.basicConditions?.module3CarData?.carType || '无' }}・
+                  {{ reportData?.basicConditions?.module3CarData?.carStatus || '无' }}
+                  [{{ reportData?.basicConditions?.module3CarData?.carPlateArea || '无' }}牌 |
+                  {{ reportData?.basicConditions?.module3CarData?.carMileage || '0' }}KM |
+                  <template v-if="reportData?.basicConditions?.module3CarData?.carPlate">
+                    车牌号{{ reportData?.basicConditions?.module3CarData?.carPlate }} |
+                  </template>
+                  <template v-if="reportData?.basicConditions?.module3CarData?.carInvoice">
+                    发票{{ reportData?.basicConditions?.module3CarData?.carInvoice }}万 |
+                  </template>
+                  评{{ reportData?.basicConditions?.module3CarData?.carEval || '0' }}万]；
+                  名下{{ reportData?.basicConditions?.module3CarData?.carOwnMonths || '0' }}个月；
+                  <template v-if="reportData?.basicConditions?.module3CarData?.carStatus === '按揭'">
+                    按揭 [{{ reportData?.basicConditions?.module3CarData?.carMortgageAmount || '0' }}万供{{ reportData?.basicConditions?.module3CarData?.carMortgageMonths || '0' }}个月-{{ reportData?.basicConditions?.module3CarData?.carMortgageOrg || '无' }}]
+                  </template>
+                  <template v-if="reportData?.basicConditions?.module3CarData?.carStatus === '抵押'">
+                    抵押 [{{ reportData?.basicConditions?.module3CarData?.carPledgeAmount || '0' }}万供{{ reportData?.basicConditions?.module3CarData?.carPledgeMonths || '0' }}个月-{{ reportData?.basicConditions?.module3CarData?.carPledgeOrg || '无' }}]
+                  </template>
+                  ）
+                </template>
               </div>
             </div>
           </div>
@@ -270,12 +335,22 @@ onMounted(async () => {
             </div>
             <div class="condition-content">
               <div class="condition-title">
-                金融资产:
+                金融资产 (共{{ reportData?.basicConditions?.module3AssetData?.assetCount || '0' }}项):
               </div>
               <div class="condition-detail">
-                {{
-                  reportData?.basicConditions?.module3AssetData?.hasAsset === 'yes' ? (reportData?.basicConditions?.module3AssetData?.assets && reportData?.basicConditions?.module3AssetData?.assets.length > 0 ? reportData?.basicConditions?.module3AssetData?.assets.map(asset => `${asset.type}（${asset.months}个月；当前价值${asset.amount}万）`).join('，') : '有金融资产，但无详细信息') : '无金融资产'
-                }}
+                {{ reportData?.basicConditions?.module3AssetData?.hasAsset === '是' ? '有金融资产' : '无金融资产' }}
+                <template v-if="reportData?.basicConditions?.module3AssetData?.hasAsset === '是' && reportData?.basicConditions?.module3AssetData?.assets && reportData?.basicConditions?.module3AssetData?.assets.length > 0">
+                  <div class="asset-list">
+                    <template v-for="(asset, index) in reportData?.basicConditions?.module3AssetData?.assets" :key="index">
+                      <div class="asset-item">
+                        {{ asset.type || '无' }}（持有{{ asset.months || '0' }}个月；当前价值{{ asset.amount || '0' }}万）
+                        <template v-if="index < reportData?.basicConditions?.module3AssetData?.assets.length - 1">
+                          ，
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </template>
               </div>
             </div>
           </div>
@@ -289,13 +364,80 @@ onMounted(async () => {
                 社保|公积金|个税:
               </div>
               <div class="condition-detail">
-                社保汇总：连{{
-                  reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths || '0'
-                }}个月；当前{{
-                  reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths || '0'
-                }}个月；医疗{{ reportData?.basicConditions?.securitySituation?.medicalBase || '0' }}元 |
-                养老{{ reportData?.basicConditions?.securitySituation?.pensionBase || '0' }}元<br>
-                社保单位：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }}
+                <!-- 社保信息 -->
+                <div class="security-section">
+                  <div class="security-title">
+                    社保信息：{{ reportData?.basicConditions?.securitySituation?.hasSocialSecurity === '是' ? '有社保' : '无社保' }}
+                  </div>
+                  <template v-if="reportData?.basicConditions?.securitySituation?.hasSocialSecurity === '是'">
+                    <div class="security-content">
+                      缴费主体：{{ reportData?.basicConditions?.securitySituation?.socialSecurityPayer || '无' }} |
+                      社保地区：{{ reportData?.basicConditions?.securitySituation?.socialSecurityArea || '无' }} |
+                      社保单位全称：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
+                      连续缴社保合计：{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths || '0' }}个月 |
+                      当前单位：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths || '0' }}个月 |
+                      近半年平均医疗基数：{{ reportData?.basicConditions?.securitySituation?.medicalBase || '0' }}元 |
+                      近半年平均养老基数：{{ reportData?.basicConditions?.securitySituation?.pensionBase || '0' }}元
+                      <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityNote">
+                        <div class="security-note">
+                          社保补充：{{ reportData?.basicConditions?.securitySituation?.socialSecurityNote }}
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- 公积金信息 -->
+                <div class="security-section">
+                  <div class="security-title">
+                    公积金信息：{{ reportData?.basicConditions?.securitySituation?.hasProvidentFund === '是' ? '有公积金' : '无公积金' }}
+                  </div>
+                  <template v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund === '是'">
+                    <div class="security-content">
+                      公积金地区：{{ reportData?.basicConditions?.securitySituation?.providentFundArea || '无' }} |
+                      <template v-if="reportData?.basicConditions?.securitySituation?.providentFundCompanyType === '同社保单位'">
+                        公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompany || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
+                      </template>
+                      <template v-else>
+                        公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompanyName || '无' }} |
+                      </template>
+                      连续缴公积金合计：{{ reportData?.basicConditions?.securitySituation?.providentFundTotalMonths || '0' }}个月 |
+                      当前单位：{{ reportData?.basicConditions?.securitySituation?.providentFundCurrentMonths || '0' }}个月 |
+                      近半年平均公积金基数：{{ reportData?.basicConditions?.securitySituation?.providentFundBase || '0' }}元
+                      <template v-if="reportData?.basicConditions?.securitySituation?.providentFundNote">
+                        <div class="security-note">
+                          公积金补充：{{ reportData?.basicConditions?.securitySituation?.providentFundNote }}
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- 个税信息 -->
+                <div class="security-section">
+                  <div class="security-title">
+                    个税信息：{{ reportData?.basicConditions?.securitySituation?.hasTax === '是' ? '有个税' : '无个税' }}
+                  </div>
+                  <template v-if="reportData?.basicConditions?.securitySituation?.hasTax === '是'">
+                    <div class="security-content">
+                      个税地区：{{ reportData?.basicConditions?.securitySituation?.taxArea || '无' }} |
+                      <template v-if="reportData?.basicConditions?.securitySituation?.taxCompanyType === '同社保单位'">
+                        个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompany || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
+                      </template>
+                      <template v-else>
+                        个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompanyName || '无' }} |
+                      </template>
+                      连续缴个税合计：{{ reportData?.basicConditions?.securitySituation?.taxTotalMonths || '0' }}个月 |
+                      当前单位：{{ reportData?.basicConditions?.securitySituation?.taxCurrentMonths || '0' }}个月 |
+                      近半年平均个税税前工资：{{ reportData?.basicConditions?.securitySituation?.taxBase || '0' }}元
+                      <template v-if="reportData?.basicConditions?.securitySituation?.taxNote">
+                        <div class="security-note">
+                          个税补充：{{ reportData?.basicConditions?.securitySituation?.taxNote }}
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
@@ -309,13 +451,61 @@ onMounted(async () => {
                 企业情况:
               </div>
               <div class="condition-detail">
-                企业汇总：注册{{
-                  reportData?.summaryConditions?.conditionAggregation?.companyAge || '0'
-                }}个月；{{ reportData?.summaryConditions?.investigate?.workType || '无' }}<br>
-                企业名称：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }}<br>
-                企业补充：{{
-                  reportData?.summaryConditions?.investigate?.canInvestigate === 'yes' ? '可考察' : '不可考察'
-                }}
+                {{ reportData?.basicConditions?.businessCondition?.hasCompany === '是' ? '有企业' : '无企业' }}
+                <template v-if="reportData?.basicConditions?.businessCondition?.hasCompany === '是'">
+                  <div class="business-info">
+                    <div class="business-item">
+                      企业全称：{{ reportData?.basicConditions?.businessCondition?.companyName || '无' }}
+                    </div>
+
+                    <div class="business-item">
+                      工商信息：
+                      <template v-if="reportData?.basicConditions?.businessCondition?.businessInfo && reportData?.basicConditions?.businessCondition?.businessInfo.length > 0">
+                        {{ reportData?.basicConditions?.businessCondition?.businessInfo.join('，') }}
+                      </template>
+                      <template v-else>
+                        无
+                      </template>
+                    </div>
+
+                    <div class="business-item">
+                      <template v-if="reportData?.basicConditions?.businessCondition?.businessInfo && reportData?.basicConditions?.businessCondition?.businessInfo.includes('法人')">
+                        法人名下：{{ reportData?.basicConditions?.businessCondition?.legalPersonMonths || '0' }}个月
+                      </template>
+                    </div>
+
+                    <div class="business-item">
+                      <template v-if="reportData?.basicConditions?.businessCondition?.businessInfo && reportData?.basicConditions?.businessCondition?.businessInfo.includes('股东')">
+                        股东名下：{{ reportData?.basicConditions?.businessCondition?.shareholderMonths || '0' }}个月；
+                        股东占股：{{ reportData?.basicConditions?.businessCondition?.shareholderPercentage || '0' }}%
+                      </template>
+                    </div>
+
+                    <div class="business-item">
+                      企业注册资金：{{ reportData?.basicConditions?.businessCondition?.registeredCapital || '0' }}万元
+                    </div>
+
+                    <div class="business-item">
+                      企业注册月数：{{ reportData?.basicConditions?.businessCondition?.registeredMonths || '0' }}个月
+                    </div>
+
+                    <div class="business-item">
+                      工商是否经营异常：{{ reportData?.basicConditions?.businessCondition?.businessAbnormal || '否' }}
+                    </div>
+
+                    <div class="business-item">
+                      是否实体：{{ reportData?.basicConditions?.businessCondition?.hasEntity || '否' }}
+                    </div>
+
+                    <div class="business-item">
+                      经营行业：{{ reportData?.basicConditions?.businessCondition?.businessIndustry || '无' }}
+                    </div>
+
+                    <div class="business-item">
+                      经营规模：人数{{ reportData?.basicConditions?.businessCondition?.businessStaff || '0' }}人；面积{{ reportData?.basicConditions?.businessCondition?.businessArea || '0' }}平方米
+                    </div>
+                  </div>
+                </template>
               </div>
             </div>
           </div>
@@ -326,11 +516,55 @@ onMounted(async () => {
             </div>
             <div class="condition-content">
               <div class="condition-title">
-                流水情况:
+                流水情况 (共{{ reportData?.basicConditions?.module3FlowData?.flowCount || '0' }}项):
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.module3FlowData?.hasFlow === 'yes' ? (reportData?.basicConditions?.module3FlowData?.flows && reportData?.basicConditions?.module3FlowData?.flows.length > 0 ? reportData?.basicConditions?.module3FlowData?.flows.map(flow => `${flow.type}（${flow.features && flow.features.length > 0 ? flow.features.join('，') : '无特点'}${flow.salaryAmount ? `工资[${flow.salaryAmount}元]` : ''}${flow.avgIncome6Months ? `近6个月平均${flow.avgIncome6Months}万` : ''}${flow.avgIncome12Months ? `，近12个月平均${flow.avgIncome12Months}万` : ''}${flow.interest && flow.interest.length > 0 ? `；结息[${flow.interest.join('，')}]` : ''}）`).join('<br>')
-                  : '有流水，但无详细信息') : '无流水记录' }}
+                {{ reportData?.basicConditions?.module3FlowData?.hasFlow === '是' ? '有有效流水' : '无有效流水' }}
+                <template v-if="reportData?.basicConditions?.module3FlowData?.hasFlow === '是' && reportData?.basicConditions?.module3FlowData?.flows && reportData?.basicConditions?.module3FlowData?.flows.length > 0">
+                  <div class="flow-list">
+                    <template v-for="(flow, index) in reportData?.basicConditions?.module3FlowData?.flows" :key="index">
+                      <div class="flow-item">
+                        <div class="flow-type">
+                          流水类别：{{ flow.type || '无' }}
+                        </div>
+
+                        <div class="flow-features">
+                          流水特点描述：
+                          <template v-if="flow.features && flow.features.length > 0">
+                            {{ flow.features.join('，') }}
+                          </template>
+                          <template v-else>
+                            无特点
+                          </template>
+                        </div>
+
+                        <template v-if="flow.salaryAmount">
+                          <div class="flow-salary">
+                            代发工资：{{ flow.salaryAmount }}元
+                          </div>
+                        </template>
+
+                        <div class="flow-avg">
+                          <template v-if="flow.avgIncome6Months">
+                            近6个月月均进账：{{ flow.avgIncome6Months }}万
+                          </template>
+                          <template v-if="flow.avgIncome12Months">
+                            <template v-if="flow.avgIncome6Months">
+                              |
+                            </template>
+                            近12个月月均进账：{{ flow.avgIncome12Months }}万
+                          </template>
+                        </div>
+
+                        <template v-if="flow.interest && flow.interest.length > 0">
+                          <div class="flow-interest">
+                            近一年结息：{{ flow.interest.join('，') }}
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </template>
               </div>
             </div>
           </div>
@@ -343,9 +577,31 @@ onMounted(async () => {
           <h2>征信情况</h2>
         </div>
         <div class="card-content">
+          <!-- 征信后新增部分 -->
           <div class="credit-section">
             <div class="credit-title">
-              【征信负债汇总】
+              【征信后新增】
+            </div>
+            <div class="credit-content">
+              <template v-if="reportData?.creditSituation?.newAdditions && reportData?.creditSituation?.newAdditions.length > 0">
+                <div v-for="(item, index) in reportData?.creditSituation?.newAdditions" :key="index" class="credit-new-item">
+                  <div class="credit-new-detail">
+                    {{ item.institution || '无' }} {{ item.type || '无' }} {{ item.amount || '0' }}万 {{ item.date || '' }}
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <div class="credit-new-detail">
+                  无征信后新增
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- 负债信息总汇部分 -->
+          <div class="credit-section">
+            <div class="credit-title">
+              【负债信息总汇】
             </div>
             <ul class="credit-list">
               <li>
@@ -381,11 +637,11 @@ onMounted(async () => {
 
           <div class="credit-section">
             <div class="credit-title">
-              【征信贷款明细（总{{ reportData?.loanCount || '0' }}笔）】
+              【征信贷款明细（总{{ reportData?.creditSituation?.loanCount || '0' }}笔）】
             </div>
-            <!-- 这里可以遍历loanDetailsInfo对象来展示贷款明细 -->
-            <div v-if="reportData?.loans && reportData?.loans.length > 0" class="condition-item">
-              <div v-for="(loan, index) in reportData?.loans" :key="index" class="condition-item">
+            <!-- 使用creditSituation中的贷款明细数据 -->
+            <div v-if="reportData?.creditSituation?.loans && reportData?.creditSituation?.loans.length > 0" class="condition-item">
+              <div v-for="(loan, index) in reportData?.creditSituation?.loans" :key="index" class="condition-item">
                 <div class="condition-number">
                   {{ String(index + 1).padStart(2, '0') }}
                 </div>
@@ -393,10 +649,13 @@ onMounted(async () => {
                   <div class="condition-title">
                     {{
                       loan.type || '无'
-                    }}（总{{ reportData?.loanCount && index === 0 ? reportData?.loanCount : '1' }}笔）：
+                    }}（总{{ reportData?.creditSituation?.loanCount && index === 0 ? reportData?.creditSituation?.loanCount : '1' }}笔）：
                   </div>
                   <div class="condition-detail">
                     {{ loan.time || '' }} {{ loan.institution || '无' }}（总{{ loan.amount || '0' }}万）
+                    <div v-if="loan.details" class="loan-details">
+                      {{ loan.details }}
+                    </div>
                   </div>
                 </div>
               </div>
