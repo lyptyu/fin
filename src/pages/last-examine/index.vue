@@ -2231,6 +2231,55 @@ onMounted(() => {
                           </template>
                         </van-field>
                       </div>
+                      <div class="form-item">
+                        <div class="radio-title">
+                          是否有二押
+                        </div>
+                        <van-radio-group v-model="house.pledgeSecond" direction="horizontal" class="radio-group">
+                          <van-radio name="否">
+                            否
+                          </van-radio>
+                          <van-radio name="是">
+                            是
+                          </van-radio>
+                        </van-radio-group>
+                      </div>
+                      <template v-if="house.pledgeSecond === '是'">
+                        <div class="form-item">
+                          <van-field
+                            v-model="house.pledgeSecondAmount"
+                            label="二押金额"
+                            type="number"
+                            placeholder="请输入金额"
+                            :rules="[{ pattern: /^\d+$/, message: '请输入整数' }]"
+                          >
+                            <template #right-icon>
+                              万
+                            </template>
+                          </van-field>
+                          
+                          <div class="radio-title">
+                            机构类型
+                          </div>
+                          <van-radio-group v-model="house.pledgeSecondOrgType" direction="horizontal" class="radio-group">
+                            <van-radio name="银行">
+                              银行
+                            </van-radio>
+                            <van-radio name="小额">
+                              小额
+                            </van-radio>
+                            <van-radio name="私人">
+                              私人
+                            </van-radio>
+                          </van-radio-group>
+                          
+                          <van-field
+                            v-model="house.pledgeSecondOrgName"
+                            label="机构名称"
+                            placeholder="请输入机构名称"
+                          />
+                        </div>
+                      </template>
                     </template>
                   </template>
                 </div>
