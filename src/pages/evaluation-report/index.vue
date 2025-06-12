@@ -70,7 +70,7 @@ onMounted(async () => {
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">大数据级别</span>
-              <span class="info-value level-badge level-a">{{ reportData?.bgLeave || '无' }}</span>
+              <span class="info-value tag">{{ reportData?.bgLeave || '无' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">征信级别</span>
@@ -98,15 +98,21 @@ onMounted(async () => {
                 条件汇总：
               </div>
               <div class="summary-content">
-                {{ reportData?.basicConditions?.housesConditions?.hasHouse ?? '无' }} |
-                {{ reportData?.basicConditions?.housesConditions?.houseCount || '0' }} |
-                {{ reportData?.basicConditions?.housesConditions?.houses?.area || '无' }} |
-                {{ reportData?.basicConditions?.housesConditions?.houses?.type || '无' }} |
-                {{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths || '无' }} |
-                {{ reportData?.summaryConditions?.conditionAggregation?.companyAge || '无' }} |
-                {{ reportData?.summaryConditions?.conditionAggregation?.companyAge || '无' }} |
-                {{ reportData?.summaryConditions?.conditionAggregation?.driverLicense || '无' }} |
-                {{ reportData?.basicInform?.financingMes?.ydriver || '无' }}
+                {{ reportData?.basicConditions?.housesConditions?.hasHouse === 'yes' ? '有房产' : '无房产' }} |
+                <template v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
+                  {{ reportData?.basicConditions?.housesConditions?.houses[0]?.area || '无' }}・
+                  {{ reportData?.basicConditions?.housesConditions?.houses[0]?.type || '无' }}
+                </template>
+                <template v-else>无房产</template> |
+                <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths">连续缴社保合计{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }}个月</template>
+                <template v-else>无社保</template> |
+                <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths">当前单位{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths }}个月</template>
+                <template v-else>无社保</template> |
+                <template v-if="reportData?.summaryConditions?.conditionAggregation?.companyAge">企业注册{{ reportData?.summaryConditions?.conditionAggregation?.companyAge }}个月</template>
+                <template v-else>无企业</template> |
+                <template v-if="reportData?.basicInform?.financingMes?.hasDrivingLicense === '是'">本人驾照</template>
+                <template v-else>本人无驾照</template>
+                <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense === '是'"> | 配偶驾照</template>
               </div>
             </div>
             <div class="summary-item">
@@ -117,11 +123,11 @@ onMounted(async () => {
                 {{ reportData?.summaryConditions?.basicAttribute?.sex || '无' }} |
                 {{ reportData?.summaryConditions?.basicAttribute?.age || '0' }}岁 |
                 {{ reportData?.summaryConditions?.basicAttribute?.address || '无' }} |
-                {{ reportData?.summaryConditions?.basicAttribute?.maritalStatus || '无' }} | {{
-                  reportData?.summaryConditions?.basicAttribute?.education || '无'
-                }}/{{
-                  reportData?.summaryConditions?.basicAttribute?.educationCheck || '无'
-                }}/{{ reportData?.summaryConditions?.basicAttribute?.educationFullTime || '无' }}
+                真实婚姻情况：{{ reportData?.summaryConditions?.basicAttribute?.realMaritalStatus || '无' }} |
+                征信婚姻状态：{{ reportData?.summaryConditions?.basicAttribute?.creditMaritalStatus || '无' }} |
+                {{ reportData?.summaryConditions?.basicAttribute?.education || '无' }}/
+                {{ reportData?.summaryConditions?.basicAttribute?.educationCheck || '无' }}/
+                {{ reportData?.summaryConditions?.basicAttribute?.educationFullTime || '无' }}
               </div>
             </div>
             <div class="summary-item">
@@ -140,8 +146,8 @@ onMounted(async () => {
                 配偶配合情况：
               </div>
               <div class="summary-content">
-                {{ reportData?.basicInform?.financingMes?.maritalStatus?.informable || '无' }} |
-                {{ reportData?.basicInform?.financingMes?.maritalStatus?.signed || '无' }}
+                配偶是否知情：{{ reportData?.summaryConditions?.spouseAware || '无' }} |
+                配偶是否可共签：{{ reportData?.summaryConditions?.spouseCanSign || '无' }}
               </div>
             </div>
             <div class="summary-item">
@@ -149,8 +155,8 @@ onMounted(async () => {
                 驾驶证情况：
               </div>
               <div class="summary-content">
-                {{ reportData?.basicInform?.financingMes?.idriver || '无' }} |
-                {{ reportData?.basicInform?.financingMes?.ydriver || '无' }}
+                本人驾驶证情况：{{ reportData?.basicInform?.financingMes?.hasDrivingLicense || '无' }}
+                <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense"> | 配偶驾驶证情况：{{ reportData?.basicInform?.financingMes?.spouseHasDrivingLicense }}</template>
               </div>
             </div>
             <div class="summary-item">
@@ -158,7 +164,7 @@ onMounted(async () => {
                 大数据情况：
               </div>
               <div class="summary-content">
-                伽马大数据30分（补充说明：有被告民事已结案，结案时间2023年06月）
+                {{ reportData?.bgLeave || '无' }}
               </div>
             </div>
             <div class="summary-item">
@@ -166,39 +172,48 @@ onMounted(async () => {
                 特别说明：
               </div>
               <div class="summary-content">
+                <!-- 历史黑灰名单情况 -->
                 <div
-                  v-if="reportData?.summaryConditions?.specialNote?.blacklistReasons && reportData?.summaryConditions?.specialNote?.blacklistReasons.length > 0"
+                  v-if="reportData?.summaryConditions?.specialNote?.blacklistOrgs && reportData?.summaryConditions?.specialNote?.blacklistOrgs.length > 0"
                   class="special-note-item"
                 >
-                  <span class="checked-box">☑</span>{{
-                    reportData?.summaryConditions?.specialNote?.blacklistReasons[0]?.black || '无'
-                  }}
+                  <span class="checked-box">☑</span>历史（含5年外）以下机构黑灰名单情况：
+                  <span v-for="(org, index) in reportData?.summaryConditions?.specialNote?.blacklistOrgs" :key="index">
+                    {{ org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.blacklistOrgs.length - 1">, </template>
+                  </span>
                 </div>
-                <div
-                  v-if="reportData?.summaryConditions?.specialNote?.queryRecords && reportData?.summaryConditions?.specialNote?.queryRecords.length > 0"
-                  class="special-note-item"
-                >
-                  <span class="checked-box">☑</span>近半年有{{
-                    reportData?.summaryConditions?.specialNote?.queryRecords[0]?.loanType || '无'
-                  }}机构查询记录 - {{ reportData?.summaryConditions?.specialNote?.queryRecords[0]?.org || '无' }}
-                </div>
+                
+                <!-- 近半年查询记录 -->
                 <div
                   v-if="reportData?.summaryConditions?.specialNote?.queryRecords && reportData?.summaryConditions?.specialNote?.queryRecords.length > 0"
                   class="special-note-item"
                 >
-                  <span class="checked-box">☑</span>历史征信有{{
-                    reportData?.summaryConditions?.specialNote?.queryRecords[0]?.loanType || '无'
-                  }}机构{{ reportData?.summaryConditions?.specialNote?.queryRecords[0]?.progress || '无' }}记录 -
-                  {{ reportData?.summaryConditions?.specialNote?.queryRecords[0]?.org || '无' }}
+                  <span class="checked-box">☑</span>近半年以下查询记录的原因及细节：
+                  <template v-for="(record, index) in reportData?.summaryConditions?.specialNote?.queryRecords" :key="index">
+                    <template v-if="record.loanType === '车贷'">
+                      {{ record.org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.queryRecords.length - 1">, </template>
+                    </template>
+                  </template>
                 </div>
+                
+                <!-- 近五年未结清机构 -->
+                <div
+                  v-if="reportData?.summaryConditions?.specialNote?.unpaidLoans && reportData?.summaryConditions?.specialNote?.unpaidLoans.length > 0"
+                  class="special-note-item"
+                >
+                  <span class="checked-box">☑</span>近五年未结清的以下机构补充：
+                  <template v-for="(loan, index) in reportData?.summaryConditions?.specialNote?.unpaidLoans" :key="index">
+                    <template v-if="loan.loanType === '车贷'">
+                      {{ loan.org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.unpaidLoans.length - 1">, </template>
+                    </template>
+                  </template>
+                </div>
+                
+                <!-- 本人特殊情况补充 -->
                 <div class="special-note-item">
-                  <span class="checked-box">☑</span>{{
-                    reportData?.summaryConditions?.specialNote?.language || '无普通话和粤语情况'
-                  }} <span class="checked-box">☑</span>{{
-                    reportData?.summaryConditions?.specialNote?.writing || '无书写情况'
-                  }} <span class="checked-box">☑</span>{{
-                    reportData?.summaryConditions?.specialNote?.physical || '无身体情况'
-                  }}
+                  <span class="checked-box">☑</span>语言能力：{{ reportData?.summaryConditions?.specialNote?.language || '无' }}
+                  <span class="checked-box">☑</span>写字能力：{{ reportData?.summaryConditions?.specialNote?.writing || '无' }}
+                  <span class="checked-box">☑</span>身体情况：{{ reportData?.summaryConditions?.specialNote?.physical || '无' }}
                 </div>
               </div>
             </div>
@@ -221,9 +236,14 @@ onMounted(async () => {
                 房产情况 (共{{ reportData?.basicConditions?.housesConditions?.houseCount || '0' }}套):
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.housesConditions?.hasHouse === 'yes' ? '有房产' : '无房产' }} | {{
-                  reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0 ? `${reportData?.basicConditions?.housesConditions?.houses[0]?.type || '无'}・${reportData?.basicConditions?.housesConditions?.houses[0]?.status || '无'}（名下${reportData?.basicConditions?.housesConditions?.houses[0]?.ownMonths || '0'}个月；${reportData?.basicConditions?.housesConditions?.houses[0]?.area || '0'}㎡；${reportData?.basicConditions?.housesConditions?.houses[0]?.shareType || '无'} [占${reportData?.basicConditions?.housesConditions?.houses[0]?.sharePercent || '0'}%与${reportData?.basicConditions?.housesConditions?.houses[0]?.shareWith || '无'}]；评${reportData?.basicConditions?.housesConditions?.houses[0]?.evalPrice || '0'}万；按揭${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageAmount || '0'}万供${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageMonths || '0'}个月；` + `二押金额${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondAmount || '0'}万-${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondType || '无'}-${reportData?.basicConditions?.housesConditions?.houses[0]?.mortgageSecondOrg || '无'}` + `）` : '无房产信息'
-                }}
+                <template v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
+                  有房产 | 
+                  <template v-for="(house, index) in reportData?.basicConditions?.housesConditions?.houses" :key="index">
+                    {{ house.area || '无' }}・{{ house.type || '无' }}
+                    <template v-if="index < reportData?.basicConditions?.housesConditions?.houses.length - 1">, </template>
+                  </template>
+                </template>
+                <template v-else>无房产</template>
               </div>
             </div>
           </div>
