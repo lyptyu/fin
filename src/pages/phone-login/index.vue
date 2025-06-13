@@ -15,6 +15,7 @@ const loading = ref(false)
 const timer = ref<number | null>(null)
 const countdown = ref(60)
 const hasRequestedCode = ref(false)
+const agreedToTerms = ref(false)
 
 // 在组件挂载时获取URL参数agent_id并保存到store
 onMounted(() => {
@@ -180,12 +181,25 @@ async function onSubmit() {
             </van-field>
           </van-cell-group>
 
+          <div class="agreement-section">
+            <van-checkbox v-model="agreedToTerms" icon-size="16px"></van-checkbox>
+            <span>
+              已阅读并同意
+              <router-link to="/agreement1" class="agreement-link">《用户协议及隐私政策》</router-link>、
+              <router-link to="/agreement2" class="agreement-link">《征信查询授权书》</router-link>、
+              <router-link to="/agreement3" class="agreement-link">《个人信息查询及使用授权书》</router-link>
+              及
+              <router-link to="/agreement4" class="agreement-link">《个人信息对外提供授权书》</router-link>
+              的内容
+            </span>
+          </div>
+
           <div class="submit-btn">
             <van-button
               round block type="primary" native-type="submit" :loading="loading"
-              :disabled="!hasRequestedCode || !code"
+              :disabled="!hasRequestedCode || !code || !agreedToTerms"
             >
-              {{ !hasRequestedCode ? '请先获取验证码' : !code ? '请输入验证码' : '登录' }}
+              {{ !hasRequestedCode ? '请先获取验证码' : !code ? '请输入验证码' : !agreedToTerms ? '请勾选同意协议' : '登录' }}
             </van-button>
           </div>
         </van-form>
@@ -243,6 +257,36 @@ async function onSubmit() {
       font-size: 20px;
       color: #666;
     }
+  }
+
+  .agreement-section {
+    margin-top: 16px;
+    padding: 0 12px; 
+    font-size: 12px;
+    color: #666; 
+    display: flex;
+    align-items: flex-start; // Align checkbox with the top of the text line
+    text-align: left; 
+  }
+
+  .agreement-section .van-checkbox {
+    margin-right: 8px;
+    // Adjust to better align with the first line of text
+    margin-top: 1px; 
+  }
+
+  .agreement-section span {
+    flex: 1; 
+    line-height: 1.5; // Improve readability for wrapped text
+  }
+
+  .agreement-link {
+    color: #667eea; 
+    text-decoration: none;
+  }
+
+  .agreement-link:hover {
+    text-decoration: underline;
   }
 
   .submit-btn {
