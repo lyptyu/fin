@@ -65,10 +65,69 @@
     第23条 联系我们：如您对本隐私政策有任何疑问、意见或请求，或需要投诉举报，可通过以下方式与我们联系：
     在线客服：您可通过平台App/网站内的在线客服与我们取得联系。
     我们将尽快审核所涉问题，并在验证您的用户身份后的十五个工作日内给予答复。若您对我们的回复不满意，特别是我们的个人信息处理行为损害了您的合法权益，您还可以向有管辖权的监管机关进行投诉或举报。
-    **用户声明：**本人（以及本人所代表的单位）已认真阅读并充分理解本隐私政策的全部内容，包括其中涉及个人敏感信息处理、信息共享和转让、以及用户权利义务的条款。本人同意并接受本隐私政策的所有约定。
+    用户声明：本人（以及本人所代表的单位）已认真阅读并充分理解本隐私政策的全部内容，包括其中涉及个人敏感信息处理、信息共享和转让、以及用户权利义务的条款。本人同意并接受本隐私政策的所有约定。
   </div>
 </template>
 
 <style scoped>
+.agreement-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 30px;
+  font-family: 'SimSun', 'Songti SC', 'Microsoft YaHei', serif; /* Common Chinese fonts for agreements */
+  line-height: 1.8;
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
 
+.agreement-container > div {
+  margin-bottom: 1em; /* Space between direct child divs (paragraphs/sections) */
+}
+
+.agreement-container h2 {
+  text-align: center;
+  font-size: 20px; /* Adjusted for better readability */
+  margin-top: 1em;
+  margin-bottom: 1.5em;
+  font-weight: bold;
+  color: #000000;
+}
+
+.agreement-container > div:first-child h2 {
+  /* Reset margin for the first h2 if it's the very first element */
+  margin-top: 0;
+}
+
+.agreement-container h4 {
+  font-size: 16px; /* Adjusted for better readability */
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  color: #111111;
+  /* Ensure h4 is displayed as a block or inline-block to allow margin and prevent text flowing beside it if it's short */
+  /* display: block; /* or inline-block depending on desired flow with subsequent text */
+}
+
+.agreement-container .section-title {
+  font-weight: bold;
+  font-size: 18px; /* Between h4 (16px) and h2 (20px) */
+  margin-top: 2em; /* More space before a major section */
+  margin-bottom: 1em;
+  color: #111111; /* Consistent with h4 */
+}
+
+/* This rule might not be needed if structure is flat, but harmless to keep for consistency */
+.agreement-container div > div {
+  /* margin-left: 2em; /* Indent sub-paragraphs or lists - removed for privacy policy as it's mostly flat */
+  margin-bottom: 0.5em;
+}
+
+/* Specific adjustment for h4 if it's directly followed by text not in its own div */
+/* This is a common pattern: <div><h4>Title:</h4> Text... </div> */
+/* To ensure h4 and the text that follows it are treated as a single block for spacing, */
+/* we rely on the parent div's margin-bottom. */
+/* If h4 itself needs to push down the text that's part of the same div, use padding-bottom on h4 or line-height. */
+/* However, the current structure where <h4> and text are siblings within a <div> handles spacing well with the div's margin. */
 </style>

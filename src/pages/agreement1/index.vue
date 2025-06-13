@@ -77,7 +77,7 @@
 <style scoped>
 .agreement-container {
   max-width: 800px;
-  margin: 20px auto;
+  margin: auto;
   padding: 30px;
   font-family: 'SimSun', 'Songti SC', 'Microsoft YaHei', serif; /* Common Chinese fonts for agreements */
   line-height: 1.8;
