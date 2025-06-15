@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { searchAssessmentReport } from '@/api/user'
 import dayjs from 'dayjs'
+import { mockData } from '@/pages/evaluation-report/mock'
 
 const route = useRoute()
 const reportData = ref(null)
@@ -11,7 +11,8 @@ onMounted(async () => {
   try {
     const phone = route.query.phone as string
     const agentId = route.query.agent_id as string
-    const res = await searchAssessmentReport(phone, agentId, '')
+    // const res = await searchAssessmentReport(phone, agentId, '')
+    const res = mockData
     if (res.code === 200) {
       reportData.value = res.data
     }
@@ -45,7 +46,7 @@ onMounted(async () => {
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">评估时间</span>
-              <span class="info-value">{{ dayjs(reportData?.basicInform?.orderTime ?? '').format('YYYY-MM-DD HH:mm') }}</span>
+              <span class="info-value">{{ reportData?.basicInform?.orderTime ? dayjs(reportData?.basicInform?.orderTime).format('YYYY-MM-DD HH:mm') : '-' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">订单来源</span>
@@ -118,8 +119,8 @@ onMounted(async () => {
                 <template v-else>
                   无社保
                 </template> |
-                <template v-if="reportData?.summaryConditions?.conditionAggregation?.companyAge">
-                  企业注册{{ reportData?.summaryConditions?.conditionAggregation?.companyAge }}个月
+                <template v-if="reportData?.basicConditions?.enterpriseSituation?.registeredMonths">
+                  企业注册{{ reportData?.basicConditions?.enterpriseSituation?.registeredMonths }}个月
                 </template>
                 <template v-else>
                   无企业
@@ -166,8 +167,8 @@ onMounted(async () => {
                 配偶配合情况：
               </div>
               <div class="summary-content">
-                配偶是否知情：{{ reportData?.summaryConditions?.spouseAware || '无' }} |
-                配偶是否可共签：{{ reportData?.summaryConditions?.spouseCanSign || '无' }}
+                配偶是否知情：{{ reportData?.basicInform?.financingMes?.spouseAware || '无' }} |
+                配偶是否可共签：{{ reportData?.basicInform?.financingMes?.spouseCanSign || '无' }}
               </div>
             </div>
             <div class="summary-item">
@@ -196,24 +197,24 @@ onMounted(async () => {
               <div class="summary-content">
                 <!-- 历史黑灰名单情况 -->
                 <div
-                  v-if="reportData?.summaryConditions?.specialNote?.blacklistOrgs && reportData?.summaryConditions?.specialNote?.blacklistOrgs.length > 0"
+                  v-if="reportData?.exceptionalCase?.specialNote?.blacklistOrgs && reportData?.exceptionalCase?.specialNote?.blacklistOrgs.length > 0"
                   class="special-note-item"
                 >
                   <span class="checked-box">☑</span>历史（含5年外）以下机构黑灰名单情况：
-                  <span v-for="(org, index) in reportData?.summaryConditions?.specialNote?.blacklistOrgs" :key="index">
-                    {{ org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.blacklistOrgs.length - 1">, </template>
+                  <span v-for="(org, index) in reportData?.exceptionalCase?.specialNote?.blacklistOrgs" :key="index">
+                    {{ org }}<template v-if="index < reportData?.exceptionalCase?.specialNote?.blacklistOrgs.length - 1">, </template>
                   </span>
                 </div>
 
                 <!-- 近半年查询记录 -->
                 <div
-                  v-if="reportData?.summaryConditions?.specialNote?.queryRecords && reportData?.summaryConditions?.specialNote?.queryRecords.length > 0"
+                  v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.length > 0"
                   class="special-note-item"
                 >
                   <span class="checked-box">☑</span>近半年以下查询记录的原因及细节：
-                  <template v-for="(record, index) in reportData?.summaryConditions?.specialNote?.queryRecords" :key="index">
+                  <template v-for="(record, index) in reportData?.exceptionalCase?.specialNote?.queryRecords" :key="index">
                     <template v-if="record.loanType === '车贷'">
-                      {{ record.org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.queryRecords.length - 1">
+                      {{ record.org }}<template v-if="index < reportData?.exceptionalCase?.specialNote?.queryRecords.length - 1">
                         ,
                       </template>
                     </template>
@@ -222,13 +223,13 @@ onMounted(async () => {
 
                 <!-- 近五年未结清机构 -->
                 <div
-                  v-if="reportData?.summaryConditions?.specialNote?.unpaidLoans && reportData?.summaryConditions?.specialNote?.unpaidLoans.length > 0"
+                  v-if="reportData?.exceptionalCase?.specialNote?.unpaidLoans && reportData?.exceptionalCase?.specialNote?.unpaidLoans.length > 0"
                   class="special-note-item"
                 >
                   <span class="checked-box">☑</span>近五年未结清的以下机构补充：
-                  <template v-for="(loan, index) in reportData?.summaryConditions?.specialNote?.unpaidLoans" :key="index">
+                  <template v-for="(loan, index) in reportData?.exceptionalCase?.specialNote?.unpaidLoans" :key="index">
                     <template v-if="loan.loanType === '车贷'">
-                      {{ loan.org }}<template v-if="index < reportData?.summaryConditions?.specialNote?.unpaidLoans.length - 1">
+                      {{ loan.org }}<template v-if="index < reportData?.exceptionalCase?.specialNote?.unpaidLoans.length - 1">
                         ,
                       </template>
                     </template>
@@ -237,9 +238,9 @@ onMounted(async () => {
 
                 <!-- 本人特殊情况补充 -->
                 <div class="special-note-item">
-                  <span class="checked-box">☑</span>语言能力：{{ reportData?.summaryConditions?.specialNote?.language || '无' }}
-                  <span class="checked-box">☑</span>写字能力：{{ reportData?.summaryConditions?.specialNote?.writing || '无' }}
-                  <span class="checked-box">☑</span>身体情况：{{ reportData?.summaryConditions?.specialNote?.physical || '无' }}
+                  <span class="checked-box">☑</span>语言能力：{{ reportData?.exceptionalCase?.specialNote?.language || '无' }}
+                  <span class="checked-box">☑</span>写字能力：{{ reportData?.exceptionalCase?.specialNote?.writing || '无' }}
+                  <span class="checked-box">☑</span>身体情况：{{ reportData?.exceptionalCase?.specialNote?.physical || '无' }}
                 </div>
               </div>
             </div>
@@ -451,17 +452,17 @@ onMounted(async () => {
                 企业情况:
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.businessCondition?.hasCompany === '是' ? '有企业' : '无企业' }}
-                <template v-if="reportData?.basicConditions?.businessCondition?.hasCompany === '是'">
+                {{ reportData?.basicConditions?.enterpriseSituation?.hasCompany === '是' ? '有企业' : '无企业' }}
+                <template v-if="reportData?.basicConditions?.enterpriseSituation?.hasCompany === '是'">
                   <div class="business-info">
                     <div class="business-item">
-                      企业全称：{{ reportData?.basicConditions?.businessCondition?.companyName || '无' }}
+                      企业全称：{{ reportData?.basicConditions?.enterpriseSituation?.companyName || '无' }}
                     </div>
 
                     <div class="business-item">
                       工商信息：
-                      <template v-if="reportData?.basicConditions?.businessCondition?.businessInfo && reportData?.basicConditions?.businessCondition?.businessInfo.length > 0">
-                        {{ reportData?.basicConditions?.businessCondition?.businessInfo.join('，') }}
+                      <template v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.length > 0">
+                        {{ reportData?.basicConditions?.enterpriseSituation?.businessInfo.join('，') }}
                       </template>
                       <template v-else>
                         无
@@ -469,40 +470,40 @@ onMounted(async () => {
                     </div>
 
                     <div class="business-item">
-                      <template v-if="reportData?.basicConditions?.businessCondition?.businessInfo && reportData?.basicConditions?.businessCondition?.businessInfo.includes('法人')">
-                        法人名下：{{ reportData?.basicConditions?.businessCondition?.legalPersonMonths || '0' }}个月
+                      <template v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.includes('法人')">
+                        法人名下：{{ reportData?.basicConditions?.enterpriseSituation?.legalPersonMonths || '0' }}个月
                       </template>
                     </div>
 
                     <div class="business-item">
-                      <template v-if="reportData?.basicConditions?.businessCondition?.businessInfo && reportData?.basicConditions?.businessCondition?.businessInfo.includes('股东')">
-                        股东名下：{{ reportData?.basicConditions?.businessCondition?.shareholderMonths || '0' }}个月；
-                        股东占股：{{ reportData?.basicConditions?.businessCondition?.shareholderPercentage || '0' }}%
+                      <template v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.includes('股东')">
+                        股东名下：{{ reportData?.basicConditions?.enterpriseSituation?.shareholderMonths || '0' }}个月；
+                        股东占股：{{ reportData?.basicConditions?.enterpriseSituation?.shareholderPercentage || '0' }}%
                       </template>
                     </div>
 
                     <div class="business-item">
-                      企业注册资金：{{ reportData?.basicConditions?.businessCondition?.registeredCapital || '0' }}万元
+                      企业注册资金：{{ reportData?.basicConditions?.enterpriseSituation?.registeredCapital || '0' }}万元
                     </div>
 
                     <div class="business-item">
-                      企业注册月数：{{ reportData?.basicConditions?.businessCondition?.registeredMonths || '0' }}个月
+                      企业注册月数：{{ reportData?.basicConditions?.enterpriseSituation?.registeredMonths || '0' }}个月
                     </div>
 
                     <div class="business-item">
-                      工商是否经营异常：{{ reportData?.basicConditions?.businessCondition?.businessAbnormal || '否' }}
+                      工商是否经营异常：{{ reportData?.basicConditions?.enterpriseSituation?.businessAbnormal || '否' }}
                     </div>
 
                     <div class="business-item">
-                      是否实体：{{ reportData?.basicConditions?.businessCondition?.hasEntity || '否' }}
+                      是否实体：{{ reportData?.basicConditions?.enterpriseSituation?.hasEntity || '否' }}
                     </div>
 
                     <div class="business-item">
-                      经营行业：{{ reportData?.basicConditions?.businessCondition?.businessIndustry || '无' }}
+                      经营行业：{{ reportData?.basicConditions?.enterpriseSituation?.businessIndustry || '无' }}
                     </div>
 
                     <div class="business-item">
-                      经营规模：人数{{ reportData?.basicConditions?.businessCondition?.businessStaff || '0' }}人；面积{{ reportData?.basicConditions?.businessCondition?.businessArea || '0' }}平方米
+                      经营规模：人数{{ reportData?.basicConditions?.enterpriseSituation?.businessStaff || '0' }}人；面积{{ reportData?.basicConditions?.enterpriseSituation?.businessArea || '0' }}平方米
                     </div>
                   </div>
                 </template>
@@ -583,21 +584,51 @@ onMounted(async () => {
               【征信后新增】
             </div>
             <div class="credit-content">
-              <template v-if="reportData?.creditSituation?.newAdditions && reportData?.creditSituation?.newAdditions.length > 0">
-                <div v-for="(item, index) in reportData?.creditSituation?.newAdditions" :key="index" class="credit-new-item">
+              <!-- 新增查询明细 -->
+              <div v-if="reportData?.creditSituation?.insertCredit?.insertQueriesList && reportData?.creditSituation?.insertCredit?.insertQueriesList.length > 0" class="credit-new-category">
+                <div class="credit-new-category-title">
+                  新增查询明细：
+                </div>
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertQueriesList" :key="`query-${index}`" class="credit-new-item">
                   <div class="credit-new-detail">
-                    {{ item.date || '' }} {{ item.institution || '无' }} {{ item.type || '无' }} {{ item.amount || '0' }}万
-                    <div v-if="item.monthlyPayment">
-                      月供{{ item.monthlyPayment }}万
-                    </div>
+                    {{ item }}
                   </div>
                 </div>
-              </template>
-              <template v-else>
-                <div class="credit-new-detail">
-                  无征信后新增
+              </div>
+
+              <!-- 新增放款明细 -->
+              <div v-if="reportData?.creditSituation?.insertCredit?.insertLoansList && reportData?.creditSituation?.insertCredit?.insertLoansList.length > 0" class="credit-new-category">
+                <div class="credit-new-category-title">
+                  新增放款明细：
                 </div>
-              </template>
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoansList" :key="`loan-${index}`" class="credit-new-item">
+                  <div class="credit-new-detail">
+                    {{ item }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- 新增逾期明细 -->
+              <div v-if="reportData?.creditSituation?.insertCredit?.insertLoanOverList && reportData?.creditSituation?.insertCredit?.insertLoanOverList.length > 0" class="credit-new-category">
+                <div class="credit-new-category-title">
+                  新增逾期明细：
+                </div>
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoanOverList" :key="`over-${index}`" class="credit-new-item">
+                  <div class="credit-new-detail">
+                    {{ item }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- 无征信后新增 -->
+              <div
+                v-if="(!reportData?.creditSituation?.insertCredit?.insertQueriesList || reportData?.creditSituation?.insertCredit?.insertQueriesList.length === 0)
+                  && (!reportData?.creditSituation?.insertCredit?.insertLoansList || reportData?.creditSituation?.insertCredit?.insertLoansList.length === 0)
+                  && (!reportData?.creditSituation?.insertCredit?.insertLoanOverList || reportData?.creditSituation?.insertCredit?.insertLoanOverList.length === 0)"
+                class="credit-new-detail"
+              >
+                无征信后新增
+              </div>
             </div>
           </div>
 
@@ -610,220 +641,275 @@ onMounted(async () => {
               <li>
                 <span class="credit-label">总负债：</span>
                 <span class="credit-value">总{{
-                  reportData?.creditSituation?.totalLiabilities?.grantAmount || '0'
-                }}万（不含担保）；余{{
-                  reportData?.creditSituation?.totalLiabilities?.balanceAmount || '0'
-                }}万；供{{
-                  reportData?.creditSituation?.totalLiabilities?.averageRepayment || '0'
-                }}万（不含担保）；担保{{
-                  reportData?.creditSituation?.totalLiabilities?.guaranteeAmount || '0'
-                }}万</span>
+                  reportData?.creditSituation?.totalLiabilities?.grant_amount || '0'
+                }}（授信额度）；余{{
+                  reportData?.creditSituation?.totalLiabilities?.balance_amount || '0'
+                }}（余额）；供{{
+                  reportData?.creditSituation?.totalLiabilities?.averageRepaymentLast6Months || '0'
+                }}（元）；担保{{
+                  reportData?.creditSituation?.totalLiabilities?.guarantee_amount || '0'
+                }}（担保金额）</span>
               </li>
               <li>
                 <span class="credit-label">信用卡：</span>
                 <span class="credit-value">总{{
-                  reportData?.creditSituation?.cardInfos?.count || '0'
-                }}家；总{{
-                  reportData?.creditSituation?.cardInfos?.grantAmount || '0'
-                }}万；已用{{
-                  reportData?.creditSituation?.cardInfos?.usedAmount || '0'
-                }}万（{{ reportData?.creditSituation?.cardInfos?.usageRate || '0' }}%）</span>
+                  reportData?.creditSituation?.cardInfos?.institution_count || '0'
+                }}家（机构数）；总{{
+                  reportData?.creditSituation?.cardInfos?.grant_amount || '0'
+                }}（授信额度）；已用{{
+                  reportData?.creditSituation?.cardInfos?.balance_amount || '0'
+                }}（余额）；平均使用率{{ reportData?.creditSituation?.cardInfos?.usage_rate || '0' }}%</span>
               </li>
               <li>
                 <span class="credit-label">负债月供：</span>
                 <span class="credit-value">{{
-                  reportData?.creditSituation?.monthlyDebtPayment?.amount || '0'
-                }}万</span>
+                  reportData?.creditSituation?.monthlyDebtPayment?.averageRepaymentLast6Months || '0'
+                }}（元）</span>
               </li>
             </ul>
           </div>
 
+          <!-- 征信贷款明细部分 -->
           <div class="credit-section">
             <div class="credit-title">
-              【征信贷款明细（总{{ reportData?.creditSituation?.loans?.length || '0' }}笔）】
-            </div>
-            <!-- 使用creditSituation中的贷款明细数据 -->
-            <div v-if="reportData?.creditSituation?.loans && reportData?.creditSituation?.loans.length > 0" class="condition-item">
-              <div v-for="(loan, index) in reportData?.creditSituation?.loans" :key="index" class="condition-item">
-                <div class="condition-number">
-                  {{ String(index + 1).padStart(2, '0') }}
-                </div>
-                <div class="condition-content">
-                  <div class="condition-title">
-                    {{ loan.type || '无' }}：
-                  </div>
-                  <div class="condition-detail">
-                    {{ loan.startDate || '' }} {{ loan.institution || '无' }}（总{{ loan.amount || '0' }}万，余{{ loan.balance || '0' }}万，月供{{ loan.monthlyPayment || '0' }}万）
-                    <div v-if="loan.endDate" class="loan-details">
-                      到期日期：{{ loan.endDate }}
-                    </div>
-                    <div v-if="loan.status" class="loan-details">
-                      状态：{{ loan.status }}
-                    </div>
-                    <div v-if="loan.notes" class="loan-details">
-                      备注：{{ loan.notes }}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              【征信贷款明细】
             </div>
 
-            <div v-else class="condition-item">
-              <div class="condition-number">
-                01
+            <!-- 小额类 -->
+            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount && reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount.length > 0" class="loan-category">
+              <div class="loan-category-title">
+                小额类
               </div>
-              <div class="condition-content">
-                <div class="condition-title">
-                  暂无贷款记录
-                </div>
-                <div class="condition-detail">
-                  无贷款记录
-                </div>
+              <table class="loan-table">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>机构</th>
+                    <th>总（元）</th>
+                    <th>余（元）</th>
+                    <th>还款方式</th>
+                    <th>供几个月</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount" :key="`small-${index}`">
+                    <td>{{ loan.grant_date || '-' }}</td>
+                    <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.grant_amount || '0' }}</td>
+                    <td>{{ loan.balance_amount || '0' }}</td>
+                    <td>{{ loan.repayment_method || '-' }}</td>
+                    <td>{{ loan.termRemainingTotal || '0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 信用非小额类 -->
+            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount && reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount.length > 0" class="loan-category">
+              <div class="loan-category-title">
+                信用非小额类
               </div>
+              <table class="loan-table">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>机构</th>
+                    <th>总（元）</th>
+                    <th>余（元）</th>
+                    <th>还款方式</th>
+                    <th>供几个月</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount" :key="`nosmall-${index}`">
+                    <td>{{ loan.grant_date || '-' }}</td>
+                    <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.grant_amount || '0' }}</td>
+                    <td>{{ loan.balance_amount || '0' }}</td>
+                    <td>{{ loan.repayment_method || '-' }}</td>
+                    <td>{{ loan.termRemainingTotal || '0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 分期卡类 -->
+            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.installmentCard && reportData?.creditSituation?.loanDetailsInfo?.installmentCard.length > 0" class="loan-category">
+              <div class="loan-category-title">
+                分期卡类
+              </div>
+              <table class="loan-table">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>机构</th>
+                    <th>总（元）</th>
+                    <th>余（元）</th>
+                    <th>还款方式</th>
+                    <th>供几个月</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.installmentCard" :key="`installment-${index}`">
+                    <td>{{ loan.grant_date || '-' }}</td>
+                    <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.grant_amount || '0' }}</td>
+                    <td>{{ loan.balance_amount || '0' }}</td>
+                    <td>{{ loan.repayment_method || '-' }}</td>
+                    <td>{{ loan.termRemainingTotal || '0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 信用类 -->
+            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.creditCategory && reportData?.creditSituation?.loanDetailsInfo?.creditCategory.length > 0" class="loan-category">
+              <div class="loan-category-title">
+                信用类
+              </div>
+              <table class="loan-table">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>机构</th>
+                    <th>总（元）</th>
+                    <th>余（元）</th>
+                    <th>还款方式</th>
+                    <th>担保方式</th>
+                    <th>供几个月</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.creditCategory" :key="`credit-${index}`">
+                    <td>{{ loan.grant_date || '-' }}</td>
+                    <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.grant_amount || '0' }}</td>
+                    <td>{{ loan.balance_amount || '0' }}</td>
+                    <td>{{ loan.repayment_method || '-' }}</td>
+                    <td>{{ loan.guaranteeMethod || '-' }}</td>
+                    <td>{{ loan.termRemainingTotal || '0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 抵押类 -->
+            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.mortgageType && reportData?.creditSituation?.loanDetailsInfo?.mortgageType.length > 0" class="loan-category">
+              <div class="loan-category-title">
+                抵押类
+              </div>
+              <table class="loan-table">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>机构</th>
+                    <th>总（元）</th>
+                    <th>余（元）</th>
+                    <th>还款方式</th>
+                    <th>担保方式</th>
+                    <th>供几个月</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.mortgageType" :key="`mortgage-${index}`">
+                    <td>{{ loan.grant_date || '-' }}</td>
+                    <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.grant_amount || '0' }}</td>
+                    <td>{{ loan.balance_amount || '0' }}</td>
+                    <td>{{ loan.repayment_method || '-' }}</td>
+                    <td>{{ loan.guaranteeMethod || '-' }}</td>
+                    <td>{{ loan.termRemainingTotal || '0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 其他类 -->
+            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.otherType && reportData?.creditSituation?.loanDetailsInfo?.otherType.length > 0" class="loan-category">
+              <div class="loan-category-title">
+                其他类
+              </div>
+              <table class="loan-table">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>机构</th>
+                    <th>总（元）</th>
+                    <th>余（元）</th>
+                    <th>还款方式</th>
+                    <th>担保方式</th>
+                    <th>供几个月</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.otherType" :key="`other-${index}`">
+                    <td>{{ loan.grant_date || '-' }}</td>
+                    <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.grant_amount || '0' }}</td>
+                    <td>{{ loan.balance_amount || '0' }}</td>
+                    <td>{{ loan.repayment_method || '-' }}</td>
+                    <td>{{ loan.guaranteeMethod || '-' }}</td>
+                    <td>{{ loan.termRemainingTotal || '0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 担保类 -->
+            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory" class="loan-category">
+              <div class="loan-category-title">
+                担保类
+              </div>
+              <table class="loan-table">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>机构</th>
+                    <th>担保对象</th>
+                    <th>总（元）</th>
+                    <th>余（元）</th>
+                    <th>贷款性质</th>
+                    <th>供几个月</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.grant_date || '-' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.bank_name || '-' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.surety_name || '-' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.grant_amount || '0' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.balance_amount || '0' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.businessType || '-' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.termRemainingTotal || '0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 无贷款明细 -->
+            <div
+              v-if="(!reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount || reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount.length === 0)
+                && (!reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount || reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount.length === 0)
+                && (!reportData?.creditSituation?.loanDetailsInfo?.installmentCard || reportData?.creditSituation?.loanDetailsInfo?.installmentCard.length === 0)
+                && (!reportData?.creditSituation?.loanDetailsInfo?.creditCategory || reportData?.creditSituation?.loanDetailsInfo?.creditCategory.length === 0)
+                && (!reportData?.creditSituation?.loanDetailsInfo?.mortgageType || reportData?.creditSituation?.loanDetailsInfo?.mortgageType.length === 0)
+                && (!reportData?.creditSituation?.loanDetailsInfo?.otherType || reportData?.creditSituation?.loanDetailsInfo?.otherType.length === 0)
+                && !reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory"
+              class="no-loan-data"
+            >
+              无贷款明细
             </div>
           </div>
 
+          <!-- 征信查询情况 -->
           <div class="credit-section">
             <div class="credit-title">
               【征信查询情况】
             </div>
-            <div class="condition-item">
-              <div class="condition-number">
-                01
-              </div>
-              <div class="condition-content">
-                <div class="condition-title">
-                  最近1次本人查询：
-                </div>
-                <div class="condition-detail">
-                  {{ reportData?.creditSituation?.iqueryHistory?.queryDate || '无记录' }}
-                </div>
-              </div>
-            </div>
-            <div class="condition-item">
-              <div class="condition-number">
-                02
-              </div>
-              <div class="condition-content">
-                <div class="condition-title">
-                  查询汇总（含法人查询）
-                </div>
-                <div class="condition-detail">
-                  近1个月{{
-                    reportData?.creditSituation?.legalQueryHistory?.m1 || '0'
-                  }}次；近3个月{{
-                    reportData?.creditSituation?.legalQueryHistory?.m3 || '0'
-                  }}次；近6个月{{
-                    reportData?.creditSituation?.legalQueryHistory?.m6 || '0'
-                  }}次；近12个月{{
-                    reportData?.creditSituation?.legalQueryHistory?.m12 || '0'
-                  }}次；近24个月{{ reportData?.creditSituation?.legalQueryHistory?.m24 || '0' }}次
-                </div>
-              </div>
-            </div>
-            <div class="condition-item">
-              <div class="condition-number">
-                03
-              </div>
-              <div class="condition-content">
-                <div class="condition-title">
-                  查询汇总（不含法人查询）
-                </div>
-                <div class="condition-detail">
-                  近1个月{{
-                    reportData?.creditSituation?.noLegalQueryHistory?.m1 || '0'
-                  }}次；近3个月{{
-                    reportData?.creditSituation?.noLegalQueryHistory?.m3 || '0'
-                  }}次；近6个月{{
-                    reportData?.creditSituation?.noLegalQueryHistory?.m6 || '0'
-                  }}次；近12个月{{
-                    reportData?.creditSituation?.noLegalQueryHistory?.m12 || '0'
-                  }}次；近24个月{{ reportData?.creditSituation?.noLegalQueryHistory?.m24 || '0' }}次
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="credit-section">
-            <div class="credit-title">
-              【征信逾期情况】
-            </div>
-            <ul class="credit-list">
-              <li>
-                <span class="credit-label">逾期汇总：</span>
-                <span class="credit-value">{{
-                  reportData?.hasOverdue === 'yes' ? '有当前逾期' : '无当前逾期'
-                }} | 半年内{{
-                  reportData?.creditSituation?.overdueCount?.m6 || '0'
-                }}次 | 一年内{{
-                  reportData?.creditSituation?.overdueCount?.m12 || '0'
-                }}次 | 两年内{{
-                  reportData?.creditSituation?.overdueCount?.m24 || '0'
-                }}次 | 两年外{{ reportData?.creditSituation?.overdueCount?.mOut || '0' }}次</span>
-              </li>
-              <li>
-                <span class="credit-label">逾期明细：</span>
-              </li>
-            </ul>
-            <!-- 贷记卡逾期明细 -->
-            <div
-              v-if="reportData?.cardOverdueDetails && reportData?.cardOverdueDetails.length > 0"
-              class="condition-item"
-            >
-              <div class="condition-number">
-                01
-              </div>
-              <div class="condition-content">
-                <div class="condition-title">
-                  贷记卡（总{{ reportData?.cardOverdueDetails.length }}次）：
-                </div>
-                <div class="condition-detail">
-                  <div v-for="(overdue, index) in reportData?.cardOverdueDetails" :key="index">
-                    {{ overdue.time || '' }} {{ overdue.institution || '无' }}逾期级别{{
-                      overdue.level || ''
-                    }}金额{{ overdue.amount || '0' }}元
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 贷款逾期明细 -->
-            <div
-              v-if="reportData?.loanOverdueDetails && reportData?.loanOverdueDetails.length > 0"
-              class="condition-item"
-            >
-              <div class="condition-number">
-                {{ reportData?.cardOverdueDetails && reportData?.cardOverdueDetails.length > 0 ? '02' : '01' }}
-              </div>
-              <div class="condition-content">
-                <div class="condition-title">
-                  贷款（总{{ reportData?.loanOverdueDetails.length }}次）：
-                </div>
-                <div class="condition-detail">
-                  <div v-for="(overdue, index) in reportData?.loanOverdueDetails" :key="index">
-                    {{ overdue.time || '' }} {{ overdue.institution || '无' }}逾期级别{{
-                      overdue.level || ''
-                    }}金额{{ overdue.amount || '0' }}元
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 无逾期记录 -->
-            <div
-              v-if="(!reportData?.cardOverdueDetails || reportData?.cardOverdueDetails.length === 0) && (!reportData?.loanOverdueDetails || reportData?.loanOverdueDetails.length === 0)"
-              class="condition-item"
-            >
-              <div class="condition-number">
-                01
-              </div>
-              <div class="condition-content">
-                <div class="condition-title">
-                  无逾期记录
-                </div>
-                <div class="condition-detail">
-                  用户征信记录良好，无任何逾期记录
-                </div>
+            <div class="credit-query-info">
+              <div class="query-item">
+                <span class="query-label">最近一次本人查询：</span>
+                <span class="query-value">{{ reportData?.creditSituation?.iqueryHistory?.queryDate || '无查询记录' }}</span>
               </div>
             </div>
           </div>
@@ -856,7 +942,7 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-            
+
             <!-- 黑名单原因 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.blacklistReasons && reportData?.exceptionalCase?.specialNote?.blacklistReasons.length > 0"
@@ -882,7 +968,7 @@ onMounted(async () => {
 
             <!-- 疑似车贷机构查询（近半年） -->
             <div
-              v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.length > 0"
+              v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.some(record => record.loanType === '车贷')"
               class="special-item"
             >
               <div class="special-icon">
@@ -893,16 +979,20 @@ onMounted(async () => {
                   疑似车贷机构查询（近半年）：
                 </div>
                 <div class="special-detail">
-                  <div v-for="(query, index) in reportData?.exceptionalCase?.specialNote?.queryRecords.filter(q => q.loanType === '车贷')" :key="index">
-                    {{ query.org || '未知机构' }}
+                  <div
+                    v-for="(record, index) in reportData?.exceptionalCase?.specialNote?.queryRecords.filter(record => record.loanType === '车贷')"
+                    :key="index"
+                  >
+                    {{ record.date || '' }} {{ record.org || '无' }}
+                    <span v-if="record.rejectReason">（拒绝原因：{{ record.rejectReason }}）</span>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <!-- 疑似车贷机构放款 -->
             <div
-              v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.filter(q => q.loanType === '车贷' && q.progress === '已批-已放款').length > 0"
+              v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.some(record => record.loanType === '车贷' && record.progress === '已批-已放款')"
               class="special-item"
             >
               <div class="special-icon">
@@ -913,11 +1003,11 @@ onMounted(async () => {
                   疑似车贷机构放款：
                 </div>
                 <div class="special-detail">
-                  <div v-for="(query, index) in reportData?.exceptionalCase?.specialNote?.queryRecords.filter(q => q.loanType === '车贷' && q.progress === '已批-已放款')" :key="index">
-                    {{ query.date || '' }} {{ query.org || '未知机构' }} {{ query.loanType || '' }} {{ query.progress || '' }}
-                    <div v-if="query.rejectReason">
-                      拒绝原因：{{ query.rejectReason }}
-                    </div>
+                  <div
+                    v-for="(record, index) in reportData?.exceptionalCase?.specialNote?.queryRecords.filter(record => record.loanType === '车贷' && record.progress === '已批-已放款')"
+                    :key="index"
+                  >
+                    {{ record.date || '' }} {{ record.org || '无' }}
                   </div>
                 </div>
               </div>
@@ -940,12 +1030,13 @@ onMounted(async () => {
                     v-for="(loan, index) in reportData?.exceptionalCase?.specialNote?.newLoans.loans"
                     :key="index"
                   >
-                    {{ loan.date || '' }} {{ loan.org || '未知机构' }} {{ loan.loanType || '未知类型' }} 月供{{ loan.monthlyPayment || '0' }}万
+                    {{ loan.date || '' }} {{ loan.org || '无' }} {{ loan.loanType || '无' }}
+                    <span v-if="loan.monthlyPayment">月供{{ loan.monthlyPayment }}元</span>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <!-- 征信后新增放款补充 - 信用卡类 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.newLoans && reportData?.exceptionalCase?.specialNote?.newLoans.creditCards && reportData?.exceptionalCase?.specialNote?.newLoans.creditCards.length > 0"
@@ -963,16 +1054,17 @@ onMounted(async () => {
                     v-for="(card, index) in reportData?.exceptionalCase?.specialNote?.newLoans.creditCards"
                     :key="index"
                   >
-                    {{ card.date || '' }} {{ card.org || '未知机构' }} {{ card.cardType || '未知类型' }} 
-                    月供{{ card.monthlyPayment || '0' }}万 已用额度{{ card.usedLimit || '0' }}万
+                    {{ card.date || '' }} {{ card.org || '无' }} {{ card.cardType || '无' }}
+                    <span v-if="card.monthlyPayment">月供{{ card.monthlyPayment }}元</span>
+                    <span v-if="card.usedLimit">已用额度{{ card.usedLimit }}元</span>
                   </div>
                 </div>
               </div>
             </div>
-            
-            <!-- 历史被拒记录情况 -->
+
+            <!-- 历史被拒记录 -->
             <div
-              v-if="reportData?.exceptionalCase?.specialNote?.rejectedOrgs && reportData?.exceptionalCase?.specialNote?.rejectedOrgs.length > 0"
+              v-if="reportData?.exceptionalCase?.specialNote?.newLoans && reportData?.exceptionalCase?.specialNote?.newLoans.rejectedOrgs && reportData?.exceptionalCase?.specialNote?.newLoans.rejectedOrgs.length > 0"
               class="special-item"
             >
               <div class="special-icon">
@@ -984,15 +1076,15 @@ onMounted(async () => {
                 </div>
                 <div class="special-detail">
                   <div>
-                    {{ reportData?.exceptionalCase?.specialNote?.rejectedOrgs.join('，') || '无' }}
+                    {{ reportData?.exceptionalCase?.specialNote?.newLoans.rejectedOrgs.join('，') || '无' }}
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <!-- 被拒时间及原因 -->
             <div
-              v-if="reportData?.exceptionalCase?.specialNote?.rejectReasons && reportData?.exceptionalCase?.specialNote?.rejectReasons.length > 0"
+              v-if="reportData?.exceptionalCase?.specialNote?.newLoans && reportData?.exceptionalCase?.specialNote?.newLoans.rejectReasons && reportData?.exceptionalCase?.specialNote?.newLoans.rejectReasons.length > 0"
               class="special-item"
             >
               <div class="special-icon">
@@ -1004,7 +1096,7 @@ onMounted(async () => {
                 </div>
                 <div class="special-detail">
                   <div
-                    v-for="(reason, index) in reportData?.exceptionalCase?.specialNote?.rejectReasons"
+                    v-for="(reason, index) in reportData?.exceptionalCase?.specialNote?.newLoans.rejectReasons"
                     :key="index"
                   >
                     {{ reason || '未知原因' }}
@@ -1013,79 +1105,55 @@ onMounted(async () => {
               </div>
             </div>
 
-            <!-- 语言能力 -->
-            <div v-if="reportData?.exceptionalCase?.specialNote?.language" class="special-item">
-              <div class="special-icon">
-                <i class="arrow-icon" />
-              </div>
-              <div class="special-content">
-                <div class="special-title">
-                  语言能力：
-                </div>
-                <div class="special-detail">
-                  <div class="checkbox-item">
-                    <span>{{ reportData?.exceptionalCase?.specialNote?.language || '无特殊情况' }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 写字能力 -->
-            <div v-if="reportData?.exceptionalCase?.specialNote?.writing" class="special-item">
-              <div class="special-icon">
-                <i class="arrow-icon" />
-              </div>
-              <div class="special-content">
-                <div class="special-title">
-                  写字能力：
-                </div>
-                <div class="special-detail">
-                  <div class="checkbox-item">
-                    <span>{{ reportData?.exceptionalCase?.specialNote?.writing || '无特殊情况' }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 身体缺陷 -->
-            <div v-if="reportData?.exceptionalCase?.specialNote?.physical" class="special-item">
-              <div class="special-icon">
-                <i class="arrow-icon" />
-              </div>
-              <div class="special-content">
-                <div class="special-title">
-                  身体缺陷：
-                </div>
-                <div class="special-detail">
-                  <div class="checkbox-item">
-                    <span>{{ reportData?.exceptionalCase?.specialNote?.physical || '无特殊情况' }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 当所有特殊情况都没有时，显示无特殊情况 -->
+            <!-- 本人特殊情况补充 -->
             <div
-              v-if="!reportData?.exceptionalCase?.specialNote?.blacklistReasons?.length
-                && !reportData?.exceptionalCase?.specialNote?.queryRecords?.length
-                && !reportData?.exceptionalCase?.specialNote?.blacklistOrgs?.length
-                && !reportData?.exceptionalCase?.specialNote?.newLoans?.loans?.length
-                && !reportData?.exceptionalCase?.specialNote?.newLoans?.creditCards?.length
-                && !reportData?.exceptionalCase?.specialNote?.rejectedOrgs?.length
-                && !reportData?.exceptionalCase?.specialNote?.rejectReasons?.length
-                && !reportData?.exceptionalCase?.specialNote?.language
-                && !reportData?.exceptionalCase?.specialNote?.writing
-                && !reportData?.exceptionalCase?.specialNote?.physical" class="special-item"
+              v-if="reportData?.exceptionalCase?.specialNote?.language || reportData?.exceptionalCase?.specialNote?.writing || reportData?.exceptionalCase?.specialNote?.physical"
+              class="special-item"
             >
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
               <div class="special-content">
                 <div class="special-title">
-                  特殊情况：
+                  本人特殊情况补充：
                 </div>
                 <div class="special-detail">
-                  无任何特殊情况记录
+                  <div v-if="reportData?.exceptionalCase?.specialNote?.language">
+                    语言能力：{{ reportData?.exceptionalCase?.specialNote?.language }}
+                  </div>
+                  <div v-if="reportData?.exceptionalCase?.specialNote?.writing">
+                    写字能力：{{ reportData?.exceptionalCase?.specialNote?.writing }}
+                  </div>
+                  <div v-if="reportData?.exceptionalCase?.specialNote?.physical">
+                    身体状况：{{ reportData?.exceptionalCase?.specialNote?.physical }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 无特殊情况 -->
+            <div
+              v-if="!reportData?.exceptionalCase?.specialNote?.blacklistReasons?.length
+                && !reportData?.exceptionalCase?.specialNote?.queryRecords?.length
+                && !reportData?.exceptionalCase?.specialNote?.blacklistOrgs?.length
+                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.loans?.length)
+                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.creditCards?.length)
+                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectedOrgs?.length)
+                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectReasons?.length)
+                && !reportData?.exceptionalCase?.specialNote?.language
+                && !reportData?.exceptionalCase?.specialNote?.writing
+                && !reportData?.exceptionalCase?.specialNote?.physical"
+              class="special-item"
+            >
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
+              <div class="special-content">
+                <div class="special-title">
+                  无特殊情况
+                </div>
+                <div class="special-detail">
+                  用户无任何特殊情况记录
                 </div>
               </div>
             </div>
@@ -1456,6 +1524,48 @@ onMounted(async () => {
   color: #4776e6;
   font-weight: bold;
   margin-right: 4px;
+}
+
+.loan-category {
+  margin-bottom: 20px;
+  
+  .loan-category-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .loan-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    
+    th {
+      background-color: #f5f5f5;
+      font-weight: bold;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  }
+}
+
+.no-loan-data {
+  color: #999;
+  padding: 15px 0;
+  text-align: center;
+  font-style: italic;
 }
 
 @media (max-width: 768px) {

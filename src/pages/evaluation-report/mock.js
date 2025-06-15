@@ -1,301 +1,500 @@
 export const mockData = {
-
-  "basicConditions": {
-    "housesConditions": {
-      "hasHouse": "string",
-      "houseCount": "string",
-      "houses": [
-        {
-          "area": "string",
-          "areaPickerShow": true,
-          "evalPrice": "string",
-          "mortgageAmount": "string",
-          "mortgageMonths": "string",
-          "mortgageOrg": "string",
-          "mortgageSecond": "string",
-          "mortgageSecondAmount": "string",
-          "mortgageSecondOrg": "string",
-          "mortgageSecondType": "string",
-          "mortgageSecondTypePickerShow": true,
-          "ownMonths": "string",
-          "pledgeAmount": "string",
-          "pledgeMonths": "string",
-          "pledgeOrg": "string",
-          "pledgeSecond": "string",
-          "pledgeSecondAmount": "string",
-          "pledgeSecondOrg": "string",
-          "pledgeSecondType": "string",
-          "pledgeSecondTypePickerShow": true,
-          "sharePercent": "string",
-          "shareType": "string",
-          "shareWith": "string",
-          "shareWithPickerShow": true,
-          "size": "string",
-          "status": "string",
-          "type": "string"
-        }
-      ]
-    },
-    "module3AssetData": {
-      "assetCount": "string",
-      "assets": [
-        {
-          "amount": "string",
-          "months": "string",
-          "type": "string",
-          "typePickerShow": true
-        }
-      ],
-      "hasAsset": "string"
-    },
-    "module3CarData": {
-      "carEval": "string",
-      "carInvoice": "string",
-      "carMileage": "string",
-      "carMortgageAmount": "string",
-      "carMortgageMonths": "string",
-      "carMortgageOrg": "string",
-      "carOwnMonths": "string",
-      "carPlate": "string",
-      "carPlateArea": "string",
-      "carPledgeAmount": "string",
-      "carPledgeMonths": "string",
-      "carPledgeOrg": "string",
-      "carStatus": "string",
-      "carType": "string",
-      "hasCar": "string"
-    },
-    "module3FlowData": {
-      "flowCount": "string",
-      "flows": [
-        {
-          "avgIncome12Months": "string",
-          "avgIncome6Months": "string",
-          "features": [
-            "string"
-          ],
-          "interest": [
-            "string"
-          ],
-          "salaryAmount": "string",
-          "type": "string"
-        }
-      ],
-      "hasFlow": "string"
-    },
-    "securitySituation": {
-      "medicalBase": "string",
-      "pensionBase": "string",
-      "socialSecurityArea": "string",
-      "socialSecurityCompany": "string",
-      "socialSecurityCurrentMonths": "string",
-      "socialSecurityTotalMonths": "string"
-    }
-  },
-  "basicInform": {
-    "agentId": "string",
-    "financingMes": {
-      "account": "string",
-      "idriver": "string",
-      "maritalStatus": {
-        "informable": "string",
-        "signed": "string",
-        "status": "string"
+  code: 200,
+  msg: '评估报告生成成功!',
+  data: {
+    basicConditions: {
+      housesConditions: {
+        hasHouse: '是',
+        houseCount: '3',
+        houses: [
+          {
+            area: '深圳',
+            areaPickerShow: false,
+            type: '商品房·住宅',
+            ownMonths: '22',
+            size: '220',
+            shareType: '单独所有',
+            sharePercent: '',
+            shareWith: '',
+            shareWithPickerShow: false,
+            evalPrice: '222',
+            status: '全款',
+            mortgageAmount: '',
+            mortgageOrg: '',
+            mortgageMonths: '',
+            mortgageSecond: '',
+            mortgageSecondAmount: '',
+            mortgageSecondType: '',
+            mortgageSecondTypePickerShow: false,
+            mortgageSecondOrg: '',
+            pledgeAmount: '',
+            pledgeOrg: '',
+            pledgeMonths: '',
+            pledgeSecond: '',
+            pledgeSecondAmount: '',
+            pledgeSecondType: '',
+            pledgeSecondTypePickerShow: false,
+            pledgeSecondOrg: '',
+          },
+          {
+            area: '广州',
+            areaPickerShow: false,
+            type: '商品房·商业',
+            ownMonths: '33',
+            size: '330',
+            shareType: '共同共有',
+            sharePercent: '34',
+            shareWith: '父母',
+            shareWithPickerShow: false,
+            evalPrice: '350',
+            status: '按揭',
+            mortgageAmount: '360',
+            mortgageOrg: '370',
+            mortgageMonths: '38',
+            mortgageSecond: '是',
+            mortgageSecondAmount: '390',
+            mortgageSecondType: '',
+            mortgageSecondTypePickerShow: false,
+            mortgageSecondOrg: '',
+            pledgeAmount: '',
+            pledgeOrg: '',
+            pledgeMonths: '',
+            pledgeSecond: '',
+            pledgeSecondAmount: '',
+            pledgeSecondType: '',
+            pledgeSecondTypePickerShow: false,
+            pledgeSecondOrg: '',
+          },
+          {
+            area: '珠海',
+            areaPickerShow: false,
+            type: '非商品房',
+            ownMonths: '40',
+            size: '410',
+            shareType: '共同共有',
+            sharePercent: '42',
+            shareWith: '配偶',
+            shareWithPickerShow: false,
+            evalPrice: '4302',
+            status: '抵押',
+            mortgageAmount: '',
+            mortgageOrg: '',
+            mortgageMonths: '',
+            mortgageSecond: '',
+            mortgageSecondAmount: '',
+            mortgageSecondType: '',
+            mortgageSecondTypePickerShow: false,
+            mortgageSecondOrg: '',
+            pledgeAmount: '',
+            pledgeOrg: '',
+            pledgeMonths: '',
+            pledgeSecond: '',
+            pledgeSecondAmount: '',
+            pledgeSecondType: '',
+            pledgeSecondTypePickerShow: false,
+            pledgeSecondOrg: '',
+          },
+        ],
       },
-      "purposeFunds": "string",
-      "repaymentSource": "string",
-      "specialNote": "string",
-      "ydriver": "string"
+      module3CarData: {
+        hasCar: '是',
+        carType: '二手车',
+        carPlateArea: '广州',
+        carOwnMonths: '48',
+        carPlate: '49000',
+        carInvoice: '',
+        carEval: '50.00',
+        carMileage: '51000',
+        carStatus: '抵押',
+        carMortgageAmount: '',
+        carMortgageMonths: '',
+        carMortgageOrg: '',
+        carPledgeAmount: '52',
+        carPledgeMonths: '53',
+        carPledgeOrg: '54',
+      },
+      module3AssetData: {
+        hasAsset: '是',
+        assetCount: '4',
+        assets: [
+          {
+            type: '股票',
+            typePickerShow: false,
+            months: '56',
+            amount: '57.00',
+          },
+          {
+            type: '基金',
+            typePickerShow: false,
+            months: '58',
+            amount: '59.00',
+          },
+          {
+            type: '理财',
+            typePickerShow: false,
+            months: '60',
+            amount: '61.00',
+          },
+          {
+            type: '定存',
+            typePickerShow: false,
+            months: '62',
+            amount: '63.00',
+          },
+        ],
+      },
+      securitySituation: {
+        hasSocialSecurity: '是',
+        socialSecurityPayer: '单位',
+        socialSecurityArea: '北京',
+        socialSecurityCompany: '8888',
+        socialSecurityTotalMonths: '26',
+        socialSecurityCurrentMonths: '12',
+        medicalBase: '5000',
+        pensionBase: '6000',
+        socialSecurityNote: '无',
+        hasProvidentFund: '是',
+        providentFundArea: '上海',
+        providentFundCompany: '',
+        providentFundTotalMonths: '34',
+        providentFundCurrentMonths: '32',
+        providentFundBase: '8880',
+        providentFundNote: '有',
+        providentFundCompanyType: '不同于社保单位',
+        providentFundCompanyName: '7788',
+        hasTax: '是',
+        taxArea: '广州',
+        taxCompany: '',
+        taxTotalMonths: '60',
+        taxCurrentMonths: '50',
+        taxBase: '9000',
+        taxNote: '或',
+        taxCompanyType: '不同于社保单位',
+        taxCompanyName: '4567',
+      },
+      enterpriseSituation: {
+        hasCompany: null,
+        companyName: '99990',
+        businessInfo: null,
+        legalPersonMonths: null,
+        shareholderMonths: null,
+        shareholderPercentage: null,
+        registeredCapital: null,
+        registeredMonths: null,
+        businessAbnormal: null,
+        hasEntity: null,
+        businessIndustry: null,
+        businessScale: null,
+        businessStaff: null,
+        businessArea: null,
+      },
+      module3FlowData: {
+        hasFlow: '是',
+        flowCount: '2',
+        flows: [
+          {
+            type: '对公',
+            features: [
+              '进账大',
+              '结息大',
+              '扣税记录',
+              '代发工资记录',
+            ],
+            salaryAmount: '',
+            avgIncome6Months: '64.0',
+            avgIncome12Months: '65.0',
+            interest: [
+              '66.0',
+              '67.0',
+              '68.0',
+              '69.0',
+            ],
+          },
+          {
+            type: '个人银行卡',
+            features: [
+              '进账大',
+              '结息大',
+              '代发工资',
+              '固定转账',
+              '分红',
+            ],
+            salaryAmount: '70.00',
+            avgIncome6Months: '71.0',
+            avgIncome12Months: '72.0',
+            interest: [
+              '73.0',
+              '74.0',
+              '75.0',
+              '76.0',
+            ],
+          },
+        ],
+      },
     },
-    "idCard": "string",
-    "orderNo": "string",
-    "orderTime": "string",
-    "userName": "string"
+    creditSituation: {
+      insertCredit: null,
+      totalLiabilities: {
+        grant_amount: '1850000',
+        balance_amount: '2010000',
+        average_repayment: '0',
+        guarantee_amount: '0',
+        usage_rate: null,
+        averageRepaymentLast6Months: '4231',
+      },
+      cardInfos: {
+        institution_count: 'null',
+        grant_amount: '0',
+        usage_rate: '0',
+        balance_amount: '0',
+      },
+      monthlyDebtPayment: {
+        averageRepaymentLast6Months: '4231',
+        usedCreditLimit: null,
+      },
+      loanDetailsInfo: {
+        smallCreditAmount: [
+          {
+            bank_name: '中国建设银行',
+            grant_date: '2023.10.17',
+            grant_amount: 0.0,
+            balance_amount: null,
+            repayment_method: null,
+            termRemainingTotal: null,
+            loan_type: null,
+            current_status: null,
+            guaranteeMethod: null,
+          },
+        ],
+        nosmallCreditAmount: null,
+        installmentCard: [
+          {
+            bank_name: '中国建设银行',
+            grant_date: '2023.10.17',
+            grant_amount: 0.0,
+            balance_amount: null,
+            repayment_method: null,
+            termRemainingTotal: null,
+            loan_type: null,
+            current_status: null,
+            guaranteeMethod: null,
+          },
+        ],
+        creditCategory: [
+          {
+            bank_name: '中国建设银行',
+            grant_date: '2023.10.17',
+            grant_amount: 0.0,
+            balance_amount: null,
+            repayment_method: null,
+            termRemainingTotal: null,
+            loan_type: null,
+            current_status: null,
+            guaranteeMethod: null,
+          },
+        ],
+        mortgageType: null,
+        otherType: null,
+        guaranteeCategory: {
+          grant_date: null,
+          bank_name: null,
+          grant_amount: null,
+          balance_amount: null,
+          surety_name: null,
+          businessType: null,
+          guarantee_identity: null,
+          current_status: null,
+          grant_date_format: null,
+        },
+      },
+      legalQueryHistory: {
+        query_str: null,
+      },
+      noLegalQueryHistory: {
+        query_str: null,
+      },
+      overdueCount: null,
+      overdueDetail: null,
+      iqueryHistory: {
+        queryDate: null,
+      },
+    },
+    exceptionalCase: {
+      specialNote: {
+        blacklistOrgs: null,
+        queryRecords: [
+          {
+            loanType: '车贷',
+            date: '2025-04-28',
+            org: '机构B-信用卡审批',
+            rejectReason: '111',
+          },
+        ],
+        blacklistReasons: [],
+        language: '只会普通话',
+        writing: '写字很慢',
+        physical: '身体有明显残疾',
+      },
+    },
+    basicInform: {
+      agentId: '18666401704_01',
+      idCard: '445281198012120360',
+      userName: '黄金香',
+      orderNo: null,
+      orderTime: null,
+      financingMes: {
+        financingAmount: null,
+        financingPurpose: null,
+        specialNotes: null,
+        repaymentSource: '工资收入',
+        realMaritalStatus: null,
+        creditMaritalStatus: null,
+        spouseAware: null,
+        spouseCanSign: null,
+        hasDrivingLicense: null,
+        spouseHasDrivingLicense: null,
+      },
+    },
+    bgLeave: null,
+    leave: null,
+    userLabel: '',
+    summaryConditions: {
+      conditionAggregation: {
+        registeredMonths: null,
+        hasDrivingLicense: null,
+        spouseHasDrivingLicense: null,
+        cardOverdueDetails: [
+          {
+            area: '深圳',
+            areaPickerShow: false,
+            type: '商品房·住宅',
+            ownMonths: '22',
+            size: '220',
+            shareType: '单独所有',
+            sharePercent: '',
+            shareWith: '',
+            shareWithPickerShow: false,
+            evalPrice: '222',
+            status: '全款',
+            mortgageAmount: '',
+            mortgageOrg: '',
+            mortgageMonths: '',
+            mortgageSecond: '',
+            mortgageSecondAmount: '',
+            mortgageSecondType: '',
+            mortgageSecondTypePickerShow: false,
+            mortgageSecondOrg: '',
+            pledgeAmount: '',
+            pledgeOrg: '',
+            pledgeMonths: '',
+            pledgeSecond: '',
+            pledgeSecondAmount: '',
+            pledgeSecondType: '',
+            pledgeSecondTypePickerShow: false,
+            pledgeSecondOrg: '',
+          },
+          {
+            area: '广州',
+            areaPickerShow: false,
+            type: '商品房·商业',
+            ownMonths: '33',
+            size: '330',
+            shareType: '共同共有',
+            sharePercent: '34',
+            shareWith: '父母',
+            shareWithPickerShow: false,
+            evalPrice: '350',
+            status: '按揭',
+            mortgageAmount: '360',
+            mortgageOrg: '370',
+            mortgageMonths: '38',
+            mortgageSecond: '是',
+            mortgageSecondAmount: '390',
+            mortgageSecondType: '',
+            mortgageSecondTypePickerShow: false,
+            mortgageSecondOrg: '',
+            pledgeAmount: '',
+            pledgeOrg: '',
+            pledgeMonths: '',
+            pledgeSecond: '',
+            pledgeSecondAmount: '',
+            pledgeSecondType: '',
+            pledgeSecondTypePickerShow: false,
+            pledgeSecondOrg: '',
+          },
+          {
+            area: '珠海',
+            areaPickerShow: false,
+            type: '非商品房',
+            ownMonths: '40',
+            size: '410',
+            shareType: '共同共有',
+            sharePercent: '42',
+            shareWith: '配偶',
+            shareWithPickerShow: false,
+            evalPrice: '4302',
+            status: '抵押',
+            mortgageAmount: '',
+            mortgageOrg: '',
+            mortgageMonths: '',
+            mortgageSecond: '',
+            mortgageSecondAmount: '',
+            mortgageSecondType: '',
+            mortgageSecondTypePickerShow: false,
+            mortgageSecondOrg: '',
+            pledgeAmount: '',
+            pledgeOrg: '',
+            pledgeMonths: '',
+            pledgeSecond: '',
+            pledgeSecondAmount: '',
+            pledgeSecondType: '',
+            pledgeSecondTypePickerShow: false,
+            pledgeSecondOrg: '',
+          },
+        ],
+        socialSecurityTotalMonths: '26',
+        socialSecurityCurrentMonths: '12',
+        workType: '企业主',
+        companyAge: null,
+      },
+      basicAttribute: {
+        realMaritalStatus: null,
+        creditMaritalStatus: null,
+        sex: '女',
+        age: '44',
+        address: '广东省普宁市流沙东街道玉环里34幢603号',
+        education: '本科',
+        educationCheck: '可查',
+        educationFullTime: '是',
+      },
+      investigate: {
+        workType: '企业主',
+        canInvestigate: '是',
+        investigateLocations: [
+          '家里',
+          '企业',
+        ],
+      },
+      spouseAware: null,
+      spouseCanSign: null,
+      hasDrivingLicense: null,
+      spouseHasDrivingLicense: null,
+      bgLeave: null,
+      specialNote: {
+        blacklistOrgs: null,
+        queryRecords: [
+          {
+            loanType: '车贷',
+            date: '2025-04-28',
+            org: '机构B-信用卡审批',
+            rejectReason: '111',
+          },
+        ],
+        blacklistReasons: [],
+        language: '只会普通话',
+        writing: '写字很慢',
+        physical: '身体有明显残疾',
+      },
+    },
   },
-  "bgLeave": "string",
-  "cardOverdueDetails": [
-    {
-      "amount": "string",
-      "cardNo": "string",
-      "id": "string",
-      "institution": "string",
-      "level": "string",
-      "repaid": "string",
-      "time": "string",
-      "type": "string"
-    }
-  ],
-  "cardOverdues": [
-    {
-      "cardNo": "string",
-      "id": "string",
-      "institution": "string"
-    }
-  ],
-  "creditSituation": {
-    "cardInfos": {
-      "balance_amount": "string",
-      "grant_amount": "string",
-      "usage_rate": "string"
-    },
-    "iqueryHistory": {
-      "queryDate": "string"
-    },
-    "legalQueryHistory": {},
-    "loanDetailsInfo": {},
-    "monthlyDebtPayment": {
-      "averageRepaymentLast6Months": "string",
-      "usedCreditLimit": "string"
-    },
-    "noLegalQueryHistory": {},
-    "overdueCount": {},
-    "overdueDetail": {
-      "amount": "string",
-      "cardNo": "string",
-      "id": "string",
-      "institution": "string",
-      "level": "string",
-      "repaid": "string",
-      "time": "string",
-      "type": "string"
-    },
-    "totalLiabilities": {
-      "average_repayment": "string",
-      "balance_amount": "string",
-      "grant_amount": "string",
-      "guarantee_amount": "string"
-    }
-  },
-  "exceptionalCase": {
-    "specialNote": {
-      "blacklistReasons": [
-        {
-          "black": "string",
-          "reasons": "string"
-        }
-      ],
-      "language": "string",
-      "physical": "string",
-      "queryRecords": [
-        {
-          "date": "string",
-          "loanType": "string",
-          "org": "string",
-          "progress": "string",
-          "rejectReason": "string"
-        }
-      ],
-      "writing": "string"
-    }
-  },
-  "hasNewLoan": "string",
-  "hasOverdue": "string",
-  "leave": "string",
-  "loanCount": "string",
-  "loanOverdueDetails": [
-    {
-      "amount": "string",
-      "cardNo": "string",
-      "id": "string",
-      "institution": "string",
-      "level": "string",
-      "repaid": "string",
-      "time": "string",
-      "type": "string"
-    }
-  ],
-  "loanOverdues": [
-    {
-      "id": "string",
-      "institution": "string",
-      "type": "string"
-    }
-  ],
-  "loans": [
-    {
-      "amount": "string",
-      "institution": "string",
-      "time": "string",
-      "type": "string"
-    }
-  ],
-  "summaryConditions": {
-    "basicAttribute": {
-      "address": "string",
-      "age": "string",
-      "education": "string",
-      "educationCheck": "string",
-      "educationFullTime": "string",
-      "maritalStatus": "string",
-      "sex": "string"
-    },
-    "bgLeave": "string",
-    "conditionAggregation": {
-      "cardOverdueDetails": [
-        {
-          "area": "string",
-          "areaPickerShow": true,
-          "evalPrice": "string",
-          "mortgageAmount": "string",
-          "mortgageMonths": "string",
-          "mortgageOrg": "string",
-          "mortgageSecond": "string",
-          "mortgageSecondAmount": "string",
-          "mortgageSecondOrg": "string",
-          "mortgageSecondType": "string",
-          "mortgageSecondTypePickerShow": true,
-          "ownMonths": "string",
-          "pledgeAmount": "string",
-          "pledgeMonths": "string",
-          "pledgeOrg": "string",
-          "pledgeSecond": "string",
-          "pledgeSecondAmount": "string",
-          "pledgeSecondOrg": "string",
-          "pledgeSecondType": "string",
-          "pledgeSecondTypePickerShow": true,
-          "sharePercent": "string",
-          "shareType": "string",
-          "shareWith": "string",
-          "shareWithPickerShow": true,
-          "size": "string",
-          "status": "string",
-          "type": "string"
-        }
-      ],
-      "companyAge": "string",
-      "driverLicense": "string",
-      "socialSecurityCurrentMonths": "string",
-      "socialSecurityTotalMonths": "string",
-      "workType": "string"
-    },
-    "driverMes": "string",
-    "investigate": {
-      "canInvestigate": "string",
-      "investigateLocations": [
-        "string"
-      ],
-      "workType": "string"
-    },
-    "specialNote": {
-      "blacklistReasons": [
-        {
-          "black": "string",
-          "reasons": "string"
-        }
-      ],
-      "language": "string",
-      "physical": "string",
-      "queryRecords": [
-        {
-          "date": "string",
-          "loanType": "string",
-          "org": "string",
-          "progress": "string",
-          "rejectReason": "string"
-        }
-      ],
-      "writing": "string"
-    }
-  },
-  "userLabel": "string"
 }
