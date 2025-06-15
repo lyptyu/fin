@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
-import { mockData } from '@/pages/evaluation-report/mock'
+import { searchAssessmentReport } from '@/api/user'
 
 const route = useRoute()
 const reportData = ref(null)
@@ -11,8 +11,8 @@ onMounted(async () => {
   try {
     const phone = route.query.phone as string
     const agentId = route.query.agent_id as string
-    // const res = await searchAssessmentReport(phone, agentId, '')
-    const res = mockData
+    const res = await searchAssessmentReport(phone, agentId, '')
+    // const res = mockData
     if (res.code === 200) {
       reportData.value = res.data
     }
@@ -1528,33 +1528,34 @@ onMounted(async () => {
 
 .loan-category {
   margin-bottom: 20px;
-  
+
   .loan-category-title {
     font-weight: bold;
     margin-bottom: 10px;
     color: #333;
   }
-  
+
   .loan-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 15px;
-    
-    th, td {
+
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 8px 12px;
       text-align: center;
     }
-    
+
     th {
       background-color: #f5f5f5;
       font-weight: bold;
     }
-    
+
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
-    
+
     tr:hover {
       background-color: #f1f1f1;
     }
