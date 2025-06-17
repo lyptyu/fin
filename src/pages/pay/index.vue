@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import { alipayAppPayRequest, queryTradeNo, signQuery } from '@/api/utils.js'
+import {alipayAppPayRequest, queryTradeNo, signQuery, wxPayAppPayRequest} from '@/api/utils.js'
 import router from '@/router/index.js'
 
 const route = useRoute()
@@ -53,7 +53,7 @@ onMounted(async () => {
   }
 })
 async function getPayUrl() {
-  const res = await alipayAppPayRequest()
+  const res = await wxPayAppPayRequest()
   console.log('res', res)
   payUrl.value = res.data.html
 }

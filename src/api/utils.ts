@@ -83,6 +83,11 @@ export function alipayAppPayRequest(): Promise<ApiResponse> {
     alipayAppPayRequest: '2m',
   })
 }
+export function wxPayAppPayRequest(): Promise<ApiResponse> {
+  return request.post(`/wxpay/h5`, {
+    wxPayAppPayRequest: '2m',
+  })
+}
 
 /* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
 /**

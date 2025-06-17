@@ -100,8 +100,6 @@ async function handleSubmit() {
         localStorage.setItem('userName', res.data.name)
         localStorage.setItem('userIdCarFd', res.data.idNumber)
       }
-      router.push('/gama-bigdata')
-      return
       if (res.data.signCustH5URL) {
         // window.open(res.data.signCustH5URL)
         // 跳转到res.data.signCustH5URL页面
