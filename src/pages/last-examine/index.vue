@@ -31,32 +31,32 @@ const module1Data = reactive({
   // 征信后新增放款补充
   newLoans: {
     loans: [
-      {
-        date: '2025-05-04',
-        org: '机构A-30万',
-        loanType: '',
-        monthlyPayment: '',
-      },
-      {
-        date: '2025-05-04',
-        org: '机构B-30万',
-        loanType: '',
-        monthlyPayment: '',
-      },
+      // {
+      //   date: '2025-05-04',
+      //   org: '机构A-30万',
+      //   loanType: '',
+      //   monthlyPayment: '',
+      // },
+      // {
+      //   date: '2025-05-04',
+      //   org: '机构B-30万',
+      //   loanType: '',
+      //   monthlyPayment: '',
+      // },
     ],
     creditCards: [
-      {
-        date: '2025-05-04',
-        org: '机构A-30万',
-        cardType: '大额专项分期卡',
-        monthlyPayment: '',
-      },
-      {
-        date: '2025-05-04',
-        org: '机构B-30万',
-        cardType: '贷记卡',
-        usedLimit: '',
-      },
+      // {
+      //   date: '2025-05-04',
+      //   org: '机构A-30万',
+      //   cardType: '大额专项分期卡',
+      //   monthlyPayment: '',
+      // },
+      // {
+      //   date: '2025-05-04',
+      //   org: '机构B-30万',
+      //   cardType: '贷记卡',
+      //   usedLimit: '',
+      // },
     ],
   },
   // 近五年未结清
@@ -2175,7 +2175,7 @@ onMounted(() => {
                               万
                             </template>
                           </van-field>
-                          
+
                           <div class="radio-title">
                             机构类型
                           </div>
@@ -2190,7 +2190,7 @@ onMounted(() => {
                               私人
                             </van-radio>
                           </van-radio-group>
-                          
+
                           <van-field
                             v-model="house.mortgageSecondOrgName"
                             label="机构名称"
@@ -2257,7 +2257,7 @@ onMounted(() => {
                               万
                             </template>
                           </van-field>
-                          
+
                           <div class="radio-title">
                             机构类型
                           </div>
@@ -2272,7 +2272,7 @@ onMounted(() => {
                               私人
                             </van-radio>
                           </van-radio-group>
-                          
+
                           <van-field
                             v-model="house.pledgeSecondOrgName"
                             label="机构名称"
