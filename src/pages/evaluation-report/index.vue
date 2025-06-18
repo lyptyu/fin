@@ -399,7 +399,7 @@ onMounted(async () => {
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund === '是'">
                     <div class="security-content">
-                      公积金地区：{{ reportData?.basicConditions?.securitySituation?.providentFundArea || '无' }} |
+                      公积金地区：{{ reportData?.basicConditions?.securitySituation?.providentFundArea || reportData?.basicConditions?.securitySituation?.providentFundCompanyType || '-' }} |
                       <template v-if="reportData?.basicConditions?.securitySituation?.providentFundCompanyType === '同社保单位'">
                         公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompany || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
                       </template>
@@ -425,7 +425,7 @@ onMounted(async () => {
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasTax === '是'">
                     <div class="security-content">
-                      个税地区：{{ reportData?.basicConditions?.securitySituation?.taxArea || '无' }} |
+                      个税地区：{{ reportData?.basicConditions?.securitySituation?.taxArea || reportData?.basicConditions?.securitySituation?.taxCompanyType || '-' }} |
                       <template v-if="reportData?.basicConditions?.securitySituation?.taxCompanyType === '同社保单位'">
                         个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompany || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
                       </template>
