@@ -100,15 +100,15 @@ async function handleSubmit() {
         localStorage.setItem('userName', res.data.name)
         localStorage.setItem('userIdCarFd', res.data.idNumber)
       }
-      if (res.data.signCustH5URL) {
-        // window.open(res.data.signCustH5URL)
-        // 跳转到res.data.signCustH5URL页面
-        window.location.href = res.data.signCustH5URL
-        // 把res.data.tid存在缓存
-        localStorage.setItem('tid', res.data.tid)
-      }
+      // if (res.data.signCustH5URL) {
+      //   // window.open(res.data.signCustH5URL)
+      //   // 跳转到res.data.signCustH5URL页面
+      //   window.location.href = res.data.signCustH5URL
+      //   // 把res.data.tid存在缓存
+      //   localStorage.setItem('tid', res.data.tid)
+      // }
       // 接下来的步骤:进入支付页面
-      // router.push('/pay')
+      router.push('/pay')
     }
     else {
       // 使用弹窗显示拒绝原因
