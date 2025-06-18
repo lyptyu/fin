@@ -682,7 +682,7 @@ onMounted(async () => {
             <!-- 小额类 -->
             <div v-if="reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount && reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount.length > 0" class="loan-category">
               <div class="loan-category-title">
-                小额类
+                信用小额类
               </div>
               <table class="loan-table">
                 <thead>
