@@ -150,7 +150,7 @@ async function onSubmit() {
           手机验证码登录
         </h2>
         <p class="subtitle">
-          安全便捷的登录方式
+          安全便捷的登录方式v1.0
         </p>
       </div>
 
@@ -261,27 +261,27 @@ async function onSubmit() {
 
   .agreement-section {
     margin-top: 16px;
-    padding: 0 12px; 
+    padding: 0 12px;
     font-size: 12px;
-    color: #666; 
+    color: #666;
     display: flex;
     align-items: flex-start; // Align checkbox with the top of the text line
-    text-align: left; 
+    text-align: left;
   }
 
   .agreement-section .van-checkbox {
     margin-right: 8px;
     // Adjust to better align with the first line of text
-    margin-top: 1px; 
+    margin-top: 1px;
   }
 
   .agreement-section span {
-    flex: 1; 
+    flex: 1;
     line-height: 1.5; // Improve readability for wrapped text
   }
 
   .agreement-link {
-    color: #667eea; 
+    color: #667eea;
     text-decoration: none;
   }
 
