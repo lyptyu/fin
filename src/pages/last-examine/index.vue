@@ -13,20 +13,20 @@ const userStore = useUserStore()
 const module1Data = reactive({
   // 近半年查询记录
   queryRecords: [
-    {
-      date: '2025-04-01',
-      org: '机构A-信用卡审批',
-      loanType: '装修贷',
-      progress: '已批-已放款',
-      rejectReason: '',
-    },
-    {
-      date: '2025-04-28',
-      org: '机构B-信用卡审批',
-      loanType: '车贷',
-      progress: '已拒',
-      rejectReason: '',
-    },
+    // {
+    //   date: '2025-04-01',
+    //   org: '机构A-信用卡审批',
+    //   loanType: '装修贷',
+    //   progress: '已批-已放款',
+    //   rejectReason: '',
+    // },
+    // {
+    //   date: '2025-04-28',
+    //   org: '机构B-信用卡审批',
+    //   loanType: '车贷',
+    //   progress: '已拒',
+    //   rejectReason: '',
+    // },
   ],
   // 征信后新增放款补充
   newLoans: {
@@ -424,9 +424,6 @@ function formatHousePledgeAmount(house: any) {
   }
 }
 
-// 在<script setup>中，所有顶级变量和函数都会自动暴露给模板
-// 无需创建formatters对象
-
 // 格式化车辆抵押金额为整数
 function formatCarPledgeAmount() {
   if (module3CarData.carPledgeAmount && module3CarData.carPledgeAmount !== '') {
@@ -769,8 +766,6 @@ function formatSalaryAmount(flow: any) {
   }
 }
 
-// 这些格式化函数已移到setup函数内部
-
 // 格式化结息，保留一位小数
 function formatInterest(flow: any, index: number) {
   if (flow.interest[index] && flow.interest[index] !== '') {
@@ -803,7 +798,7 @@ function formatCarMortgageAmount() {
 
 // 这些函数已移到setup函数内部
 
-// 这些格式化函数已移到setup函数内部
+// 这些函数已移到setup函数内部
 
 // 这些函数已移到setup函数内部
 
@@ -980,59 +975,64 @@ onMounted(() => {
             <div class="section-title">
               01近半年以下查询记录的原因及细节
             </div>
-            <template v-for="(record, index) in module1Data.queryRecords" :key="index">
-              <div class="record-item">
-                <div class="record-header">
-                  <span class="record-date">{{ dayjs(record.date).format('YYYY-MM-DD') }}</span>
-                  <span class="record-org">{{ record.org }}</span>
-                </div>
-
-                <div class="radio-title">
-                  申请贷款类型：
-                </div>
-                <van-radio-group v-model="record.loanType" direction="horizontal" class="radio-group">
-                  <van-radio name="装修贷">
-                    装修贷
-                  </van-radio>
-                  <van-radio name="车贷">
-                    车贷
-                  </van-radio>
-                  <van-radio name="信贷">
-                    信贷
-                  </van-radio>
-                  <van-radio name="其它">
-                    其它
-                  </van-radio>
-                </van-radio-group>
-
-                <div class="radio-title">
-                  后续进度：
-                </div>
-                <van-radio-group v-model="record.progress" direction="horizontal" class="radio-group">
-                  <van-radio name="已批-未放款">
-                    已批-未放款
-                  </van-radio>
-                  <van-radio name="已批-已放款">
-                    已批-已放款
-                  </van-radio>
-                  <van-radio name="已拒">
-                    已拒
-                  </van-radio>
-                </van-radio-group>
-
-                <div v-if="record.progress === '已拒'" class="form-item required">
-                  <div class="radio-title">
-                    拒绝原因：
+            <template v-if="module1Data.queryRecords && module1Data.queryRecords.length > 0">
+              <template v-for="(record, index) in module1Data.queryRecords" :key="index">
+                <div class="record-item">
+                  <div class="record-header">
+                    <span class="record-date">{{ dayjs(record.date).format('YYYY-MM-DD') }}</span>
+                    <span class="record-org">{{ record.org }}</span>
                   </div>
-                  <van-field
-                    v-model="record.rejectReason"
-                    placeholder="请输入拒绝原因"
-                    class="reject-reason"
-                    :rules="[{ required: true, message: '请输入拒绝原因' }]"
-                  />
+
+                  <div class="radio-title">
+                    申请贷款类型：
+                  </div>
+                  <van-radio-group v-model="record.loanType" direction="horizontal" class="radio-group">
+                    <van-radio name="装修贷">
+                      装修贷
+                    </van-radio>
+                    <van-radio name="车贷">
+                      车贷
+                    </van-radio>
+                    <van-radio name="信贷">
+                      信贷
+                    </van-radio>
+                    <van-radio name="其它">
+                      其它
+                    </van-radio>
+                  </van-radio-group>
+
+                  <div class="radio-title">
+                    后续进度：
+                  </div>
+                  <van-radio-group v-model="record.progress" direction="horizontal" class="radio-group">
+                    <van-radio name="已批-未放款">
+                      已批-未放款
+                    </van-radio>
+                    <van-radio name="已批-已放款">
+                      已批-已放款
+                    </van-radio>
+                    <van-radio name="已拒">
+                      已拒
+                    </van-radio>
+                  </van-radio-group>
+
+                  <div v-if="record.progress === '已拒'" class="form-item required">
+                    <div class="radio-title">
+                      拒绝原因：
+                    </div>
+                    <van-field
+                      v-model="record.rejectReason"
+                      placeholder="请输入拒绝原因"
+                      class="reject-reason"
+                      :rules="[{ required: true, message: '请输入拒绝原因' }]"
+                    />
+                  </div>
                 </div>
-              </div>
+              </template>
             </template>
+            <div v-else class="empty-state">
+              <van-empty description="暂无查询记录" />
+            </div>
           </div>
 
           <!-- 02征信后新增放款补充 -->
@@ -1045,83 +1045,93 @@ onMounted(() => {
             <div class="subsection-header">
               贷款类
             </div>
-            <template v-for="(loan, index) in module1Data.newLoans.loans" :key="index">
-              <div class="subsection">
-                <div class="date-org">
+            <template v-if="module1Data.newLoans.loans && module1Data.newLoans.loans.length > 0">
+              <template v-for="(loan, index) in module1Data.newLoans.loans" :key="index">
+                <div class="subsection">
+                  <div class="date-org">
 <!--                  <span class="date">{{ dayjs(loan.date).format('YYYY-MM-DD') }}</span>-->
-                  <span class="org">{{ loan.org }}</span>
+                    <span class="org">{{ loan.org }}</span>
+                  </div>
+                  <div class="form-item">
+                    <van-field
+                      v-model="loan.loanType"
+                      readonly
+                      clickable
+                      label="贷款类型"
+                      placeholder="请选择贷款类型"
+                      @click="handleLoanTypeClick(index)"
+                    />
+                  </div>
+                  <div class="form-item">
+                    <van-field
+                      v-model="loan.monthlyPayment"
+                      label="还款月供"
+                      placeholder="请输入"
+                      type="number"
+                    >
+                      <template #button>
+                        <span class="field-suffix">元</span>
+                      </template>
+                    </van-field>
+                  </div>
                 </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="loan.loanType"
-                    readonly
-                    clickable
-                    label="贷款类型"
-                    placeholder="请选择贷款类型"
-                    @click="handleLoanTypeClick(index)"
-                  />
-                </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="loan.monthlyPayment"
-                    label="还款月供"
-                    placeholder="请输入"
-                    type="number"
-                  >
-                    <template #button>
-                      <span class="field-suffix">元</span>
-                    </template>
-                  </van-field>
-                </div>
-              </div>
+              </template>
             </template>
+            <div v-else class="empty-state">
+              <van-empty description="暂无贷款记录" />
+            </div>
 
             <!-- 信用卡类 -->
             <div class="subsection-header">
               信用卡类
             </div>
-            <template v-for="(card, index) in module1Data.newLoans.creditCards" :key="index">
-              <div class="subsection">
-                <div class="date-org">
+            <template v-if="module1Data.newLoans.creditCards && module1Data.newLoans.creditCards.length > 0">
+              <template v-for="(card, index) in module1Data.newLoans.creditCards" :key="index">
+                <div class="subsection">
+                  <div class="date-org">
 <!--                  <span class="date">{{ dayjs(card.date).format('YYYY-MM-DD') }}</span>-->
-                  <span class="org">{{ card.org }}</span>
+                    <span class="org">{{ card.org }}</span>
+                  </div>
+                  <div class="form-item">
+                    <van-field
+                      v-model="card.cardType"
+                      readonly
+                      clickable
+                      label="贷款类型"
+                      placeholder="请选择贷款类型"
+                      @click="handleCreditCardTypeClick(index)"
+                    />
+                  </div>
+                  <div v-if="card.cardType === '大额专项分期卡'" class="form-item">
+                    <van-field
+                      v-model="card.monthlyPayment"
+                      label="还款月供"
+                      placeholder="请输入"
+                      type="number"
+                    >
+                      <template #button>
+                        <span class="field-suffix">元</span>
+                      </template>
+                    </van-field>
+                  </div>
+                  <div v-if="card.cardType === '贷记卡'" class="form-item">
+                    <van-field
+                      v-model="card.usedLimit"
+                      label="已用额度"
+                      placeholder="请输入"
+                      type="number"
+                    >
+                      <template #button>
+                        <span class="field-suffix">元</span>
+                      </template>
+                    </van-field>
+                  </div>
                 </div>
-                <div class="form-item">
-                  <van-field
-                    v-model="card.cardType"
-                    readonly
-                    clickable
-                    label="贷款类型"
-                    placeholder="请选择贷款类型"
-                    @click="handleCreditCardTypeClick(index)"
-                  />
-                </div>
-                <div v-if="card.cardType === '大额专项分期卡'" class="form-item">
-                  <van-field
-                    v-model="card.monthlyPayment"
-                    label="还款月供"
-                    placeholder="请输入"
-                    type="number"
-                  >
-                    <template #button>
-                      <span class="field-suffix">元</span>
-                    </template>
-                  </van-field>
-                </div>
-                <div v-if="card.cardType === '贷记卡'" class="form-item">
-                  <van-field
-                    v-model="card.usedLimit"
-                    label="已用额度"
-                    placeholder="请输入"
-                    type="number"
-                  >
-                    <template #button>
-                      <span class="field-suffix">元</span>
-                    </template>
-                  </van-field>
-                </div>
-              </div>
+              </template>
             </template>
+            <div v-else class="empty-state">
+              <van-empty description="暂无信用卡记录" />
+            </div>
           </div>
 
           <!-- 03近五年未结清 -->
@@ -3449,5 +3459,16 @@ onMounted(() => {
 .field-suffix {
   margin-right: 8px;
   color: #666;
+}
+
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  
+  :deep(.van-empty__description) {
+    color: #999;
+    font-size: 14px;
+    margin-top: 12px;
+  }
 }
 </style>
