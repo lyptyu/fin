@@ -97,5 +97,5 @@ export function wxPayAppPayRequest(): Promise<ApiResponse> {
  */
 /* <<<<<<<<<<  bc49ed93-08e1-4c4c-993b-d88ca101ef84  >>>>>>>>>>> */
 export function queryTradeNo(data: { outTradeNo: string }): Promise<ApiResponse> {
-  return request.post(`/alipay/queryTradeNo?outTradeNo=${data.outTradeNo}`)
+  return request.post(`/wxpay/queryTradeNo?outTradeNo=${data.outTradeNo}`)
 }
