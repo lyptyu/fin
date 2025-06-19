@@ -103,7 +103,6 @@ onMounted(async () => {
                 条件汇总：
               </div>
               <div class="summary-content">
-                {{ reportData?.basicConditions?.housesConditions?.hasHouse === '是' ? '有房产' : '无房产' }} |
                 <template v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
                   {{ reportData?.basicConditions?.housesConditions?.houses[0]?.area || '无' }}・
                   {{ reportData?.basicConditions?.housesConditions?.houses[0]?.type || '无' }}
@@ -112,7 +111,7 @@ onMounted(async () => {
                   无房产
                 </template> |
                 <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths">
-                  连续缴社保合计{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }}个月
+                  连续缴{{ reportData?.basicConditions?.securitySituation?.socialSecurityArea || '' }}社保合计{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }}个月
                 </template>
                 <template v-else>
                   无社保
@@ -128,16 +127,16 @@ onMounted(async () => {
                 </template>
                 <template v-else>
                   无企业
-                </template> |
-                <template v-if="reportData?.basicInform?.financingMes?.hasDrivingLicense === '是'">
-                  本人驾照
                 </template>
-                <template v-else>
-                  本人无驾照
-                </template>
-                <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense === '是'">
-                  | 配偶驾照
-                </template>
+                <!--                <template v-if="reportData?.basicInform?.financingMes?.hasDrivingLicense === '是'"> -->
+                <!--                  本人驾照 -->
+                <!--                </template> -->
+                <!--                <template v-else> -->
+                <!--                  本人无驾照 -->
+                <!--                </template> -->
+                <!--                <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense === '是'"> -->
+                <!--                  | 配偶驾照 -->
+                <!--                </template> -->
               </div>
             </div>
             <div class="summary-item">
@@ -171,8 +170,8 @@ onMounted(async () => {
                 配偶配合情况：
               </div>
               <div class="summary-content">
-                配偶是否知情：{{ reportData?.basicInform?.financingMes?.spouseAware || '无' }} |
-                配偶是否可共签：{{ reportData?.basicInform?.financingMes?.spouseCanSign || '无' }}
+                {{ reportData?.basicInform?.financingMes?.spouseAware === '是' ? '配偶可知情' : '配偶不可知情' }} |
+                {{ reportData?.basicInform?.financingMes?.spouseCanSign === '是' ? '配偶可共签' : '配偶不可共签' }}
               </div>
             </div>
             <div class="summary-item">
@@ -191,7 +190,7 @@ onMounted(async () => {
                 大数据情况：
               </div>
               <div class="summary-content">
-                {{ reportData?.bgLeave || '无' }}
+                伽马大数据{{ reportData?.bgLeave }}分
               </div>
             </div>
             <div class="summary-item">
@@ -242,9 +241,9 @@ onMounted(async () => {
 
                 <!-- 本人特殊情况补充 -->
                 <div class="special-note-item">
-                  <span class="checked-box">☑</span>语言能力：{{ reportData?.exceptionalCase?.specialNote?.language || '无' }}
-                  <span class="checked-box">☑</span>写字能力：{{ reportData?.exceptionalCase?.specialNote?.writing || '无' }}
-                  <span class="checked-box">☑</span>身体情况：{{ reportData?.exceptionalCase?.specialNote?.physical || '无' }}
+                  <span class="checked-box">☑</span>{{ reportData?.exceptionalCase?.specialNote?.language || '无' }}
+                  <span class="checked-box">☑</span>{{ reportData?.exceptionalCase?.specialNote?.writing || '无' }}
+                  <span class="checked-box">☑</span>{{ reportData?.exceptionalCase?.specialNote?.physical || '无' }}
                 </div>
               </div>
             </div>
@@ -267,7 +266,6 @@ onMounted(async () => {
                 房产情况 (共{{ reportData?.basicConditions?.housesConditions?.houseCount || '0' }}套):
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.housesConditions?.hasHouse === '是' ? '有房产' : '无房产' }}
                 <template v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
                   <template v-for="(house, index) in reportData?.basicConditions?.housesConditions?.houses" :key="index">
                     <div class="house-item">
@@ -308,7 +306,6 @@ onMounted(async () => {
                 车产情况:
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.module3CarData?.hasCar === '是' ? '有车产' : '无车产' }}
                 <template v-if="reportData?.basicConditions?.module3CarData?.hasCar === '是'">
                   （{{ reportData?.basicConditions?.module3CarData?.carType || '无' }}・
                   {{ reportData?.basicConditions?.module3CarData?.carStatus || '无' }}
@@ -343,7 +340,6 @@ onMounted(async () => {
                 金融资产 (共{{ reportData?.basicConditions?.module3AssetData?.assetCount || '0' }}项):
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.module3AssetData?.hasAsset === '是' ? '有金融资产' : '无金融资产' }}
                 <template v-if="reportData?.basicConditions?.module3AssetData?.hasAsset === '是' && reportData?.basicConditions?.module3AssetData?.assets && reportData?.basicConditions?.module3AssetData?.assets.length > 0">
                   <div class="asset-list">
                     <template v-for="(asset, index) in reportData?.basicConditions?.module3AssetData?.assets" :key="index">
@@ -371,9 +367,6 @@ onMounted(async () => {
               <div class="condition-detail">
                 <!-- 社保信息 -->
                 <div class="security-section">
-                  <div class="security-title">
-                    社保信息：{{ reportData?.basicConditions?.securitySituation?.hasSocialSecurity === '是' ? '有社保' : '无社保' }}
-                  </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasSocialSecurity === '是'">
                     <div class="security-content">
                       缴费主体：{{ reportData?.basicConditions?.securitySituation?.socialSecurityPayer || '无' }} |
@@ -456,7 +449,6 @@ onMounted(async () => {
                 企业情况:
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.enterpriseSituation?.hasCompany === '是' ? '有企业' : '无企业' }}
                 <template v-if="reportData?.basicConditions?.enterpriseSituation?.hasCompany === '是'">
                   <div class="business-info">
                     <div class="business-item">
@@ -524,7 +516,6 @@ onMounted(async () => {
                 流水情况 (共{{ reportData?.basicConditions?.module3FlowData?.flowCount || '0' }}项):
               </div>
               <div class="condition-detail">
-                {{ reportData?.basicConditions?.module3FlowData?.hasFlow === '是' ? '有有效流水' : '无有效流水' }}
                 <template v-if="reportData?.basicConditions?.module3FlowData?.hasFlow === '是' && reportData?.basicConditions?.module3FlowData?.flows && reportData?.basicConditions?.module3FlowData?.flows.length > 0">
                   <div class="flow-list">
                     <template v-for="(flow, index) in reportData?.basicConditions?.module3FlowData?.flows" :key="index">
