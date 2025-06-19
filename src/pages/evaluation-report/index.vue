@@ -688,21 +688,25 @@ onMounted(async () => {
                 <thead>
                   <tr>
                     <th>日期</th>
-                    <th>机构</th>
-                    <th>总（元）</th>
-                    <th>余（元）</th>
+                    <th>机构简称</th>
+                    <th>业务类型</th>
+                    <th>授信总额</th>
+                    <th>余额</th>
                     <th>还款方式</th>
-                    <th>供几个月</th>
+                    <th>已供期数</th>
+                    <th>状态</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount" :key="`small-${index}`">
                     <td>{{ loan.grant_date || '-' }}</td>
                     <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.type || '-' }}</td>
                     <td>{{ loan.grant_amount || '0' }}</td>
                     <td>{{ loan.balance_amount || '0' }}</td>
                     <td>{{ loan.repayment_method || '-' }}</td>
                     <td>{{ loan.termRemainingTotal || '0' }}</td>
+                    <td>{{ loan.current_status || '-' }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -717,21 +721,25 @@ onMounted(async () => {
                 <thead>
                   <tr>
                     <th>日期</th>
-                    <th>机构</th>
-                    <th>总（元）</th>
-                    <th>余（元）</th>
+                    <th>机构简称</th>
+                    <th>业务类型</th>
+                    <th>授信总额</th>
+                    <th>余额</th>
                     <th>还款方式</th>
-                    <th>供几个月</th>
+                    <th>已供期数</th>
+                    <th>状态</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount" :key="`nosmall-${index}`">
                     <td>{{ loan.grant_date || '-' }}</td>
                     <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.type || '-' }}</td>
                     <td>{{ loan.grant_amount || '0' }}</td>
                     <td>{{ loan.balance_amount || '0' }}</td>
                     <td>{{ loan.repayment_method || '-' }}</td>
                     <td>{{ loan.termRemainingTotal || '0' }}</td>
+                    <td>{{ loan.current_status || '-' }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -746,21 +754,25 @@ onMounted(async () => {
                 <thead>
                   <tr>
                     <th>日期</th>
-                    <th>机构</th>
-                    <th>总（元）</th>
-                    <th>余（元）</th>
+                    <th>机构简称</th>
+                    <th>业务类型</th>
+                    <th>授信总额</th>
+                    <th>余额</th>
                     <th>还款方式</th>
-                    <th>供几个月</th>
+                    <th>已供期数</th>
+                    <th>状态</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.installmentCard" :key="`installment-${index}`">
                     <td>{{ loan.grant_date || '-' }}</td>
                     <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.type || '-' }}</td>
                     <td>{{ loan.grant_amount || '0' }}</td>
                     <td>{{ loan.balance_amount || '0' }}</td>
                     <td>{{ loan.repayment_method || '-' }}</td>
                     <td>{{ loan.termRemainingTotal || '0' }}</td>
+                    <td>{{ loan.current_status || '-' }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -775,23 +787,25 @@ onMounted(async () => {
                 <thead>
                   <tr>
                     <th>日期</th>
-                    <th>机构</th>
-                    <th>总（元）</th>
-                    <th>余（元）</th>
+                    <th>机构简称</th>
+                    <th>业务类型</th>
+                    <th>授信总额</th>
+                    <th>余额</th>
                     <th>还款方式</th>
-                    <th>担保方式</th>
-                    <th>供几个月</th>
+                    <th>已供期数</th>
+                    <th>状态</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.creditCategory" :key="`credit-${index}`">
                     <td>{{ loan.grant_date || '-' }}</td>
                     <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.type || '-' }}</td>
                     <td>{{ loan.grant_amount || '0' }}</td>
                     <td>{{ loan.balance_amount || '0' }}</td>
                     <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.guaranteeMethod || '-' }}</td>
                     <td>{{ loan.termRemainingTotal || '0' }}</td>
+                    <td>{{ loan.current_status || '-' }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -806,23 +820,25 @@ onMounted(async () => {
                 <thead>
                   <tr>
                     <th>日期</th>
-                    <th>机构</th>
-                    <th>总（元）</th>
-                    <th>余（元）</th>
+                    <th>机构简称</th>
+                    <th>业务类型</th>
+                    <th>授信总额</th>
+                    <th>余额</th>
                     <th>还款方式</th>
-                    <th>担保方式</th>
-                    <th>供几个月</th>
+                    <th>已供期数</th>
+                    <th>状态</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.mortgageType" :key="`mortgage-${index}`">
                     <td>{{ loan.grant_date || '-' }}</td>
                     <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.type || '-' }}</td>
                     <td>{{ loan.grant_amount || '0' }}</td>
                     <td>{{ loan.balance_amount || '0' }}</td>
                     <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.guaranteeMethod || '-' }}</td>
                     <td>{{ loan.termRemainingTotal || '0' }}</td>
+                    <td>{{ loan.current_status || '-' }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -837,23 +853,25 @@ onMounted(async () => {
                 <thead>
                   <tr>
                     <th>日期</th>
-                    <th>机构</th>
-                    <th>总（元）</th>
-                    <th>余（元）</th>
+                    <th>机构简称</th>
+                    <th>业务类型</th>
+                    <th>授信总额</th>
+                    <th>余额</th>
                     <th>还款方式</th>
-                    <th>担保方式</th>
-                    <th>供几个月</th>
+                    <th>已供期数</th>
+                    <th>状态</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.otherType" :key="`other-${index}`">
                     <td>{{ loan.grant_date || '-' }}</td>
                     <td>{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.type || '-' }}</td>
                     <td>{{ loan.grant_amount || '0' }}</td>
                     <td>{{ loan.balance_amount || '0' }}</td>
                     <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.guaranteeMethod || '-' }}</td>
                     <td>{{ loan.termRemainingTotal || '0' }}</td>
+                    <td>{{ loan.current_status || '-' }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -868,23 +886,25 @@ onMounted(async () => {
                 <thead>
                   <tr>
                     <th>日期</th>
-                    <th>机构</th>
-                    <th>担保对象</th>
-                    <th>总（元）</th>
-                    <th>余（元）</th>
-                    <th>贷款性质</th>
-                    <th>供几个月</th>
+                    <th>机构简称</th>
+                    <th>业务类型</th>
+                    <th>授信总额</th>
+                    <th>余额</th>
+                    <th>还款方式</th>
+                    <th>已供期数</th>
+                    <th>状态</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.grant_date || '-' }}</td>
                     <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.bank_name || '-' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.surety_name || '-' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.type || '-' }}</td>
                     <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.grant_amount || '0' }}</td>
                     <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.balance_amount || '0' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.businessType || '-' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.repayment_method || '-' }}</td>
                     <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.termRemainingTotal || '0' }}</td>
+                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.current_status || '-' }}</td>
                   </tr>
                 </tbody>
               </table>
