@@ -123,7 +123,7 @@ onMounted(async () => {
                   无社保
                 </template> |
                 <template v-if="reportData?.basicConditions?.enterpriseSituation?.registeredMonths">
-                  企业注册{{ reportData?.basicConditions?.enterpriseSituation?.registeredMonths }}个月
+                  {{ reportData?.basicConditions?.enterpriseSituation?.companyArea || '' }}企业注册{{ reportData?.basicConditions?.enterpriseSituation?.registeredMonths }}个月
                 </template>
                 <template v-else>
                   无企业

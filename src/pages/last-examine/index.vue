@@ -169,6 +169,7 @@ const module2Data = reactive({
   // 企业信息
   hasCompany: '',
   companyName: '',
+  companyArea: '',
   businessInfo: [] as string[],
   legalPersonMonths: '',
   shareholderMonths: '',
@@ -236,6 +237,24 @@ function onTaxAreaConfirm(params: {
 }) {
   module2Data.taxArea = params.selectedOptions[0]?.text || ''
   showTaxAreaPicker.value = false
+}
+
+// 企业地区选择相关代码
+const showCompanyAreaPicker = ref(false)
+const companyAreaOptions = ref([
+  {text: '北京', value: '北京'},
+  {text: '上海', value: '上海'},
+  {text: '广州', value: '广州'},
+  {text: '深圳', value: '深圳'},
+]) // 这里应该从后端获取，可参考社保地区
+
+function onCompanyAreaConfirm(params: {
+  selectedValues: string[]
+  selectedOptions: Array<{ text: string, value: string }>
+  selectedIndexes: number[]
+}) {
+  module2Data.companyArea = params.selectedOptions[0]?.text || ''
+  showCompanyAreaPicker.value = false
 }
 
 // module3Data 房产相关字段
@@ -1736,6 +1755,14 @@ onMounted(() => {
                   label="企业全称"
                   placeholder="请输入企业全称"
                 />
+                <van-field
+                  v-model="module2Data.companyArea"
+                  label="企业地区"
+                  placeholder="请选择企业地区"
+                  readonly
+                  is-link
+                  @click="showCompanyAreaPicker = true"
+                />
               </div>
 
               <!-- 工商信息 -->
@@ -2996,6 +3023,17 @@ onMounted(() => {
         title="选择个税地区"
         @confirm="onTaxAreaConfirm"
         @cancel="showTaxAreaPicker = false"
+      />
+    </van-popup>
+
+    <!-- 企业地区选择器弹窗 -->
+    <van-popup v-model:show="showCompanyAreaPicker" position="bottom">
+      <van-picker
+        :columns="companyAreaOptions"
+        show-toolbar
+        title="选择企业地区"
+        @confirm="onCompanyAreaConfirm"
+        @cancel="showCompanyAreaPicker = false"
       />
     </van-popup>
 
