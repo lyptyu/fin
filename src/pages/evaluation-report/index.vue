@@ -387,8 +387,8 @@ onMounted(async () => {
 
                 <!-- 公积金信息 -->
                 <div class="security-section">
-                  <div class="security-title">
-                    公积金信息：{{ reportData?.basicConditions?.securitySituation?.hasProvidentFund === '是' ? '有公积金' : '无公积金' }}
+                  <div v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund !== '是'" class="security-title">
+                    无公积金
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund === '是'">
                     <div class="security-content">
@@ -413,8 +413,8 @@ onMounted(async () => {
 
                 <!-- 个税信息 -->
                 <div class="security-section">
-                  <div class="security-title">
-                    个税信息：{{ reportData?.basicConditions?.securitySituation?.hasTax === '是' ? '有个税' : '无个税' }}
+                  <div v-if="reportData?.basicConditions?.securitySituation?.hasTax !== '是" class="security-title">
+                    无个税
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasTax === '是'">
                     <div class="security-content">
