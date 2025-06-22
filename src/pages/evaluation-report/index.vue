@@ -413,7 +413,7 @@ onMounted(async () => {
 
                 <!-- 个税信息 -->
                 <div class="security-section">
-                  <div v-if="reportData?.basicConditions?.securitySituation?.hasTax !== '是" class="security-title">
+                  <div v-if="reportData?.basicConditions?.securitySituation?.hasTax !== '是'" class="security-title">
                     无个税
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasTax === '是'">
@@ -635,25 +635,25 @@ onMounted(async () => {
             <ul class="credit-list">
               <li>
                 <span class="credit-label">总负债：</span>
-                <span class="credit-value">总{{
+                <span class="credit-value">总授信额度{{
                   reportData?.creditSituation?.totalLiabilities?.grant_amount || '0'
-                }}（授信额度）；余{{
+                }}；余额{{
                   reportData?.creditSituation?.totalLiabilities?.balance_amount || '0'
-                }}（余额）；供{{
+                }}；供{{
                   reportData?.creditSituation?.totalLiabilities?.averageRepaymentLast6Months || '0'
-                }}（元）；担保{{
+                }}（元）；担保金额{{
                   reportData?.creditSituation?.totalLiabilities?.guarantee_amount || '0'
-                }}（担保金额）</span>
+                }}</span>
               </li>
               <li>
                 <span class="credit-label">信用卡：</span>
                 <span class="credit-value">总{{
                   reportData?.creditSituation?.cardInfos?.institution_count || '0'
-                }}家（机构数）；总{{
+                }}家；总授信额度{{
                   reportData?.creditSituation?.cardInfos?.grant_amount || '0'
-                }}（授信额度）；已用{{
+                }}；余额{{
                   reportData?.creditSituation?.cardInfos?.balance_amount || '0'
-                }}（余额）；平均使用率{{ reportData?.creditSituation?.cardInfos?.usage_rate || '0' }}%</span>
+                }}；平均使用率{{ reportData?.creditSituation?.cardInfos?.usage_rate || '0' }}%</span>
               </li>
               <li>
                 <span class="credit-label">负债月供：</span>
