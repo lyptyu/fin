@@ -916,6 +916,124 @@ onMounted(async () => {
             </table>
           </div>
 
+          <!-- 逾期/透支信息汇总 -->
+          <div v-if="reportData?.creditSituation?.overdueOverdraftSummary" class="overdue-summary-section">
+            <div class="overdue-summary-title">
+              逾期/透支信息汇总：
+            </div>
+            <table class="overdue-summary-table">
+              <thead>
+                <tr>
+                  <th class="account-type-header" rowspan="2">账户类型</th>
+                  <th class="time-period-header" rowspan="2">时间</th>
+                  <th>逾期次数</th>
+                  <th>最长逾期月数</th>
+                  <th>最高逾期金额</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- 贷款 -->
+                <tr>
+                  <td class="account-type-cell" rowspan="5">贷款</td>
+                  <td class="time-period-cell">当前逾期期</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近半年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近一年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近两年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近五年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
+                </tr>
+
+                <!-- 信用卡 -->
+                <tr>
+                  <td class="account-type-cell" rowspan="5">信用卡</td>
+                  <td class="time-period-cell">当前逾期期</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近半年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近一年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近两年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近五年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
+                </tr>
+
+                <!-- 合计 -->
+                <tr>
+                  <td class="account-type-cell" rowspan="5">合计</td>
+                  <td class="time-period-cell">当前逾期期</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近半年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近一年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近两年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="time-period-cell">近五年</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.overdueCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
           <!-- 征信查询情况 -->
           <div class="credit-section">
             <div class="credit-title">
@@ -927,6 +1045,72 @@ onMounted(async () => {
                 <span class="query-value">{{ reportData?.creditSituation?.iqueryHistory?.queryDate || '无查询记录' }}</span>
               </div>
             </div>
+          </div>
+
+          <!-- 查询信息汇总 -->
+          <div v-if="reportData?.creditSituation?.queryHistory?.queryInformationSummary?.length > 0" class="query-summary-section">
+            <div class="query-summary-title">
+              查询信息汇总：
+            </div>
+            <table class="query-summary-table">
+              <thead>
+                <tr>
+                  <th rowspan="2">时间</th>
+                  <th colspan="4">查询次数</th>
+                  <th colspan="1">查询机构数</th>
+                </tr>
+                <tr>
+                  <th>非贷后</th>
+                  <th>贷款审批</th>
+                  <th>信用卡审批</th>
+                  <th>本人查询</th>
+                  <th>非贷后查询</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in reportData.creditSituation.queryHistory.queryInformationSummary" :key="index">
+                  <td>{{ item.timePeriod || '-' }}</td>
+                  <td>{{ item.queryCount.nonPostLoanQuery || '-' }}</td>
+                  <td>{{ item.queryCount.loanApproval || '-' }}</td>
+                  <td>{{ item.queryCount.creditCardApproval || '-' }}</td>
+                  <td>{{ item.queryCount.selfInquiry || '-' }}</td>
+                  <td>{{ item.queryInstitutionCount.nonPostLoanQuery || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 征信查询情况 -->
+          <div v-if="reportData?.creditSituation?.queryHistory?.queryRecords?.length > 0" class="credit-query-section">
+            <div class="credit-query-title">
+              征信查询情况：
+            </div>
+            <table class="credit-query-table">
+              <thead>
+                <tr>
+                  <th class="query-date-header">
+                    查询时间
+                  </th>
+                  <th class="query-type-header">
+                    查询类型
+                  </th>
+                  <th class="query-organization-header">
+                    查询机构
+                  </th>
+                  <th class="query-reason-header">
+                    查询原因
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(record, index) in reportData?.creditSituation?.queryHistory?.queryRecords" :key="index">
+                  <td class="query-date-cell">{{ record.queryDate || '-' }}</td>
+                  <td class="query-type-cell">{{ record.queryType || '-' }}</td>
+                  <td class="query-organization-cell">{{ record.queryOrganization || '-' }}</td>
+                  <td class="query-reason-cell">{{ record.queryReason || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -1684,6 +1868,130 @@ onMounted(async () => {
 }
 
 .responsibilities-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.overdue-summary-section {
+  margin-bottom: 20px;
+}
+
+.overdue-summary-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.overdue-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.account-type-header {
+  width: 80px;
+}
+
+.account-type-cell {
+  width: 80px;
+}
+
+.time-period-header {
+  width: 80px;
+}
+
+.time-period-cell {
+  width: 80px;
+}
+
+.overdue-summary-table th,
+.overdue-summary-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.overdue-summary-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.overdue-summary-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.overdue-summary-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.query-summary-section {
+  margin-bottom: 20px;
+}
+
+.query-summary-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.query-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.query-summary-table th,
+.query-summary-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.query-summary-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.query-summary-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.query-summary-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.credit-query-section {
+  margin-bottom: 20px;
+}
+
+.credit-query-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.credit-query-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.credit-query-table th,
+.credit-query-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.credit-query-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.credit-query-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.credit-query-table tr:hover {
   background-color: #f1f1f1;
 }
 
