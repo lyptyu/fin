@@ -2,7 +2,7 @@
 import useRouteCache from '@/stores/modules/routeCache'
 
 useHead({
-  title: '金融',
+  title: 'Ai信审通',
   meta: [
     {
       name: 'description',
