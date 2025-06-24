@@ -579,51 +579,6 @@ onMounted(async () => {
               【征信后新增】
             </div>
             <div class="credit-content">
-              <!-- 负债概要（未结清） -->
-              <div v-if="reportData?.creditSituation?.debtSummary" class="debt-summary-section">
-                <div class="debt-summary-title">
-                  负债概要（未结清）：
-                </div>
-                <table class="debt-summary-table">
-                  <thead>
-                    <tr>
-                      <th class="debt-category-header">类型</th>
-                      <th>机构数</th>
-                      <th>账户数</th>
-                      <th>授信总额(元)</th>
-                      <th>余额(元)</th>
-                      <th>已用(元)</th>
-                      <th>平均应还(元)</th>
-                      <th>平均使用(元)</th>
-                      <th>月供计算</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="debt-category-cell">贷款类</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.institutionsCount || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.accountCount || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.totalCreditLimit || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.balance || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.usedCreditLimit || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageRepaymentLast6Months || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageUsageLast6Months || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.monthlyPayment || '-' }}</td>
-                    </tr>
-                    <tr>
-                      <td class="debt-category-cell">信用卡</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.institutionsCount || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.accountCount || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.totalCreditLimit || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.balance || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.usedCreditLimit || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageRepaymentLast6Months || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageUsageLast6Months || '-' }}</td>
-                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.monthlyPayment || '-' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
 
               <!-- 新增查询明细 -->
               <div v-if="reportData?.creditSituation?.insertCredit?.insertQueriesList && reportData?.creditSituation?.insertCredit?.insertQueriesList.length > 0" class="credit-new-category">
@@ -672,7 +627,62 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-
+          <!-- 负债概要（未结清） -->
+          <div v-if="reportData?.creditSituation?.debtSummary" class="debt-summary-section">
+            <div class="debt-summary-title">
+              负债概要（未结清）：
+            </div>
+            <table class="debt-summary-table">
+              <thead>
+              <tr>
+                <th class="debt-category-header">类型</th>
+                <th>机构数</th>
+                <th>账户数</th>
+                <th>授信总额(元)</th>
+                <th>余额(元)</th>
+                <th>已用(元)</th>
+                <th>平均应还(元)</th>
+                <th>平均使用(元)</th>
+                <th>月供计算</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td class="debt-category-cell">贷款类</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.institutionsCount || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.accountCount || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.totalCreditLimit || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.balance || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.usedCreditLimit || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageRepaymentLast6Months || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageUsageLast6Months || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.monthlyPayment || '-' }}</td>
+              </tr>
+              <tr>
+                <td class="debt-category-cell">信用卡</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.institutionsCount || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.accountCount || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.totalCreditLimit || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.balance || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.usedCreditLimit || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageRepaymentLast6Months || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageUsageLast6Months || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.monthlyPayment || '-' }}</td>
+              </tr>
+              <tr>
+                <td class="debt-category-cell">合计</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.institutionsCount || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.accountCount || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.totalCreditLimit || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.balance || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.usedCreditLimit || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.averageRepaymentLast6Months || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.averageUsageLast6Months || '-' }}</td>
+                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.monthlyPayment || '-' }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
           <!-- 征信查询情况 -->
           <div class="credit-section">
             <div class="credit-title">
