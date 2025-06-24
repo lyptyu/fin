@@ -579,6 +579,52 @@ onMounted(async () => {
               【征信后新增】
             </div>
             <div class="credit-content">
+              <!-- 负债概要（未结清） -->
+              <div v-if="reportData?.creditSituation?.debtSummary" class="debt-summary-section">
+                <div class="debt-summary-title">
+                  负债概要（未结清）：
+                </div>
+                <table class="debt-summary-table">
+                  <thead>
+                    <tr>
+                      <th class="debt-category-header">类型</th>
+                      <th>机构数</th>
+                      <th>账户数</th>
+                      <th>授信总额(元)</th>
+                      <th>余额(元)</th>
+                      <th>已用(元)</th>
+                      <th>平均应还(元)</th>
+                      <th>平均使用(元)</th>
+                      <th>月供计算</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="debt-category-cell">贷款类</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.institutionsCount || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.accountCount || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.totalCreditLimit || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.balance || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.usedCreditLimit || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageRepaymentLast6Months || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageUsageLast6Months || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.loan?.monthlyPayment || '-' }}</td>
+                    </tr>
+                    <tr>
+                      <td class="debt-category-cell">信用卡</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.institutionsCount || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.accountCount || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.totalCreditLimit || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.balance || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.usedCreditLimit || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageRepaymentLast6Months || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageUsageLast6Months || '-' }}</td>
+                      <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.monthlyPayment || '-' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
               <!-- 新增查询明细 -->
               <div v-if="reportData?.creditSituation?.insertCredit?.insertQueriesList && reportData?.creditSituation?.insertCredit?.insertQueriesList.length > 0" class="credit-new-category">
                 <div class="credit-new-category-title">
@@ -624,295 +670,6 @@ onMounted(async () => {
               >
                 无征信后新增
               </div>
-            </div>
-          </div>
-
-          <!-- 负债信息总汇部分 -->
-          <div class="credit-section">
-            <div class="credit-title">
-              【负债信息总汇】
-            </div>
-            <ul class="credit-list">
-              <li>
-                <span class="credit-label">总负债：</span>
-                <span class="credit-value">总授信额度{{
-                  reportData?.creditSituation?.totalLiabilities?.grant_amount || '0'
-                }}；余额{{
-                  reportData?.creditSituation?.totalLiabilities?.balance_amount || '0'
-                }}；供{{
-                  reportData?.creditSituation?.totalLiabilities?.averageRepaymentLast6Months || '0'
-                }}（元）；担保金额{{
-                  reportData?.creditSituation?.totalLiabilities?.guarantee_amount || '0'
-                }}</span>
-              </li>
-              <li>
-                <span class="credit-label">信用卡：</span>
-                <span class="credit-value">总{{
-                  reportData?.creditSituation?.cardInfos?.institution_count || '0'
-                }}家；总授信额度{{
-                  reportData?.creditSituation?.cardInfos?.grant_amount || '0'
-                }}；余额{{
-                  reportData?.creditSituation?.cardInfos?.balance_amount || '0'
-                }}；平均使用率{{ reportData?.creditSituation?.cardInfos?.usage_rate || '0' }}%</span>
-              </li>
-              <li>
-                <span class="credit-label">负债月供：</span>
-                <span class="credit-value">{{
-                  reportData?.creditSituation?.monthlyDebtPayment?.averageRepaymentLast6Months || '0'
-                }}（元）</span>
-              </li>
-            </ul>
-          </div>
-
-          <!-- 征信贷款明细部分 -->
-          <div class="credit-section">
-            <div class="credit-title">
-              【征信贷款明细】
-            </div>
-
-            <!-- 小额类 -->
-            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount && reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount.length > 0" class="loan-category">
-              <div class="loan-category-title">
-                信用小额类
-              </div>
-              <table class="loan-table">
-                <thead>
-                  <tr>
-                    <th>日期</th>
-                    <th>机构简称</th>
-                    <th>业务类型</th>
-                    <th>授信总额</th>
-                    <th>余额</th>
-                    <th>还款方式</th>
-                    <th>已供期数</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount" :key="`small-${index}`">
-                    <td>{{ loan.grant_date || '-' }}</td>
-                    <td>{{ loan.bank_name || '-' }}</td>
-                    <td>{{ loan.type || '-' }}</td>
-                    <td>{{ loan.grant_amount || '0' }}</td>
-                    <td>{{ loan.balance_amount || '0' }}</td>
-                    <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.termRemainingTotal || '0' }}</td>
-                    <td>{{ loan.current_status || '-' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- 信用非小额类 -->
-            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount && reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount.length > 0" class="loan-category">
-              <div class="loan-category-title">
-                信用非小额类
-              </div>
-              <table class="loan-table">
-                <thead>
-                  <tr>
-                    <th>日期</th>
-                    <th>机构简称</th>
-                    <th>业务类型</th>
-                    <th>授信总额</th>
-                    <th>余额</th>
-                    <th>还款方式</th>
-                    <th>已供期数</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount" :key="`nosmall-${index}`">
-                    <td>{{ loan.grant_date || '-' }}</td>
-                    <td>{{ loan.bank_name || '-' }}</td>
-                    <td>{{ loan.type || '-' }}</td>
-                    <td>{{ loan.grant_amount || '0' }}</td>
-                    <td>{{ loan.balance_amount || '0' }}</td>
-                    <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.termRemainingTotal || '0' }}</td>
-                    <td>{{ loan.current_status || '-' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- 分期卡类 -->
-            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.installmentCard && reportData?.creditSituation?.loanDetailsInfo?.installmentCard.length > 0" class="loan-category">
-              <div class="loan-category-title">
-                分期卡类
-              </div>
-              <table class="loan-table">
-                <thead>
-                  <tr>
-                    <th>日期</th>
-                    <th>机构简称</th>
-                    <th>业务类型</th>
-                    <th>授信总额</th>
-                    <th>余额</th>
-                    <th>还款方式</th>
-                    <th>已供期数</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.installmentCard" :key="`installment-${index}`">
-                    <td>{{ loan.grant_date || '-' }}</td>
-                    <td>{{ loan.bank_name || '-' }}</td>
-                    <td>{{ loan.type || '-' }}</td>
-                    <td>{{ loan.grant_amount || '0' }}</td>
-                    <td>{{ loan.balance_amount || '0' }}</td>
-                    <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.termRemainingTotal || '0' }}</td>
-                    <td>{{ loan.current_status || '-' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- 信用类 -->
-            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.creditCategory && reportData?.creditSituation?.loanDetailsInfo?.creditCategory.length > 0" class="loan-category">
-              <div class="loan-category-title">
-                信用类
-              </div>
-              <table class="loan-table">
-                <thead>
-                  <tr>
-                    <th>日期</th>
-                    <th>机构简称</th>
-                    <th>业务类型</th>
-                    <th>授信总额</th>
-                    <th>余额</th>
-                    <th>还款方式</th>
-                    <th>已供期数</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.creditCategory" :key="`credit-${index}`">
-                    <td>{{ loan.grant_date || '-' }}</td>
-                    <td>{{ loan.bank_name || '-' }}</td>
-                    <td>{{ loan.type || '-' }}</td>
-                    <td>{{ loan.grant_amount || '0' }}</td>
-                    <td>{{ loan.balance_amount || '0' }}</td>
-                    <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.termRemainingTotal || '0' }}</td>
-                    <td>{{ loan.current_status || '-' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- 抵押类 -->
-            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.mortgageType && reportData?.creditSituation?.loanDetailsInfo?.mortgageType.length > 0" class="loan-category">
-              <div class="loan-category-title">
-                抵押类
-              </div>
-              <table class="loan-table">
-                <thead>
-                  <tr>
-                    <th>日期</th>
-                    <th>机构简称</th>
-                    <th>业务类型</th>
-                    <th>授信总额</th>
-                    <th>余额</th>
-                    <th>还款方式</th>
-                    <th>已供期数</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.mortgageType" :key="`mortgage-${index}`">
-                    <td>{{ loan.grant_date || '-' }}</td>
-                    <td>{{ loan.bank_name || '-' }}</td>
-                    <td>{{ loan.type || '-' }}</td>
-                    <td>{{ loan.grant_amount || '0' }}</td>
-                    <td>{{ loan.balance_amount || '0' }}</td>
-                    <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.termRemainingTotal || '0' }}</td>
-                    <td>{{ loan.current_status || '-' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- 其他类 -->
-            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.otherType && reportData?.creditSituation?.loanDetailsInfo?.otherType.length > 0" class="loan-category">
-              <div class="loan-category-title">
-                其他类
-              </div>
-              <table class="loan-table">
-                <thead>
-                  <tr>
-                    <th>日期</th>
-                    <th>机构简称</th>
-                    <th>业务类型</th>
-                    <th>授信总额</th>
-                    <th>余额</th>
-                    <th>还款方式</th>
-                    <th>已供期数</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.otherType" :key="`other-${index}`">
-                    <td>{{ loan.grant_date || '-' }}</td>
-                    <td>{{ loan.bank_name || '-' }}</td>
-                    <td>{{ loan.type || '-' }}</td>
-                    <td>{{ loan.grant_amount || '0' }}</td>
-                    <td>{{ loan.balance_amount || '0' }}</td>
-                    <td>{{ loan.repayment_method || '-' }}</td>
-                    <td>{{ loan.termRemainingTotal || '0' }}</td>
-                    <td>{{ loan.current_status || '-' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- 担保类 -->
-            <div v-if="reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory" class="loan-category">
-              <div class="loan-category-title">
-                担保类
-              </div>
-              <table class="loan-table">
-                <thead>
-                  <tr>
-                    <th>日期</th>
-                    <th>机构简称</th>
-                    <th>业务类型</th>
-                    <th>授信总额</th>
-                    <th>余额</th>
-                    <th>还款方式</th>
-                    <th>已供期数</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.grant_date || '-' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.bank_name || '-' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.type || '-' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.grant_amount || '0' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.balance_amount || '0' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.repayment_method || '-' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.termRemainingTotal || '0' }}</td>
-                    <td>{{ reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory?.current_status || '-' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- 无贷款明细 -->
-            <div
-              v-if="(!reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount || reportData?.creditSituation?.loanDetailsInfo?.smallCreditAmount.length === 0)
-                && (!reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount || reportData?.creditSituation?.loanDetailsInfo?.nosmallCreditAmount.length === 0)
-                && (!reportData?.creditSituation?.loanDetailsInfo?.installmentCard || reportData?.creditSituation?.loanDetailsInfo?.installmentCard.length === 0)
-                && (!reportData?.creditSituation?.loanDetailsInfo?.creditCategory || reportData?.creditSituation?.loanDetailsInfo?.creditCategory.length === 0)
-                && (!reportData?.creditSituation?.loanDetailsInfo?.mortgageType || reportData?.creditSituation?.loanDetailsInfo?.mortgageType.length === 0)
-                && (!reportData?.creditSituation?.loanDetailsInfo?.otherType || reportData?.creditSituation?.loanDetailsInfo?.otherType.length === 0)
-                && !reportData?.creditSituation?.loanDetailsInfo?.guaranteeCategory"
-              class="no-loan-data"
-            >
-              无贷款明细
             </div>
           </div>
 
@@ -1510,78 +1267,48 @@ onMounted(async () => {
   margin-right: 4px;
 }
 
-.condition-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.summary-item {
-  display: flex;
-  align-items: flex-start;
-}
-
-.summary-label {
-  font-weight: 600;
-  color: #333;
-  min-width: 120px;
-  margin-right: 12px;
-}
-
-.summary-content {
-  flex: 1;
-  color: #555;
-  line-height: 1.6;
-}
-
-.checked-box {
-  display: inline-block;
-  color: #4776e6;
-  font-weight: bold;
-  margin-right: 4px;
-}
-
-.loan-category {
+.debt-summary-section {
   margin-bottom: 20px;
-
-  .loan-category-title {
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-  }
-
-  .loan-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 15px;
-
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 8px 12px;
-      text-align: center;
-    }
-
-    th {
-      background-color: #f5f5f5;
-      font-weight: bold;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-  }
 }
 
-.no-loan-data {
-  color: #999;
-  padding: 15px 0;
+.debt-summary-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.debt-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.debt-category-header {
+  width: 80px;
+}
+
+.debt-category-cell {
+  width: 80px;
+}
+
+.debt-summary-table th,
+.debt-summary-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
   text-align: center;
-  font-style: italic;
+}
+
+.debt-summary-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.debt-summary-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.debt-summary-table tr:hover {
+  background-color: #f1f1f1;
 }
 
 @media (max-width: 768px) {
