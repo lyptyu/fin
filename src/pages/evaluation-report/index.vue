@@ -885,6 +885,37 @@ onMounted(async () => {
             </table>
           </div>
 
+          <!-- 相关责任（未结清/逾期） -->
+          <div v-if="reportData?.creditSituation?.responsibilities?.responsibilities && reportData?.creditSituation?.responsibilities?.responsibilities.length > 0" class="responsibilities-section">
+            <div class="responsibilities-title">
+              相关责任（未结清/逾期）：
+            </div>
+            <table class="responsibilities-table">
+              <thead>
+                <tr>
+                  <th>管理机构</th>
+                  <th>业务类型</th>
+                  <th>借款人类型</th>
+                  <th>责任金额</th>
+                  <th>余额</th>
+                  <th>逾期月数</th>
+                  <th>五级分类</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in reportData?.creditSituation?.responsibilities?.responsibilities" :key="index">
+                  <td>{{ item.managingInstitution || '-' }}</td>
+                  <td>{{ item.businessType || '-' }}</td>
+                  <td>{{ item.borrowerType || '-' }}</td>
+                  <td>{{ item.responsibilityAmount || '-' }}</td>
+                  <td>{{ item.balance || '-' }}</td>
+                  <td>{{ item.overdueMonths || '-' }}</td>
+                  <td>{{ item.fiveLevelClassification || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
           <!-- 征信查询情况 -->
           <div class="credit-section">
             <div class="credit-title">
@@ -1250,15 +1281,15 @@ onMounted(async () => {
 }
 
 .info-label {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+  min-width: 100px;
+  margin-right: 8px;
 }
 
 .info-value {
-  font-size: 16px;
   color: #333;
-  font-weight: 500;
+  flex: 1;
 }
 
 .level-badge {
@@ -1617,6 +1648,42 @@ onMounted(async () => {
 }
 
 .loan-details-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.responsibilities-section {
+  margin-bottom: 20px;
+}
+
+.responsibilities-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.responsibilities-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.responsibilities-table th,
+.responsibilities-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.responsibilities-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.responsibilities-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.responsibilities-table tr:hover {
   background-color: #f1f1f1;
 }
 
