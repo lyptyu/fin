@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { searchAssessmentReport } from '@/api/user'
@@ -25,6 +25,40 @@ onMounted(async () => {
   catch (error) {
     console.error('Failed to fetch assessment report:', error)
   }
+})
+
+const processedQueryRecords = computed(() => {
+  const queryRecords = reportData.value?.creditSituation?.queryRecords
+  if (!queryRecords) {
+    return []
+  }
+
+  const processedList = []
+  const groups = [
+    { key: 'queryRecordItemList1y', name: '近1月' },
+    { key: 'queryRecordItemList2y', name: '近2月' },
+    { key: 'queryRecordItemList3y', name: '近3月' },
+    { key: 'queryRecordItemList6y', name: '近6月' },
+    { key: 'queryRecordItemList1n', name: '近1年' },
+    { key: 'queryRecordItemRList6y', name: '近6月' },
+    { key: 'queryRecordItemRList1n', name: '近1年' },
+  ]
+
+  groups.forEach((groupInfo) => {
+    const records = queryRecords[groupInfo.key]
+    if (records && records.length > 0) {
+      records.forEach((record, index) => {
+        processedList.push({
+          isFirstInGroup: index === 0,
+          groupName: groupInfo.name,
+          groupSize: records.length,
+          record,
+        })
+      })
+    }
+  })
+
+  return processedList
 })
 </script>
 
@@ -703,8 +737,8 @@ onMounted(async () => {
                   </th>
                   <th>机构数</th>
                   <th>账户数</th>
-                  <th>授信额度(元)</th>
-                  <th>余额(元)</th>
+                  <th>授信额度</th>
+                  <th>余额</th>
                 </tr>
               </thead>
               <tbody>
@@ -924,8 +958,12 @@ onMounted(async () => {
             <table class="overdue-summary-table">
               <thead>
                 <tr>
-                  <th class="account-type-header" rowspan="2">账户类型</th>
-                  <th class="time-period-header" rowspan="2">时间</th>
+                  <th class="account-type-header" rowspan="2">
+                    账户类型
+                  </th>
+                  <th class="time-period-header" rowspan="2">
+                    时间
+                  </th>
                   <th>逾期次数</th>
                   <th>最长逾期月数</th>
                   <th>最高逾期金额</th>
@@ -934,32 +972,44 @@ onMounted(async () => {
               <tbody>
                 <!-- 贷款 -->
                 <tr>
-                  <td class="account-type-cell" rowspan="5">贷款</td>
-                  <td class="time-period-cell">当前逾期期</td>
+                  <td class="account-type-cell" rowspan="5">
+                    贷款
+                  </td>
+                  <td class="time-period-cell">
+                    当前逾期期
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近半年</td>
+                  <td class="time-period-cell">
+                    近半年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近一年</td>
+                  <td class="time-period-cell">
+                    近一年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近两年</td>
+                  <td class="time-period-cell">
+                    近两年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近五年</td>
+                  <td class="time-period-cell">
+                    近五年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
@@ -967,32 +1017,44 @@ onMounted(async () => {
 
                 <!-- 信用卡 -->
                 <tr>
-                  <td class="account-type-cell" rowspan="5">信用卡</td>
-                  <td class="time-period-cell">当前逾期期</td>
+                  <td class="account-type-cell" rowspan="5">
+                    信用卡
+                  </td>
+                  <td class="time-period-cell">
+                    当前逾期期
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近半年</td>
+                  <td class="time-period-cell">
+                    近半年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近一年</td>
+                  <td class="time-period-cell">
+                    近一年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近两年</td>
+                  <td class="time-period-cell">
+                    近两年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近五年</td>
+                  <td class="time-period-cell">
+                    近五年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
@@ -1000,32 +1062,44 @@ onMounted(async () => {
 
                 <!-- 合计 -->
                 <tr>
-                  <td class="account-type-cell" rowspan="5">合计</td>
-                  <td class="time-period-cell">当前逾期期</td>
+                  <td class="account-type-cell" rowspan="5">
+                    合计
+                  </td>
+                  <td class="time-period-cell">
+                    当前逾期期
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近半年</td>
+                  <td class="time-period-cell">
+                    近半年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近一年</td>
+                  <td class="time-period-cell">
+                    近一年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近两年</td>
+                  <td class="time-period-cell">
+                    近两年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
                 </tr>
                 <tr>
-                  <td class="time-period-cell">近五年</td>
+                  <td class="time-period-cell">
+                    近五年
+                  </td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.overdueCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
@@ -1040,32 +1114,67 @@ onMounted(async () => {
             </div>
             <table class="query-summary-table">
               <thead>
-              <tr>
-                <th rowspan="2">时间</th>
-                <th colspan="4">查询次数</th>
-                <th colspan="1">查询机构数</th>
-              </tr>
-              <tr>
-                <th>非贷后</th>
-                <th>贷款审批</th>
-                <th>信用卡审批</th>
-                <th>本人查询</th>
-                <th>非贷后查询</th>
-              </tr>
+                <tr>
+                  <th rowspan="2">
+                    时间
+                  </th>
+                  <th colspan="4">
+                    查询次数
+                  </th>
+                  <th colspan="1">
+                    查询机构数
+                  </th>
+                </tr>
+                <tr>
+                  <th>非贷后</th>
+                  <th>贷款审批</th>
+                  <th>信用卡审批</th>
+                  <th>本人查询</th>
+                  <th>非贷后查询</th>
+                </tr>
               </thead>
               <tbody>
-              <tr v-for="(item, index) in reportData.creditSituation.queryHistory.queryInformationSummary" :key="index">
-                <td>{{ item.timePeriod || '-' }}</td>
-                <td>{{ item.queryCount.nonPostLoanQuery || '-' }}</td>
-                <td>{{ item.queryCount.loanApproval || '-' }}</td>
-                <td>{{ item.queryCount.creditCardApproval || '-' }}</td>
-                <td>{{ item.queryCount.selfInquiry || '-' }}</td>
-                <td>{{ item.queryInstitutionCount.nonPostLoanQuery || '-' }}</td>
-              </tr>
+                <tr v-for="(item, index) in reportData.creditSituation.queryHistory.queryInformationSummary" :key="index">
+                  <td>{{ item.timePeriod || '-' }}</td>
+                  <td>{{ item.queryCount.nonPostLoanQuery || '-' }}</td>
+                  <td>{{ item.queryCount.loanApproval || '-' }}</td>
+                  <td>{{ item.queryCount.creditCardApproval || '-' }}</td>
+                  <td>{{ item.queryCount.selfInquiry || '-' }}</td>
+                  <td>{{ item.queryInstitutionCount.nonPostLoanQuery || '-' }}</td>
+                </tr>
               </tbody>
             </table>
           </div>
-
+          <!-- 查询记录 -->
+          <div v-if="processedQueryRecords.length > 0" class="query-records-section">
+            <div class="query-records-title">
+              查询记录(已去除贷后)：
+            </div>
+            <table class="query-records-table">
+              <thead>
+                <tr>
+                  <th>查询日期</th>
+                  <th>序号</th>
+                  <th>日期</th>
+                  <th>查询机构</th>
+                  <th>查询原因</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="(item, index) in processedQueryRecords" :key="index">
+                  <tr>
+                    <td v-if="item.isFirstInGroup" :rowspan="item.groupSize">
+                      {{ item.shou_query_date }}
+                    </td>
+                    <td>{{ item.record.number || '-' }}</td>
+                    <td>{{ item.record.inquiryDate || '-' }}</td>
+                    <td>{{ item.record.inquiryInstitution || '-' }}</td>
+                    <td>{{ item.record.inquiryReason || '-' }}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
           <!-- 征信查询情况 -->
           <div class="credit-section">
             <div class="credit-title">
@@ -1078,8 +1187,6 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-
-
 
           <!-- 征信查询情况 -->
           <div v-if="reportData?.creditSituation?.queryHistory?.queryRecords?.length > 0" class="credit-query-section">
@@ -1105,10 +1212,18 @@ onMounted(async () => {
               </thead>
               <tbody>
                 <tr v-for="(record, index) in reportData?.creditSituation?.queryHistory?.queryRecords" :key="index">
-                  <td class="query-date-cell">{{ record.queryDate || '-' }}</td>
-                  <td class="query-type-cell">{{ record.queryType || '-' }}</td>
-                  <td class="query-organization-cell">{{ record.queryOrganization || '-' }}</td>
-                  <td class="query-reason-cell">{{ record.queryReason || '-' }}</td>
+                  <td class="query-date-cell">
+                    {{ record.queryDate || '-' }}
+                  </td>
+                  <td class="query-type-cell">
+                    {{ record.queryType || '-' }}
+                  </td>
+                  <td class="query-organization-cell">
+                    {{ record.queryOrganization || '-' }}
+                  </td>
+                  <td class="query-reason-cell">
+                    {{ record.queryReason || '-' }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -1993,6 +2108,43 @@ onMounted(async () => {
 }
 
 .credit-query-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.query-records-section {
+  margin-bottom: 20px;
+}
+
+.query-records-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.query-records-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.query-records-table th,
+.query-records-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.query-records-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.query-records-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.query-records-table tr:hover {
   background-color: #f1f1f1;
 }
 
