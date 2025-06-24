@@ -1033,6 +1033,38 @@ onMounted(async () => {
               </tbody>
             </table>
           </div>
+          <!-- 查询信息汇总 -->
+          <div v-if="reportData?.creditSituation?.queryHistory?.queryInformationSummary?.length > 0" class="query-summary-section">
+            <div class="query-summary-title">
+              查询信息汇总：
+            </div>
+            <table class="query-summary-table">
+              <thead>
+              <tr>
+                <th rowspan="2">时间</th>
+                <th colspan="4">查询次数</th>
+                <th colspan="1">查询机构数</th>
+              </tr>
+              <tr>
+                <th>非贷后</th>
+                <th>贷款审批</th>
+                <th>信用卡审批</th>
+                <th>本人查询</th>
+                <th>非贷后查询</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="(item, index) in reportData.creditSituation.queryHistory.queryInformationSummary" :key="index">
+                <td>{{ item.timePeriod || '-' }}</td>
+                <td>{{ item.queryCount.nonPostLoanQuery || '-' }}</td>
+                <td>{{ item.queryCount.loanApproval || '-' }}</td>
+                <td>{{ item.queryCount.creditCardApproval || '-' }}</td>
+                <td>{{ item.queryCount.selfInquiry || '-' }}</td>
+                <td>{{ item.queryInstitutionCount.nonPostLoanQuery || '-' }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
 
           <!-- 征信查询情况 -->
           <div class="credit-section">
@@ -1047,38 +1079,7 @@ onMounted(async () => {
             </div>
           </div>
 
-          <!-- 查询信息汇总 -->
-          <div v-if="reportData?.creditSituation?.queryHistory?.queryInformationSummary?.length > 0" class="query-summary-section">
-            <div class="query-summary-title">
-              查询信息汇总：
-            </div>
-            <table class="query-summary-table">
-              <thead>
-                <tr>
-                  <th rowspan="2">时间</th>
-                  <th colspan="4">查询次数</th>
-                  <th colspan="1">查询机构数</th>
-                </tr>
-                <tr>
-                  <th>非贷后</th>
-                  <th>贷款审批</th>
-                  <th>信用卡审批</th>
-                  <th>本人查询</th>
-                  <th>非贷后查询</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, index) in reportData.creditSituation.queryHistory.queryInformationSummary" :key="index">
-                  <td>{{ item.timePeriod || '-' }}</td>
-                  <td>{{ item.queryCount.nonPostLoanQuery || '-' }}</td>
-                  <td>{{ item.queryCount.loanApproval || '-' }}</td>
-                  <td>{{ item.queryCount.creditCardApproval || '-' }}</td>
-                  <td>{{ item.queryCount.selfInquiry || '-' }}</td>
-                  <td>{{ item.queryInstitutionCount.nonPostLoanQuery || '-' }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
 
           <!-- 征信查询情况 -->
           <div v-if="reportData?.creditSituation?.queryHistory?.queryRecords?.length > 0" class="credit-query-section">
