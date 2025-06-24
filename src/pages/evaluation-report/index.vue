@@ -584,7 +584,7 @@ onMounted(async () => {
                 <div class="credit-new-category-title">
                   新增查询明细：
                 </div>
-                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertQueriesList" :key="`query-${index}`" class="credit-new-item">
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertQueriesList" :key="index" class="credit-new-item">
                   <div class="credit-new-detail">
                     {{ item }}
                   </div>
@@ -596,7 +596,7 @@ onMounted(async () => {
                 <div class="credit-new-category-title">
                   新增放款明细：
                 </div>
-                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoansList" :key="`loan-${index}`" class="credit-new-item">
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoansList" :key="index" class="credit-new-item">
                   <div class="credit-new-detail">
                     {{ item }}
                   </div>
@@ -608,7 +608,7 @@ onMounted(async () => {
                 <div class="credit-new-category-title">
                   新增逾期明细：
                 </div>
-                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoanOverList" :key="`over-${index}`" class="credit-new-item">
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoanOverList" :key="index" class="credit-new-item">
                   <div class="credit-new-detail">
                     {{ item }}
                   </div>
@@ -789,6 +789,45 @@ onMounted(async () => {
                   <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.totalCreditLimit || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.balance || '-' }}</td>
                 </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- 贷款明细（未结清/逾期账户） -->
+          <div v-if="reportData?.creditSituation?.loanDetailsInfo?.creditAmountList && reportData?.creditSituation?.loanDetailsInfo?.creditAmountList.length > 0" class="loan-details-section">
+            <div class="loan-details-title">
+              贷款明细（未结清/逾期账户）：
+            </div>
+            <table class="loan-details-table">
+              <thead>
+                <tr>
+                  <th class="loan-bank-header">管理机构</th>
+                  <th>开立日期</th>
+                  <th>业务类型</th>
+                  <th>担保方式</th>
+                  <th>授信额度</th>
+                  <th>余额</th>
+                  <th>还款方式</th>
+                  <th>已供期数</th>
+                  <th>当前状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.creditAmountList" :key="index">
+                  <tr>
+                    <td class="loan-bank-cell" rowspan="2">{{ loan.bank_name || '-' }}</td>
+                    <td>{{ loan.grant_date || '-' }}</td>
+                    <td>{{ loan.type || '-' }}</td>
+                    <td>{{ loan.guaranteeMethod || '-' }}</td>
+                    <td>{{ loan.grant_amount || '-' }}</td>
+                    <td>{{ loan.balance_amount || '-' }}</td>
+                    <td>{{ loan.repayment_method || '-' }}</td>
+                    <td>{{ loan.termRemainingTotal || '-' }}</td>
+                    <td>{{ loan.current_status || '-' }}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="8" class="loan-mes-cell">{{ loan.mes || '-' }}</td>
+                  </tr>
+                </template>
               </tbody>
             </table>
           </div>
@@ -1471,6 +1510,59 @@ onMounted(async () => {
 }
 
 .special-business-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.loan-details-section {
+  margin-bottom: 20px;
+}
+
+.loan-details-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.loan-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.loan-bank-header {
+  width: 80px;
+}
+
+.loan-bank-cell {
+  width: 80px;
+  vertical-align: middle;
+}
+
+.loan-mes-cell {
+  text-align: left;
+  padding: 8px 12px;
+  background-color: #f9f9f9;
+  font-style: italic;
+  color: #666;
+}
+
+.loan-details-table th,
+.loan-details-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.loan-details-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.loan-details-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.loan-details-table tr:hover {
   background-color: #f1f1f1;
 }
 
