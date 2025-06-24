@@ -579,7 +579,6 @@ onMounted(async () => {
               【征信后新增】
             </div>
             <div class="credit-content">
-
               <!-- 新增查询明细 -->
               <div v-if="reportData?.creditSituation?.insertCredit?.insertQueriesList && reportData?.creditSituation?.insertCredit?.insertQueriesList.length > 0" class="credit-new-category">
                 <div class="credit-new-category-title">
@@ -634,52 +633,162 @@ onMounted(async () => {
             </div>
             <table class="debt-summary-table">
               <thead>
-              <tr>
-                <th class="debt-category-header">类型</th>
-                <th>机构数</th>
-                <th>账户数</th>
-                <th>授信总额(元)</th>
-                <th>余额(元)</th>
-                <th>已用(元)</th>
-                <th>平均应还(元)</th>
-                <th>平均使用(元)</th>
-                <th>月供计算</th>
-              </tr>
+                <tr>
+                  <th class="debt-category-header">
+                    类型
+                  </th>
+                  <th>机构数</th>
+                  <th>账户数</th>
+                  <th>授信总额(元)</th>
+                  <th>余额(元)</th>
+                  <th>已用(元)</th>
+                  <th>平均应还(元)</th>
+                  <th>平均使用(元)</th>
+                  <th>月供计算</th>
+                </tr>
               </thead>
               <tbody>
-              <tr>
-                <td class="debt-category-cell">贷款类</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.institutionsCount || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.accountCount || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.totalCreditLimit || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.balance || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.usedCreditLimit || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageRepaymentLast6Months || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageUsageLast6Months || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.loan?.monthlyPayment || '-' }}</td>
-              </tr>
-              <tr>
-                <td class="debt-category-cell">信用卡</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.institutionsCount || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.accountCount || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.totalCreditLimit || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.balance || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.usedCreditLimit || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageRepaymentLast6Months || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageUsageLast6Months || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.monthlyPayment || '-' }}</td>
-              </tr>
-              <tr>
-                <td class="debt-category-cell">合计</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.institutionsCount || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.accountCount || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.totalCreditLimit || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.balance || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.usedCreditLimit || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.averageRepaymentLast6Months || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.averageUsageLast6Months || '-' }}</td>
-                <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.monthlyPayment || '-' }}</td>
-              </tr>
+                <tr>
+                  <td class="debt-category-cell">
+                    贷款类
+                  </td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.loan?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.loan?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.loan?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.loan?.balance || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.loan?.usedCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageRepaymentLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.loan?.averageUsageLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.loan?.monthlyPayment || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="debt-category-cell">
+                    信用卡
+                  </td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.balance || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.usedCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageRepaymentLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageUsageLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.monthlyPayment || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="debt-category-cell">
+                    合计
+                  </td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.balance || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.usedCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.averageRepaymentLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.averageUsageLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.monthlyPayment || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- 特殊业务(未结清)概要 -->
+          <div v-if="reportData?.creditSituation?.specialBusiness" class="special-business-section">
+            <div class="special-business-title">
+              特殊业务(未结清)概要：
+            </div>
+            <table class="special-business-table">
+              <thead>
+                <tr>
+                  <th class="business-category-header">
+                    贷款
+                  </th>
+                  <th>机构数</th>
+                  <th>账户数</th>
+                  <th>授信额度(元)</th>
+                  <th>余额(元)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="business-category-cell">
+                    住房按揭
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.houseMortgage?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.houseMortgage?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.houseMortgage?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.houseMortgage?.balance || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="business-category-cell">
+                    汽车按揭
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.vehicleMortgage?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.vehicleMortgage?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.vehicleMortgage?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.vehicleMortgage?.balance || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="business-category-cell">
+                    银行类贷款
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.bankLoans?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.bankLoans?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.bankLoans?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.bankLoans?.balance || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="business-category-cell">
+                    非银行类贷款
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.nonBankLoans?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.nonBankLoans?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.nonBankLoans?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.nonBankLoans?.balance || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="business-category-cell">
+                    个人经营贷
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.balance || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="business-category-cell">
+                    个人消费贷
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.balance || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="business-category-cell">
+                    小额贷款
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.smallLoan?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.smallLoan?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.smallLoan?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.smallLoan?.balance || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="business-category-cell">
+                    消费金融
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.consumerFinance?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.consumerFinance?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.consumerFinance?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.consumerFinance?.balance || '-' }}</td>
+                </tr>
+                <tr v-if="reportData?.creditSituation?.specialBusiness?.largeInstallment">
+                  <td class="business-category-cell">
+                    大额分期
+                  </td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.balance || '-' }}</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -1318,6 +1427,50 @@ onMounted(async () => {
 }
 
 .debt-summary-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.special-business-section {
+  margin-bottom: 20px;
+}
+
+.special-business-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.special-business-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.business-category-header {
+  width: 80px;
+}
+
+.business-category-cell {
+  width: 80px;
+}
+
+.special-business-table th,
+.special-business-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.special-business-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.special-business-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.special-business-table tr:hover {
   background-color: #f1f1f1;
 }
 
