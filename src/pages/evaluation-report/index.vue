@@ -793,14 +793,16 @@ onMounted(async () => {
             </table>
           </div>
           <!-- 贷款明细（未结清/逾期账户） -->
-          <div v-if="reportData?.creditSituation?.loanDetailsInfo?.creditAmountList && reportData?.creditSituation?.loanDetailsInfo?.creditAmountList.length > 0" class="loan-details-section">
+          <div v-if="reportData?.creditSituation?.cardInfos?.cardInfoList && reportData?.creditSituation?.cardInfos?.cardInfoList.length > 0" class="loan-details-section">
             <div class="loan-details-title">
               贷款明细（未结清/逾期账户）：
             </div>
             <table class="loan-details-table">
               <thead>
                 <tr>
-                  <th class="loan-bank-header">管理机构</th>
+                  <th class="loan-bank-header">
+                    管理机构
+                  </th>
                   <th>开立日期</th>
                   <th>业务类型</th>
                   <th>担保方式</th>
@@ -814,7 +816,9 @@ onMounted(async () => {
               <tbody>
                 <template v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.creditAmountList" :key="index">
                   <tr>
-                    <td class="loan-bank-cell" rowspan="2">{{ loan.bank_name || '-' }}</td>
+                    <td class="loan-bank-cell" rowspan="2">
+                      {{ loan.bank_name || '-' }}
+                    </td>
                     <td>{{ loan.grant_date || '-' }}</td>
                     <td>{{ loan.type || '-' }}</td>
                     <td>{{ loan.guaranteeMethod || '-' }}</td>
@@ -825,12 +829,62 @@ onMounted(async () => {
                     <td>{{ loan.current_status || '-' }}</td>
                   </tr>
                   <tr>
-                    <td colspan="8" class="loan-mes-cell">{{ loan.mes || '-' }}</td>
+                    <td colspan="8" class="loan-mes-cell">
+                      {{ loan.mes || '-' }}
+                    </td>
                   </tr>
                 </template>
               </tbody>
             </table>
           </div>
+          <!-- 信用卡明细（未结清人民币/逾期账户） -->
+          <div v-if="reportData?.creditSituation?.cardInfos?.cardInfoList && reportData?.creditSituation?.cardInfos?.cardInfoList.length > 0" class="loan-details-section">
+            <div class="loan-details-title">
+              信用卡明细（未结清人民币/逾期账户）:
+            </div>
+            <table class="loan-details-table">
+              <thead>
+                <tr>
+                  <th class="loan-bank-header">
+                    发卡机构
+                  </th>
+                  <th>开立日期</th>
+                  <th>业务类型</th>
+                  <th>担保方式</th>
+                  <th>授信额度</th>
+                  <th>已用额度</th>
+                  <th>大额分期额度</th>
+                  <th>使用率</th>
+                  <th>当前状态</th>
+                  <th>信用卡标记</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="(loan, index) in reportData?.creditSituation?.cardInfos?.cardInfoList" :key="index">
+                  <tr>
+                    <td class="loan-bank-cell" rowspan="2">
+                      {{ loan.bank_name || '-' }}
+                    </td>
+                    <td>{{ loan.grant_date || '-' }}</td>
+                    <td>{{ loan.type || '-' }}</td>
+                    <td>{{ loan.guaranteeMethod || '-' }}</td>
+                    <td>{{ loan.grant_amount || '-' }}</td>
+                    <td>{{ loan.usedCreditLimit || '-' }}</td>
+                    <td>{{ loan.largeInstallmentLimit || '-' }}</td>
+                    <td>{{ loan.usageRate || '-' }}</td>
+                    <td>{{ loan.accountStatus || '-' }}</td>
+                    <td>{{ loan.cardFlag || '-' }}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="9" class="loan-mes-cell">
+                      {{ loan.mes || '-' }}
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+
           <!-- 征信查询情况 -->
           <div class="credit-section">
             <div class="credit-title">
