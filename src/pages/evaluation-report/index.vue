@@ -1164,7 +1164,7 @@ const processedQueryRecords = computed(() => {
                 <template v-for="(item, index) in processedQueryRecords" :key="index">
                   <tr>
                     <td v-if="item.isFirstInGroup" :rowspan="item.groupSize">
-                      {{ item.shou_query_date }}
+                      {{ item.groupName }}
                     </td>
                     <td>{{ item.record.number || '-' }}</td>
                     <td>{{ item.record.inquiryDate || '-' }}</td>
