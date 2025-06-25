@@ -109,11 +109,14 @@ const processedQueryRecords = computed(() => {
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">大数据级别</span>
-              <span class="info-value tag">{{ reportData?.bgLeave || '无' }}</span>
+              <div class="badge-container">
+                <span class="level-badge level-a">{{ reportData?.bgLeave || '无' }}</span>
+                <span>{{reportData?.bgMes || ''}}</span>
+              </div>
             </div>
             <div class="info-item">
               <span class="info-label">征信级别</span>
-              <span class="info-value level-badge level-a">{{ reportData?.leave || '无' }}</span>
+              <span class="level-badge level-a">{{ reportData?.leave || '无' }}</span>
             </div>
           </div>
           <div class="info-row">
@@ -1575,6 +1578,7 @@ const processedQueryRecords = computed(() => {
 .info-item {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   margin-right: 48px;
   min-width: 200px;
   margin-bottom: 16px;
@@ -1593,14 +1597,15 @@ const processedQueryRecords = computed(() => {
 }
 
 .level-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   width: 32px;
   height: 32px;
+  line-height: 32px;
+  text-align: center;
   border-radius: 50%;
   font-weight: bold;
   color: white;
+  flex-shrink: 0;
 }
 
 .level-a {
@@ -2146,6 +2151,27 @@ const processedQueryRecords = computed(() => {
 
 .query-records-table tr:hover {
   background-color: #f1f1f1;
+}
+
+.badge-container {
+  display: flex;
+  align-items: center;
+}
+
+.badge-container span:first-child {
+  margin-right: 8px;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 120px;
+  margin-right: 12px;
+}
+
+.summary-content {
+  color: #555;
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
