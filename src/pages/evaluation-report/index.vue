@@ -715,14 +715,14 @@ const processedQueryRecords = computed(() => {
                   <td class="debt-category-cell">
                     合计
                   </td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.institutionsCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.accountCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.totalCreditLimit || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.balance || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.usedCreditLimit || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.averageRepaymentLast6Months || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.averageUsageLast6Months || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.DebtSummaryCount?.monthlyPayment || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.balance || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.usedCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.averageRepaymentLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.averageUsageLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.monthlyPayment || '-' }}</td>
                 </tr>
               </tbody>
             </table>
