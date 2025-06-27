@@ -185,9 +185,9 @@ function restoreFormDataFromStorage() {
   }
 }
 
-// 页面加载时恢复数据
+// 页面加载时不自动恢复数据，保持表单为空状态
 onMounted(() => {
-  restoreFormDataFromStorage()
+  // 表单保持空状态，让用户自己填写
 })
 
 // 提交表单
