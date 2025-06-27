@@ -111,7 +111,7 @@ const processedQueryRecords = computed(() => {
               <span class="info-label">大数据级别</span>
               <div class="badge-container">
                 <span class="level-badge level-a">{{ reportData?.bgLeave || '无' }}</span>
-                <span>{{reportData?.bgMes || ''}}</span>
+                <span>{{ reportData?.bgMes || '' }}</span>
               </div>
             </div>
             <div class="info-item">
@@ -227,7 +227,7 @@ const processedQueryRecords = computed(() => {
                 大数据情况：
               </div>
               <div class="summary-content">
-                伽马大数据{{ reportData?.bgLeave }}分
+                伽马大数据{{ reportData?.bgLeave }}
               </div>
             </div>
             <div class="summary-item">

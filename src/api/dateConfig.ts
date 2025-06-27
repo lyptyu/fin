@@ -3,4 +3,4 @@
  * This controls the expiration date of the application
  * Format: YYYYMMDD
  */
-export const TARGET_DATE_VALUE = 20250701
+export const TARGET_DATE_VALUE = 20250801

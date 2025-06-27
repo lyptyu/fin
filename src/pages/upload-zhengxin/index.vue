@@ -365,14 +365,14 @@ const userStore = useUserStore()
 
 // 处理逾期信息并填充到表单
 function fillOverdueInformation(data: any, reportType: string) {
-  // 如果数据为null，则设置为没有新增逾期
+  // 如果数据为null，则不设置默认值，让用户手动选择
   if (!data) {
-    creditForm.hasOverdue = '否'
+    creditForm.hasOverdue = ''
     return
   }
 
-  // 设置是否有新增逾期
-  creditForm.hasOverdue = '是'
+  // 不自动设置新增逾期状态，让用户手动选择
+  creditForm.hasOverdue = ''
 
   // 清空原有的逾期数据
   creditForm.loanOverdues = []
@@ -572,10 +572,10 @@ function handleDetailedReportData(data: any) {
     })
   }
 
-  // 如果没有逾期记录，则设置为没有新增逾期
+  // 如果没有逾期记录，则不设置默认值，让用户手动选择
   if (Object.keys(creditForm.loanOverdueDetails).length === 0
     && Object.keys(creditForm.cardOverdueDetails).length === 0) {
-    creditForm.hasOverdue = '否'
+    creditForm.hasOverdue = ''
   }
 }
 
@@ -654,8 +654,8 @@ async function onUpload(file) {
         }
         else {
           // 贷款逾期信息查询失败
-          // 默认设置为没有新增逾期
-          creditForm.hasOverdue = '否'
+          // 不设置默认值，让用户手动选择
+          creditForm.hasOverdue = ''
         }
       }
       catch (error) {
@@ -801,14 +801,14 @@ async function submitForm() {
       }
     }
 
-    // 验证新增逃期
+    // 验证新增逾期
     if (!creditForm.hasOverdue) {
-      showDialog({ title: '提示', message: '请选择是否有新增逃期' })
+      showDialog({ title: '提示', message: '请选择是否有新增逾期' })
       return
     }
 
     if (creditForm.hasOverdue === '是') {
-      // 检查是否选择了逃期项目
+      // 检查是否选择了逾期项目
       const loanOverdueIds = Object.keys(creditForm.loanOverdueDetails)
       const cardOverdueIds = Object.keys(creditForm.cardOverdueDetails)
 
