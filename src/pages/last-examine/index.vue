@@ -990,81 +990,76 @@ onMounted(() => {
         </van-cell>
         <div class="module-content">
           <!-- 01近半年查询记录 -->
-          <div class="section">
+          <div v-if="module1Data.queryRecords && module1Data.queryRecords.length > 0" class="section">
             <div class="section-title">
               01近半年以下查询记录的原因及细节
             </div>
-            <template v-if="module1Data.queryRecords && module1Data.queryRecords.length > 0">
-              <template v-for="(record, index) in module1Data.queryRecords" :key="index">
-                <div class="record-item">
-                  <div class="record-header">
-                    <span class="record-date">{{ dayjs(record.date).format('YYYY-MM-DD') }}</span>
-                    <span class="record-org">{{ record.org }}</span>
-                  </div>
-
-                  <div class="radio-title">
-                    申请贷款类型：
-                  </div>
-                  <van-radio-group v-model="record.loanType" direction="horizontal" class="radio-group">
-                    <van-radio name="装修贷">
-                      装修贷
-                    </van-radio>
-                    <van-radio name="车贷">
-                      车贷
-                    </van-radio>
-                    <van-radio name="信贷">
-                      信贷
-                    </van-radio>
-                    <van-radio name="其它">
-                      其它
-                    </van-radio>
-                  </van-radio-group>
-
-                  <div class="radio-title">
-                    后续进度：
-                  </div>
-                  <van-radio-group v-model="record.progress" direction="horizontal" class="radio-group">
-                    <van-radio name="已批-未放款">
-                      已批-未放款
-                    </van-radio>
-                    <van-radio name="已批-已放款">
-                      已批-已放款
-                    </van-radio>
-                    <van-radio name="已拒">
-                      已拒
-                    </van-radio>
-                  </van-radio-group>
-
-                  <div v-if="record.progress === '已拒'" class="form-item required">
-                    <div class="radio-title">
-                      拒绝原因：
-                    </div>
-                    <van-field
-                      v-model="record.rejectReason"
-                      placeholder="请输入拒绝原因"
-                      class="reject-reason"
-                      :rules="[{ required: true, message: '请输入拒绝原因' }]"
-                    />
-                  </div>
+            <template v-for="(record, index) in module1Data.queryRecords" :key="index">
+              <div class="record-item">
+                <div class="record-header">
+                  <span class="record-date">{{ dayjs(record.date).format('YYYY-MM-DD') }}</span>
+                  <span class="record-org">{{ record.org }}</span>
                 </div>
-              </template>
+
+                <div class="radio-title">
+                  申请贷款类型：
+                </div>
+                <van-radio-group v-model="record.loanType" direction="horizontal" class="radio-group">
+                  <van-radio name="装修贷">
+                    装修贷
+                  </van-radio>
+                  <van-radio name="车贷">
+                    车贷
+                  </van-radio>
+                  <van-radio name="信贷">
+                    信贷
+                  </van-radio>
+                  <van-radio name="其它">
+                    其它
+                  </van-radio>
+                </van-radio-group>
+
+                <div class="radio-title">
+                  后续进度：
+                </div>
+                <van-radio-group v-model="record.progress" direction="horizontal" class="radio-group">
+                  <van-radio name="已批-未放款">
+                    已批-未放款
+                  </van-radio>
+                  <van-radio name="已批-已放款">
+                    已批-已放款
+                  </van-radio>
+                  <van-radio name="已拒">
+                    已拒
+                  </van-radio>
+                </van-radio-group>
+
+                <div v-if="record.progress === '已拒'" class="form-item required">
+                  <div class="radio-title">
+                    拒绝原因：
+                  </div>
+                  <van-field
+                    v-model="record.rejectReason"
+                    placeholder="请输入拒绝原因"
+                    class="reject-reason"
+                    :rules="[{ required: true, message: '请输入拒绝原因' }]"
+                  />
+                </div>
+              </div>
             </template>
-            <div v-else class="empty-state">
-              <van-empty description="暂无查询记录" />
-            </div>
           </div>
 
           <!-- 02征信后新增放款补充 -->
-          <div class="section">
+          <div v-if="(module1Data.newLoans.loans && module1Data.newLoans.loans.length > 0) || (module1Data.newLoans.creditCards && module1Data.newLoans.creditCards.length > 0)" class="section">
             <div class="section-title">
               02征信后新增放款补充
             </div>
 
             <!-- 贷款类 -->
-            <div class="subsection-header">
-              贷款类
-            </div>
             <template v-if="module1Data.newLoans.loans && module1Data.newLoans.loans.length > 0">
+              <div class="subsection-header">
+                贷款类
+              </div>
               <template v-for="(loan, index) in module1Data.newLoans.loans" :key="index">
                 <div class="subsection">
                   <div class="date-org">
@@ -1096,15 +1091,12 @@ onMounted(() => {
                 </div>
               </template>
             </template>
-            <div v-else class="empty-state">
-              <van-empty description="暂无贷款记录" />
-            </div>
 
             <!-- 信用卡类 -->
-            <div class="subsection-header">
-              信用卡类
-            </div>
             <template v-if="module1Data.newLoans.creditCards && module1Data.newLoans.creditCards.length > 0">
+              <div class="subsection-header">
+                信用卡类
+              </div>
               <template v-for="(card, index) in module1Data.newLoans.creditCards" :key="index">
                 <div class="subsection">
                   <div class="date-org">
@@ -1148,13 +1140,10 @@ onMounted(() => {
                 </div>
               </template>
             </template>
-            <div v-else class="empty-state">
-              <van-empty description="暂无信用卡记录" />
-            </div>
           </div>
 
           <!-- 03近五年未结清 -->
-          <div class="section">
+          <div v-if="module1Data.unpaidLoans && module1Data.unpaidLoans.length > 0" class="section">
             <div class="section-title">
               03近五年未结清的以下机构补充
             </div>
