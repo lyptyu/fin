@@ -80,7 +80,8 @@ const processedQueryRecords = computed(() => {
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">评估时间</span>
-              <span class="info-value">{{ reportData?.basicInform?.orderTime ? dayjs(reportData?.basicInform?.orderTime).format('YYYY-MM-DD HH:mm') : '-' }}</span>
+              <span class="info-value">{{ reportData?.basicInform?.orderTime ?
+                dayjs(reportData?.basicInform?.orderTime).format('YYYY-MM-DD HH:mm') : '-' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">订单来源</span>
@@ -99,7 +100,8 @@ const processedQueryRecords = computed(() => {
           <div class="info-row">
             <div class="info-item">
               <span class="info-label">期望融资额度</span>
-              <span class="info-value">{{ reportData?.basicInform?.financingMes?.financingAmount ? `${reportData.basicInform.financingMes.financingAmount}元` : '无' }}</span>
+              <span class="info-value">{{ reportData?.basicInform?.financingMes?.financingAmount ?
+                `${reportData.basicInform.financingMes.financingAmount}元` : '无' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">资金用途</span>
@@ -140,7 +142,8 @@ const processedQueryRecords = computed(() => {
                 条件汇总：
               </div>
               <div class="summary-content">
-                <template v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
+                <template
+                  v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
                   {{ reportData?.basicConditions?.housesConditions?.houses[0]?.area || '无' }}・
                   {{ reportData?.basicConditions?.housesConditions?.houses[0]?.type || '无' }}
                 </template>
@@ -148,7 +151,8 @@ const processedQueryRecords = computed(() => {
                   无房产
                 </template> |
                 <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths">
-                  连续缴{{ reportData?.basicConditions?.securitySituation?.socialSecurityArea || '' }}社保合计{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }}个月
+                  连续缴{{ reportData?.basicConditions?.securitySituation?.socialSecurityArea || '' }}社保合计{{
+                    reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }}个月
                 </template>
                 <template v-else>
                   无社保
@@ -160,7 +164,8 @@ const processedQueryRecords = computed(() => {
                   无社保
                 </template> |
                 <template v-if="reportData?.basicConditions?.enterpriseSituation?.registeredMonths">
-                  {{ reportData?.basicConditions?.enterpriseSituation?.companyArea || '' }}企业注册{{ reportData?.basicConditions?.enterpriseSituation?.registeredMonths }}个月
+                  {{ reportData?.basicConditions?.enterpriseSituation?.companyArea || '' }}企业注册{{
+                    reportData?.basicConditions?.enterpriseSituation?.registeredMonths }}个月
                 </template>
                 <template v-else>
                   无企业
@@ -198,8 +203,7 @@ const processedQueryRecords = computed(() => {
               <div class="summary-content">
                 {{ reportData?.summaryConditions?.investigate?.workType || '无' }} | <span
                   v-for="(location, index) in reportData?.summaryConditions?.investigate?.investigateLocations"
-                  :key="index" class="location-item"
-                ><span class="checked-box">☑</span>{{ location }}</span>
+                  :key="index" class="location-item"><span class="checked-box">☑</span>{{ location }}</span>
               </div>
             </div>
             <div class="summary-item">
@@ -238,23 +242,23 @@ const processedQueryRecords = computed(() => {
                 <!-- 历史黑灰名单情况 -->
                 <div
                   v-if="reportData?.exceptionalCase?.specialNote?.blacklistOrgs && reportData?.exceptionalCase?.specialNote?.blacklistOrgs.length > 0"
-                  class="special-note-item"
-                >
+                  class="special-note-item">
                   <span class="checked-box">☑</span>历史（含5年外）以下机构黑灰名单情况：
-                  <span v-for="(org, index) in reportData?.exceptionalCase?.specialNote?.blacklistOrgs" :key="index">
-                    {{ org }}<template v-if="index < reportData?.exceptionalCase?.specialNote?.blacklistOrgs.length - 1">, </template>
+                  <span v-if="reportData?.exceptionalCase?.specialNote?.blacklistOrgs">
+                    {{ reportData?.exceptionalCase?.specialNote?.blacklistOrgs }}
                   </span>
                 </div>
 
                 <!-- 近半年查询记录 -->
                 <div
                   v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.length > 0"
-                  class="special-note-item"
-                >
+                  class="special-note-item">
                   <span class="checked-box">☑</span>近半年以下查询记录的原因及细节：
-                  <template v-for="(record, index) in reportData?.exceptionalCase?.specialNote?.queryRecords" :key="index">
+                  <template v-for="(record, index) in reportData?.exceptionalCase?.specialNote?.queryRecords"
+                    :key="index">
                     <template v-if="record.loanType === '车贷'">
-                      {{ record.org }}<template v-if="index < reportData?.exceptionalCase?.specialNote?.queryRecords.length - 1">
+                      {{ record.org }}<template
+                        v-if="index < reportData?.exceptionalCase?.specialNote?.queryRecords.length - 1">
                         ,
                       </template>
                     </template>
@@ -264,12 +268,12 @@ const processedQueryRecords = computed(() => {
                 <!-- 近五年未结清机构 -->
                 <div
                   v-if="reportData?.exceptionalCase?.specialNote?.unpaidLoans && reportData?.exceptionalCase?.specialNote?.unpaidLoans.length > 0"
-                  class="special-note-item"
-                >
+                  class="special-note-item">
                   <span class="checked-box">☑</span>近五年未结清的以下机构补充：
                   <template v-for="(loan, index) in reportData?.exceptionalCase?.specialNote?.unpaidLoans" :key="index">
                     <template v-if="loan.loanType === '车贷'">
-                      {{ loan.org }}<template v-if="index < reportData?.exceptionalCase?.specialNote?.unpaidLoans.length - 1">
+                      {{ loan.org }}<template
+                        v-if="index < reportData?.exceptionalCase?.specialNote?.unpaidLoans.length - 1">
                         ,
                       </template>
                     </template>
@@ -303,8 +307,10 @@ const processedQueryRecords = computed(() => {
                 房产情况 (共{{ reportData?.basicConditions?.housesConditions?.houseCount || '0' }}套):
               </div>
               <div class="condition-detail">
-                <template v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
-                  <template v-for="(house, index) in reportData?.basicConditions?.housesConditions?.houses" :key="index">
+                <template
+                  v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0">
+                  <template v-for="(house, index) in reportData?.basicConditions?.housesConditions?.houses"
+                    :key="index">
                     <div class="house-item">
                       {{ house.area || '无' }}・{{ house.type || '无' }}・{{ house.status || '无' }}
                       （名下{{ house.ownMonths || '0' }}个月；
@@ -315,15 +321,19 @@ const processedQueryRecords = computed(() => {
                       </template>；
                       评{{ house.evalPrice || '0' }}万；
                       <template v-if="house.status === '按揭'">
-                        按揭{{ house.mortgageAmount || '0' }}万供{{ house.mortgageMonths || '0' }}个月-{{ house.mortgageOrg || '无' }}；
+                        按揭{{ house.mortgageAmount || '0' }}万供{{ house.mortgageMonths || '0' }}个月-{{ house.mortgageOrg ||
+                          '无' }}；
                         <template v-if="house.mortgageSecond === '是'">
-                          二押金额{{ house.mortgageSecondAmount || '0' }}万-{{ house.mortgageSecondType || '无' }}-{{ house.mortgageSecondOrg || '无' }}
+                          二押金额{{ house.mortgageSecondAmount || '0' }}万-{{ house.mortgageSecondType || '无' }}-{{
+                            house.mortgageSecondOrg || '无' }}
                         </template>
                       </template>
                       <template v-if="house.status === '抵押'">
-                        抵押{{ house.pledgeAmount || '0' }}万供{{ house.pledgeMonths || '0' }}个月-{{ house.pledgeOrg || '无' }}；
+                        抵押{{ house.pledgeAmount || '0' }}万供{{ house.pledgeMonths || '0' }}个月-{{ house.pledgeOrg || '无'
+                        }}；
                         <template v-if="house.pledgeSecond === '是'">
-                          二押金额{{ house.pledgeSecondAmount || '0' }}万-{{ house.pledgeSecondType || '无' }}-{{ house.pledgeSecondOrg || '无' }}
+                          二押金额{{ house.pledgeSecondAmount || '0' }}万-{{ house.pledgeSecondType || '无' }}-{{
+                            house.pledgeSecondOrg || '无' }}
                         </template>
                       </template>
                       ）
@@ -357,10 +367,14 @@ const processedQueryRecords = computed(() => {
                   评{{ reportData?.basicConditions?.module3CarData?.carEval || '0' }}万]；
                   名下{{ reportData?.basicConditions?.module3CarData?.carOwnMonths || '0' }}个月；
                   <template v-if="reportData?.basicConditions?.module3CarData?.carStatus === '按揭'">
-                    按揭 [{{ reportData?.basicConditions?.module3CarData?.carMortgageAmount || '0' }}万供{{ reportData?.basicConditions?.module3CarData?.carMortgageMonths || '0' }}个月-{{ reportData?.basicConditions?.module3CarData?.carMortgageOrg || '无' }}]
+                    按揭 [{{ reportData?.basicConditions?.module3CarData?.carMortgageAmount || '0' }}万供{{
+                      reportData?.basicConditions?.module3CarData?.carMortgageMonths || '0' }}个月-{{
+                      reportData?.basicConditions?.module3CarData?.carMortgageOrg || '无' }}]
                   </template>
                   <template v-if="reportData?.basicConditions?.module3CarData?.carStatus === '抵押'">
-                    抵押 [{{ reportData?.basicConditions?.module3CarData?.carPledgeAmount || '0' }}万供{{ reportData?.basicConditions?.module3CarData?.carPledgeMonths || '0' }}个月-{{ reportData?.basicConditions?.module3CarData?.carPledgeOrg || '无' }}]
+                    抵押 [{{ reportData?.basicConditions?.module3CarData?.carPledgeAmount || '0' }}万供{{
+                      reportData?.basicConditions?.module3CarData?.carPledgeMonths || '0' }}个月-{{
+                      reportData?.basicConditions?.module3CarData?.carPledgeOrg || '无' }}]
                   </template>
                   ）
                 </template>
@@ -377,9 +391,11 @@ const processedQueryRecords = computed(() => {
                 金融资产 (共{{ reportData?.basicConditions?.module3AssetData?.assetCount || '0' }}项):
               </div>
               <div class="condition-detail">
-                <template v-if="reportData?.basicConditions?.module3AssetData?.hasAsset === '是' && reportData?.basicConditions?.module3AssetData?.assets && reportData?.basicConditions?.module3AssetData?.assets.length > 0">
+                <template
+                  v-if="reportData?.basicConditions?.module3AssetData?.hasAsset === '是' && reportData?.basicConditions?.module3AssetData?.assets && reportData?.basicConditions?.module3AssetData?.assets.length > 0">
                   <div class="asset-list">
-                    <template v-for="(asset, index) in reportData?.basicConditions?.module3AssetData?.assets" :key="index">
+                    <template v-for="(asset, index) in reportData?.basicConditions?.module3AssetData?.assets"
+                      :key="index">
                       <div class="asset-item">
                         {{ asset.type || '无' }}（持有{{ asset.months || '0' }}个月；当前价值{{ asset.amount || '0' }}万）
                         <template v-if="index < reportData?.basicConditions?.module3AssetData?.assets.length - 1">
@@ -424,14 +440,18 @@ const processedQueryRecords = computed(() => {
 
                 <!-- 公积金信息 -->
                 <div class="security-section">
-                  <div v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund !== '是'" class="security-title">
+                  <div v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund !== '是'"
+                    class="security-title">
                     无公积金
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund === '是'">
                     <div class="security-content">
-                      公积金地区：{{ reportData?.basicConditions?.securitySituation?.providentFundArea || reportData?.basicConditions?.securitySituation?.providentFundCompanyType || '-' }} |
-                      <template v-if="reportData?.basicConditions?.securitySituation?.providentFundCompanyType === '同社保单位'">
-                        公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompany || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
+                      公积金地区：{{ reportData?.basicConditions?.securitySituation?.providentFundArea ||
+                        reportData?.basicConditions?.securitySituation?.providentFundCompanyType || '-' }} |
+                      <template
+                        v-if="reportData?.basicConditions?.securitySituation?.providentFundCompanyType === '同社保单位'">
+                        公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompany ||
+                          reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
                       </template>
                       <template v-else>
                         公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompanyName || '无' }} |
@@ -455,9 +475,11 @@ const processedQueryRecords = computed(() => {
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasTax === '是'">
                     <div class="security-content">
-                      个税地区：{{ reportData?.basicConditions?.securitySituation?.taxArea || reportData?.basicConditions?.securitySituation?.taxCompanyType || '-' }} |
+                      个税地区：{{ reportData?.basicConditions?.securitySituation?.taxArea ||
+                        reportData?.basicConditions?.securitySituation?.taxCompanyType || '-' }} |
                       <template v-if="reportData?.basicConditions?.securitySituation?.taxCompanyType === '同社保单位'">
-                        个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompany || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
+                        个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompany ||
+                          reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
                       </template>
                       <template v-else>
                         个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompanyName || '无' }} |
@@ -494,7 +516,8 @@ const processedQueryRecords = computed(() => {
 
                     <div class="business-item">
                       工商信息：
-                      <template v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.length > 0">
+                      <template
+                        v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.length > 0">
                         {{ reportData?.basicConditions?.enterpriseSituation?.businessInfo.join('，') }}
                       </template>
                       <template v-else>
@@ -503,13 +526,15 @@ const processedQueryRecords = computed(() => {
                     </div>
 
                     <div class="business-item">
-                      <template v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.includes('法人')">
+                      <template
+                        v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.includes('法人')">
                         法人名下：{{ reportData?.basicConditions?.enterpriseSituation?.legalPersonMonths || '0' }}个月
                       </template>
                     </div>
 
                     <div class="business-item">
-                      <template v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.includes('股东')">
+                      <template
+                        v-if="reportData?.basicConditions?.enterpriseSituation?.businessInfo && reportData?.basicConditions?.enterpriseSituation?.businessInfo.includes('股东')">
                         股东名下：{{ reportData?.basicConditions?.enterpriseSituation?.shareholderMonths || '0' }}个月；
                         股东占股：{{ reportData?.basicConditions?.enterpriseSituation?.shareholderPercentage || '0' }}%
                       </template>
@@ -536,7 +561,8 @@ const processedQueryRecords = computed(() => {
                     </div>
 
                     <div class="business-item">
-                      经营规模：人数{{ reportData?.basicConditions?.enterpriseSituation?.businessStaff || '0' }}人；面积{{ reportData?.basicConditions?.enterpriseSituation?.businessArea || '0' }}平方米
+                      经营规模：人数{{ reportData?.basicConditions?.enterpriseSituation?.businessStaff || '0' }}人；面积{{
+                        reportData?.basicConditions?.enterpriseSituation?.businessArea || '0' }}平方米
                     </div>
                   </div>
                 </template>
@@ -553,7 +579,8 @@ const processedQueryRecords = computed(() => {
                 流水情况 (共{{ reportData?.basicConditions?.module3FlowData?.flowCount || '0' }}项):
               </div>
               <div class="condition-detail">
-                <template v-if="reportData?.basicConditions?.module3FlowData?.hasFlow === '是' && reportData?.basicConditions?.module3FlowData?.flows && reportData?.basicConditions?.module3FlowData?.flows.length > 0">
+                <template
+                  v-if="reportData?.basicConditions?.module3FlowData?.hasFlow === '是' && reportData?.basicConditions?.module3FlowData?.flows && reportData?.basicConditions?.module3FlowData?.flows.length > 0">
                   <div class="flow-list">
                     <template v-for="(flow, index) in reportData?.basicConditions?.module3FlowData?.flows" :key="index">
                       <div class="flow-item">
@@ -617,11 +644,14 @@ const processedQueryRecords = computed(() => {
             </div>
             <div class="credit-content">
               <!-- 新增查询明细 -->
-              <div v-if="reportData?.creditSituation?.insertCredit?.insertQueriesList && reportData?.creditSituation?.insertCredit?.insertQueriesList.length > 0" class="credit-new-category">
+              <div
+                v-if="reportData?.creditSituation?.insertCredit?.insertQueriesList && reportData?.creditSituation?.insertCredit?.insertQueriesList.length > 0"
+                class="credit-new-category">
                 <div class="credit-new-category-title">
                   新增查询明细：
                 </div>
-                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertQueriesList" :key="index" class="credit-new-item">
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertQueriesList" :key="index"
+                  class="credit-new-item">
                   <div class="credit-new-detail">
                     {{ item }}
                   </div>
@@ -629,11 +659,14 @@ const processedQueryRecords = computed(() => {
               </div>
 
               <!-- 新增放款明细 -->
-              <div v-if="reportData?.creditSituation?.insertCredit?.insertLoansList && reportData?.creditSituation?.insertCredit?.insertLoansList.length > 0" class="credit-new-category">
+              <div
+                v-if="reportData?.creditSituation?.insertCredit?.insertLoansList && reportData?.creditSituation?.insertCredit?.insertLoansList.length > 0"
+                class="credit-new-category">
                 <div class="credit-new-category-title">
                   新增放款明细：
                 </div>
-                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoansList" :key="index" class="credit-new-item">
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoansList" :key="index"
+                  class="credit-new-item">
                   <div class="credit-new-detail">
                     {{ item }}
                   </div>
@@ -641,11 +674,14 @@ const processedQueryRecords = computed(() => {
               </div>
 
               <!-- 新增逾期明细 -->
-              <div v-if="reportData?.creditSituation?.insertCredit?.insertLoanOverList && reportData?.creditSituation?.insertCredit?.insertLoanOverList.length > 0" class="credit-new-category">
+              <div
+                v-if="reportData?.creditSituation?.insertCredit?.insertLoanOverList && reportData?.creditSituation?.insertCredit?.insertLoanOverList.length > 0"
+                class="credit-new-category">
                 <div class="credit-new-category-title">
                   新增逾期明细：
                 </div>
-                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoanOverList" :key="index" class="credit-new-item">
+                <div v-for="(item, index) in reportData?.creditSituation?.insertCredit?.insertLoanOverList" :key="index"
+                  class="credit-new-item">
                   <div class="credit-new-detail">
                     {{ item }}
                   </div>
@@ -657,8 +693,7 @@ const processedQueryRecords = computed(() => {
                 v-if="(!reportData?.creditSituation?.insertCredit?.insertQueriesList || reportData?.creditSituation?.insertCredit?.insertQueriesList.length === 0)
                   && (!reportData?.creditSituation?.insertCredit?.insertLoansList || reportData?.creditSituation?.insertCredit?.insertLoansList.length === 0)
                   && (!reportData?.creditSituation?.insertCredit?.insertLoanOverList || reportData?.creditSituation?.insertCredit?.insertLoanOverList.length === 0)"
-                class="credit-new-detail"
-              >
+                class="credit-new-detail">
                 无征信后新增
               </div>
             </div>
@@ -707,7 +742,8 @@ const processedQueryRecords = computed(() => {
                   <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.totalCreditLimit || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.balance || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.usedCreditLimit || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageRepaymentLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageRepaymentLast6Months || '-' }}
+                  </td>
                   <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.averageUsageLast6Months || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.debtSummary?.creditCard?.monthlyPayment || '-' }}</td>
                 </tr>
@@ -720,8 +756,11 @@ const processedQueryRecords = computed(() => {
                   <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.totalCreditLimit || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.balance || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.usedCreditLimit || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.averageRepaymentLast6Months || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.averageUsageLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.averageRepaymentLast6Months || '-'
+                  }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.averageUsageLast6Months || '-' }}
+                  </td>
                   <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.monthlyPayment || '-' }}</td>
                 </tr>
               </tbody>
@@ -785,7 +824,8 @@ const processedQueryRecords = computed(() => {
                   <td class="business-category-cell">
                     个人经营贷
                   </td>
-                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.institutionsCount || '-' }}
+                  </td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.accountCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.totalCreditLimit || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.balance || '-' }}</td>
@@ -794,9 +834,11 @@ const processedQueryRecords = computed(() => {
                   <td class="business-category-cell">
                     个人消费贷
                   </td>
-                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.institutionsCount || '-' }}
+                  </td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.accountCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.totalCreditLimit || '-' }}
+                  </td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.balance || '-' }}</td>
                 </tr>
                 <tr>
@@ -821,7 +863,8 @@ const processedQueryRecords = computed(() => {
                   <td class="business-category-cell">
                     大额分期
                   </td>
-                  <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.institutionsCount || '-' }}
+                  </td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.accountCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.totalCreditLimit || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.largeInstallment?.balance || '-' }}</td>
@@ -830,7 +873,9 @@ const processedQueryRecords = computed(() => {
             </table>
           </div>
           <!-- 贷款明细（未结清/逾期账户） -->
-          <div v-if="reportData?.creditSituation?.cardInfos?.cardInfoList && reportData?.creditSituation?.cardInfos?.cardInfoList.length > 0" class="loan-details-section">
+          <div
+            v-if="reportData?.creditSituation?.cardInfos?.cardInfoList && reportData?.creditSituation?.cardInfos?.cardInfoList.length > 0"
+            class="loan-details-section">
             <div class="loan-details-title">
               贷款明细（未结清/逾期账户）：
             </div>
@@ -851,7 +896,8 @@ const processedQueryRecords = computed(() => {
                 </tr>
               </thead>
               <tbody>
-                <template v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.creditAmountList" :key="index">
+                <template v-for="(loan, index) in reportData?.creditSituation?.loanDetailsInfo?.creditAmountList"
+                  :key="index">
                   <tr>
                     <td class="loan-bank-cell" rowspan="2">
                       {{ loan.bank_name || '-' }}
@@ -875,7 +921,9 @@ const processedQueryRecords = computed(() => {
             </table>
           </div>
           <!-- 信用卡明细（未结清人民币/逾期账户） -->
-          <div v-if="reportData?.creditSituation?.cardInfos?.cardInfoList && reportData?.creditSituation?.cardInfos?.cardInfoList.length > 0" class="loan-details-section">
+          <div
+            v-if="reportData?.creditSituation?.cardInfos?.cardInfoList && reportData?.creditSituation?.cardInfos?.cardInfoList.length > 0"
+            class="loan-details-section">
             <div class="loan-details-title">
               信用卡明细（未结清人民币/逾期账户）:
             </div>
@@ -923,7 +971,9 @@ const processedQueryRecords = computed(() => {
           </div>
 
           <!-- 相关责任（未结清/逾期） -->
-          <div v-if="reportData?.creditSituation?.responsibilities?.responsibilities && reportData?.creditSituation?.responsibilities?.responsibilities.length > 0" class="responsibilities-section">
+          <div
+            v-if="reportData?.creditSituation?.responsibilities?.responsibilities && reportData?.creditSituation?.responsibilities?.responsibilities.length > 0"
+            class="responsibilities-section">
             <div class="responsibilities-title">
               相关责任（未结清/逾期）：
             </div>
@@ -940,7 +990,8 @@ const processedQueryRecords = computed(() => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(item, index) in reportData?.creditSituation?.responsibilities?.responsibilities" :key="index">
+                <tr v-for="(item, index) in reportData?.creditSituation?.responsibilities?.responsibilities"
+                  :key="index">
                   <td>{{ item.managingInstitution || '-' }}</td>
                   <td>{{ item.businessType || '-' }}</td>
                   <td>{{ item.borrowerType || '-' }}</td>
@@ -981,41 +1032,65 @@ const processedQueryRecords = computed(() => {
                   <td class="time-period-cell">
                     当前逾期期
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.overdueCount || '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.longestOverdueMonths ||
+                    '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.current?.maxOverdueAmount || '-' }}
+                  </td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近半年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.overdueCount || '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.longestOverdueMonths
+                    || '-'
+                  }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.last6Months?.maxOverdueAmount ||
+                    '-' }}
+                  </td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近一年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.overdueCount || '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.longestOverdueMonths ||
+                    '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastYear?.maxOverdueAmount || '-'
+                  }}</td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近两年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.overdueCount || '-'
+                  }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.longestOverdueMonths
+                    || '-'
+                  }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.maxOverdueAmount ||
+                    '-' }}
+                  </td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近五年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.overdueCount || '-'
+                  }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.longestOverdueMonths
+                    ||
+                    '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastFiveYears?.maxOverdueAmount ||
+                    '-' }}
+                  </td>
                 </tr>
 
                 <!-- 信用卡 -->
@@ -1026,41 +1101,71 @@ const processedQueryRecords = computed(() => {
                   <td class="time-period-cell">
                     当前逾期期
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.overdueCount || '-'
+                  }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.longestOverdueMonths
+                    ||
+                    '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.current?.maxOverdueAmount ||
+                    '-' }}
+                  </td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近半年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.overdueCount ||
+                    '-' }}
+                  </td>
+                  <td>{{
+                    reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.longestOverdueMonths
+                    || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.last6Months?.maxOverdueAmount
+                    ||
+                    '-' }}</td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近一年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.overdueCount || '-'
+                  }}
+                  </td>
+                  <td>{{
+                    reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.longestOverdueMonths ||
+                    '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastYear?.maxOverdueAmount ||
+                    '-'
+                  }}</td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近两年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.overdueCount ||
+                    '-'
+                  }}</td>
+                  <td>{{
+                    reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.longestOverdueMonths
+                    || '-' }}</td>
+                  <td>{{
+                    reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastTwoYears?.maxOverdueAmount ||
+                    '-' }}</td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近五年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.overdueCount
+                    || '-'
+                  }}</td>
+                  <td>{{
+                    reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.longestOverdueMonths
+                    || '-' }}</td>
+                  <td>{{
+                    reportData?.creditSituation?.overdueOverdraftSummary?.creditCard?.lastFiveYears?.maxOverdueAmount ||
+                    '-' }}</td>
                 </tr>
 
                 <!-- 合计 -->
@@ -1071,47 +1176,74 @@ const processedQueryRecords = computed(() => {
                   <td class="time-period-cell">
                     当前逾期期
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.overdueCount || '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.longestOverdueMonths ||
+                    '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.current?.maxOverdueAmount || '-'
+                  }}</td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近半年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.overdueCount || '-'
+                  }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.longestOverdueMonths
+                    || '-'
+                  }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.last6Months?.maxOverdueAmount ||
+                    '-' }}
+                  </td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近一年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.overdueCount || '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.longestOverdueMonths ||
+                    '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastYear?.maxOverdueAmount || '-'
+                  }}
+                  </td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近两年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.overdueCount || '-'
+                  }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.longestOverdueMonths
+                    ||
+                    '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastTwoYears?.maxOverdueAmount ||
+                    '-' }}
+                  </td>
                 </tr>
                 <tr>
                   <td class="time-period-cell">
                     近五年
                   </td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.overdueCount || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.longestOverdueMonths || '-' }}</td>
-                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.maxOverdueAmount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.overdueCount || '-'
+                  }}
+                  </td>
+                  <td>{{
+                    reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.longestOverdueMonths ||
+                    '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.overdueOverdraftSummary?.total?.lastFiveYears?.maxOverdueAmount ||
+                    '-'
+                  }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <!-- 查询信息汇总 -->
-          <div v-if="reportData?.creditSituation?.queryHistory?.queryInformationSummary?.length > 0" class="query-summary-section">
+          <div v-if="reportData?.creditSituation?.queryHistory?.queryInformationSummary?.length > 0"
+            class="query-summary-section">
             <div class="query-summary-title">
               查询信息汇总：
             </div>
@@ -1137,7 +1269,8 @@ const processedQueryRecords = computed(() => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(item, index) in reportData.creditSituation.queryHistory.queryInformationSummary" :key="index">
+                <tr v-for="(item, index) in reportData.creditSituation.queryHistory.queryInformationSummary"
+                  :key="index">
                   <td>{{ item.timePeriod || '-' }}</td>
                   <td>{{ item.queryCount.nonPostLoanQuery || '-' }}</td>
                   <td>{{ item.queryCount.loanApproval || '-' }}</td>
@@ -1242,10 +1375,7 @@ const processedQueryRecords = computed(() => {
         <div class="card-content">
           <div class="special-section">
             <!-- 黑/灰名单情况 -->
-            <div
-              v-if="reportData?.exceptionalCase?.specialNote?.blacklistOrgs"
-              class="special-item"
-            >
+            <div v-if="reportData?.exceptionalCase?.specialNote?.blacklistOrgs" class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1262,10 +1392,7 @@ const processedQueryRecords = computed(() => {
             </div>
 
             <!-- 历史征信被拒记录情况 -->
-            <div
-              v-if="reportData?.exceptionalCase?.specialNote?.rejectedOrgs"
-              class="special-item"
-            >
+            <div v-if="reportData?.exceptionalCase?.specialNote?.rejectedOrgs" class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1282,10 +1409,7 @@ const processedQueryRecords = computed(() => {
             </div>
 
             <!-- 历史未结清车贷记录情况 -->
-            <div
-              v-if="reportData?.exceptionalCase?.specialNote?.carLoanrecords"
-              class="special-item"
-            >
+            <div v-if="reportData?.exceptionalCase?.specialNote?.carLoanrecords" class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1304,8 +1428,7 @@ const processedQueryRecords = computed(() => {
             <!-- 黑名单原因 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.blacklistReasons && reportData?.exceptionalCase?.specialNote?.blacklistReasons.length > 0"
-              class="special-item"
-            >
+              class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1314,10 +1437,8 @@ const processedQueryRecords = computed(() => {
                   黑名单原因：
                 </div>
                 <div class="special-detail">
-                  <div
-                    v-for="(reason, index) in reportData?.exceptionalCase?.specialNote?.blacklistReasons"
-                    :key="index"
-                  >
+                  <div v-for="(reason, index) in reportData?.exceptionalCase?.specialNote?.blacklistReasons"
+                    :key="index">
                     {{ reason || '未知原因' }}
                   </div>
                 </div>
@@ -1327,8 +1448,7 @@ const processedQueryRecords = computed(() => {
             <!-- 疑似车贷机构查询（近半年） -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.some(record => record.loanType === '车贷')"
-              class="special-item"
-            >
+              class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1339,8 +1459,7 @@ const processedQueryRecords = computed(() => {
                 <div class="special-detail">
                   <div
                     v-for="(record, index) in reportData?.exceptionalCase?.specialNote?.queryRecords.filter(record => record.loanType === '车贷')"
-                    :key="index"
-                  >
+                    :key="index">
                     {{ record.date || '' }} {{ record.org || '无' }}
                     <span v-if="record.rejectReason">（拒绝原因：{{ record.rejectReason }}）</span>
                   </div>
@@ -1351,8 +1470,7 @@ const processedQueryRecords = computed(() => {
             <!-- 疑似车贷机构放款 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.queryRecords && reportData?.exceptionalCase?.specialNote?.queryRecords.some(record => record.loanType === '车贷' && record.progress === '已批-已放款')"
-              class="special-item"
-            >
+              class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1363,8 +1481,7 @@ const processedQueryRecords = computed(() => {
                 <div class="special-detail">
                   <div
                     v-for="(record, index) in reportData?.exceptionalCase?.specialNote?.queryRecords.filter(record => record.loanType === '车贷' && record.progress === '已批-已放款')"
-                    :key="index"
-                  >
+                    :key="index">
                     {{ record.date || '' }} {{ record.org || '无' }}
                   </div>
                 </div>
@@ -1374,8 +1491,7 @@ const processedQueryRecords = computed(() => {
             <!-- 征信后新增放款补充 - 贷款类 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.newLoans && reportData?.exceptionalCase?.specialNote?.newLoans.loans && reportData?.exceptionalCase?.specialNote?.newLoans.loans.length > 0"
-              class="special-item"
-            >
+              class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1384,10 +1500,7 @@ const processedQueryRecords = computed(() => {
                   征信后新增放款补充 - 贷款类：
                 </div>
                 <div class="special-detail">
-                  <div
-                    v-for="(loan, index) in reportData?.exceptionalCase?.specialNote?.newLoans.loans"
-                    :key="index"
-                  >
+                  <div v-for="(loan, index) in reportData?.exceptionalCase?.specialNote?.newLoans.loans" :key="index">
                     {{ loan.date || '' }} {{ loan.org || '无' }} {{ loan.loanType || '无' }}
                     <span v-if="loan.monthlyPayment">月供{{ loan.monthlyPayment }}元</span>
                   </div>
@@ -1398,8 +1511,7 @@ const processedQueryRecords = computed(() => {
             <!-- 征信后新增放款补充 - 信用卡类 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.newLoans && reportData?.exceptionalCase?.specialNote?.newLoans.creditCards && reportData?.exceptionalCase?.specialNote?.newLoans.creditCards.length > 0"
-              class="special-item"
-            >
+              class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1408,10 +1520,8 @@ const processedQueryRecords = computed(() => {
                   征信后新增放款补充 - 信用卡类：
                 </div>
                 <div class="special-detail">
-                  <div
-                    v-for="(card, index) in reportData?.exceptionalCase?.specialNote?.newLoans.creditCards"
-                    :key="index"
-                  >
+                  <div v-for="(card, index) in reportData?.exceptionalCase?.specialNote?.newLoans.creditCards"
+                    :key="index">
                     {{ card.date || '' }} {{ card.org || '无' }} {{ card.cardType || '无' }}
                     <span v-if="card.monthlyPayment">月供{{ card.monthlyPayment }}元</span>
                     <span v-if="card.usedLimit">已用额度{{ card.usedLimit }}元</span>
@@ -1423,8 +1533,7 @@ const processedQueryRecords = computed(() => {
             <!-- 历史被拒记录 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.newLoans && reportData?.exceptionalCase?.specialNote?.newLoans.rejectedOrgs && reportData?.exceptionalCase?.specialNote?.newLoans.rejectedOrgs.length > 0"
-              class="special-item"
-            >
+              class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1443,8 +1552,7 @@ const processedQueryRecords = computed(() => {
             <!-- 被拒时间及原因 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.newLoans && reportData?.exceptionalCase?.specialNote?.newLoans.rejectReasons && reportData?.exceptionalCase?.specialNote?.newLoans.rejectReasons.length > 0"
-              class="special-item"
-            >
+              class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1453,10 +1561,8 @@ const processedQueryRecords = computed(() => {
                   被拒时间及原因：
                 </div>
                 <div class="special-detail">
-                  <div
-                    v-for="(reason, index) in reportData?.exceptionalCase?.specialNote?.newLoans.rejectReasons"
-                    :key="index"
-                  >
+                  <div v-for="(reason, index) in reportData?.exceptionalCase?.specialNote?.newLoans.rejectReasons"
+                    :key="index">
                     {{ reason || '未知原因' }}
                   </div>
                 </div>
@@ -1466,8 +1572,7 @@ const processedQueryRecords = computed(() => {
             <!-- 本人特殊情况补充 -->
             <div
               v-if="reportData?.exceptionalCase?.specialNote?.language || reportData?.exceptionalCase?.specialNote?.writing || reportData?.exceptionalCase?.specialNote?.physical"
-              class="special-item"
-            >
+              class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
@@ -1490,21 +1595,18 @@ const processedQueryRecords = computed(() => {
             </div>
 
             <!-- 无特殊情况 -->
-            <div
-              v-if="!reportData?.exceptionalCase?.specialNote?.blacklistReasons?.length
-                && !reportData?.exceptionalCase?.specialNote?.queryRecords?.length
-                && !reportData?.exceptionalCase?.specialNote?.blacklistOrgs
-                && !reportData?.exceptionalCase?.specialNote?.rejectedOrgs
-                && !reportData?.exceptionalCase?.specialNote?.carLoanrecords
-                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.loans?.length)
-                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.creditCards?.length)
-                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectedOrgs?.length)
-                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectReasons?.length)
-                && !reportData?.exceptionalCase?.specialNote?.language
-                && !reportData?.exceptionalCase?.specialNote?.writing
-                && !reportData?.exceptionalCase?.specialNote?.physical"
-              class="special-item"
-            >
+            <div v-if="!reportData?.exceptionalCase?.specialNote?.blacklistReasons?.length
+              && !reportData?.exceptionalCase?.specialNote?.queryRecords?.length
+              && !reportData?.exceptionalCase?.specialNote?.blacklistOrgs
+              && !reportData?.exceptionalCase?.specialNote?.rejectedOrgs
+              && !reportData?.exceptionalCase?.specialNote?.carLoanrecords
+              && !(reportData?.exceptionalCase?.specialNote?.newLoans?.loans?.length)
+              && !(reportData?.exceptionalCase?.specialNote?.newLoans?.creditCards?.length)
+              && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectedOrgs?.length)
+              && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectReasons?.length)
+              && !reportData?.exceptionalCase?.specialNote?.language
+              && !reportData?.exceptionalCase?.specialNote?.writing
+              && !reportData?.exceptionalCase?.specialNote?.physical" class="special-item">
               <div class="special-icon">
                 <i class="arrow-icon" />
               </div>
