@@ -1243,7 +1243,7 @@ const processedQueryRecords = computed(() => {
           <div class="special-section">
             <!-- 黑/灰名单情况 -->
             <div
-              v-if="reportData?.exceptionalCase?.specialNote?.blacklistOrgs && reportData?.exceptionalCase?.specialNote?.blacklistOrgs.length > 0"
+              v-if="reportData?.exceptionalCase?.specialNote?.blacklistOrgs"
               class="special-item"
             >
               <div class="special-icon">
@@ -1255,7 +1255,47 @@ const processedQueryRecords = computed(() => {
                 </div>
                 <div class="special-detail">
                   <div>
-                    {{ reportData?.exceptionalCase?.specialNote?.blacklistOrgs.join('，') || '无' }}
+                    {{ reportData?.exceptionalCase?.specialNote?.blacklistOrgs }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 历史征信被拒记录情况 -->
+            <div
+              v-if="reportData?.exceptionalCase?.specialNote?.rejectedOrgs"
+              class="special-item"
+            >
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
+              <div class="special-content">
+                <div class="special-title">
+                  历史征信（含五年前和已结清）有疑似车贷机构被拒记录情况：
+                </div>
+                <div class="special-detail">
+                  <div>
+                    {{ reportData?.exceptionalCase?.specialNote?.rejectedOrgs }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 历史未结清车贷记录情况 -->
+            <div
+              v-if="reportData?.exceptionalCase?.specialNote?.carLoanrecords"
+              class="special-item"
+            >
+              <div class="special-icon">
+                <i class="arrow-icon" />
+              </div>
+              <div class="special-content">
+                <div class="special-title">
+                  历史未结清的贷款中有疑似车贷机构放款记录情况：
+                </div>
+                <div class="special-detail">
+                  <div>
+                    {{ reportData?.exceptionalCase?.specialNote?.carLoanrecords }}
                   </div>
                 </div>
               </div>
@@ -1453,7 +1493,9 @@ const processedQueryRecords = computed(() => {
             <div
               v-if="!reportData?.exceptionalCase?.specialNote?.blacklistReasons?.length
                 && !reportData?.exceptionalCase?.specialNote?.queryRecords?.length
-                && !reportData?.exceptionalCase?.specialNote?.blacklistOrgs?.length
+                && !reportData?.exceptionalCase?.specialNote?.blacklistOrgs
+                && !reportData?.exceptionalCase?.specialNote?.rejectedOrgs
+                && !reportData?.exceptionalCase?.specialNote?.carLoanrecords
                 && !(reportData?.exceptionalCase?.specialNote?.newLoans?.loans?.length)
                 && !(reportData?.exceptionalCase?.specialNote?.newLoans?.creditCards?.length)
                 && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectedOrgs?.length)
