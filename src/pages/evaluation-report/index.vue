@@ -464,12 +464,8 @@ const processedQueryRecords = computed(() => {
                       公积金地区：{{ reportData?.basicConditions?.securitySituation?.providentFundArea
                         || reportData?.basicConditions?.securitySituation?.providentFundCompanyType || '-' }} |
                       <template
-                        v-if="reportData?.basicConditions?.securitySituation?.providentFundCompanyType === '同社保单位'"
+                        v-if="reportData?.basicConditions?.securitySituation?.providentFundCompanyType !== '同社保单位'"
                       >
-                        公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompany
-                          || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
-                      </template>
-                      <template v-else>
                         公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompanyName || '无' }} |
                       </template>
                       连续缴公积金合计：{{ reportData?.basicConditions?.securitySituation?.providentFundTotalMonths || '0' }}个月 |
@@ -493,11 +489,7 @@ const processedQueryRecords = computed(() => {
                     <div class="security-content">
                       个税地区：{{ reportData?.basicConditions?.securitySituation?.taxArea
                         || reportData?.basicConditions?.securitySituation?.taxCompanyType || '-' }} |
-                      <template v-if="reportData?.basicConditions?.securitySituation?.taxCompanyType === '同社保单位'">
-                        个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompany
-                          || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
-                      </template>
-                      <template v-else>
+                      <template v-if="reportData?.basicConditions?.securitySituation?.taxCompanyType !== '同社保单位'">
                         个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompanyName || '无' }} |
                       </template>
                       连续缴个税合计：{{ reportData?.basicConditions?.securitySituation?.taxTotalMonths || '0' }}个月 |
