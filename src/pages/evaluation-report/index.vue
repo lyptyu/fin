@@ -638,7 +638,7 @@ const processedQueryRecords = computed(() => {
 
                         <template v-if="flow.interest && flow.interest.length > 0">
                           <div class="flow-interest">
-                            近一年结息：{{ flow.interest.join('，') }}
+                            近一年结息：{{ flow.interest.map(item => item + '元').join('，') }}
                           </div>
                         </template>
                       </div>
@@ -1130,8 +1130,7 @@ const processedQueryRecords = computed(() => {
                   </td>
                   <td>
                     {{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.longestOverdueMonths
-                      || '-'
-                    }}
+                      || '-' }}
                   </td>
                   <td>
                     {{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.maxOverdueAmount
