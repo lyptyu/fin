@@ -1832,7 +1832,6 @@ const processedQueryRecords = computed(() => {
 .info-row {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 16px;
 }
 
 .info-row:last-child {
