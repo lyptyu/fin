@@ -157,15 +157,15 @@ const processedQueryRecords = computed(() => {
                 </template>
                 <template v-else>
                   无社保
-                </template> |
+                </template> （
                 <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths">
                   当前单位{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths }}个月
                 </template>
                 <template v-else>
                   无社保
-                </template> |
+                </template> ）|
                 <template v-if="reportData?.basicConditions?.enterpriseSituation?.registeredMonths">
-                  {{ reportData?.basicConditions?.enterpriseSituation?.companyArea || '' }}企业注册{{
+                  {{ reportData?.basicConditions?.enterpriseSituation?.companyArea || '' }}企业注册满{{
                     reportData?.basicConditions?.enterpriseSituation?.registeredMonths }}个月
                 </template>
                 <template v-else>
