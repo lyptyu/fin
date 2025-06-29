@@ -989,10 +989,10 @@ onMounted(() => {
           </template>
         </van-cell>
         <div class="module-content">
-          <!-- 01近半年查询记录 -->
+          <!-- 近半年查询记录 -->
           <div v-if="module1Data.queryRecords && module1Data.queryRecords.length > 0" class="section">
             <div class="section-title">
-              01近半年以下查询记录的原因及细节
+              近半年以下查询记录的原因及细节
             </div>
             <template v-for="(record, index) in module1Data.queryRecords" :key="index">
               <div class="record-item">
@@ -1049,10 +1049,10 @@ onMounted(() => {
             </template>
           </div>
 
-          <!-- 02征信后新增放款补充 -->
+          <!-- 征信后新增放款补充 -->
           <div v-if="(module1Data.newLoans.loans && module1Data.newLoans.loans.length > 0) || (module1Data.newLoans.creditCards && module1Data.newLoans.creditCards.length > 0)" class="section">
             <div class="section-title">
-              02征信后新增放款补充
+              征信后新增放款补充
             </div>
 
             <!-- 贷款类 -->
@@ -1142,10 +1142,10 @@ onMounted(() => {
             </template>
           </div>
 
-          <!-- 03近五年未结清 -->
+          <!-- 近五年未结清 -->
           <div v-if="module1Data.unpaidLoans && module1Data.unpaidLoans.length > 0" class="section">
             <div class="section-title">
-              03近五年未结清的以下机构补充
+              近五年未结清的以下机构补充
             </div>
             <div v-for="(loan, index) in module1Data.unpaidLoans" :key="index" class="loan-item">
               <div class="loan-header">
@@ -1172,10 +1172,10 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- 03历史黑灰名单 -->
+          <!-- 历史黑灰名单 -->
           <div class="section">
             <div class="section-title">
-              03历史(含5年外)以下机构黑灰名单情况
+              历史(含5年外)以下机构黑灰名单情况
             </div>
             <van-checkbox-group v-model="module1Data.blacklistOrgs" direction="horizontal" class="checkbox-group">
               <van-checkbox name="中行">
@@ -1217,10 +1217,10 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- 04历史被拒记录 -->
+          <!-- 历史被拒记录 -->
           <div class="section">
             <div class="section-title">
-              04历史(含5年外)以下机构被拒记录情况
+              历史(含5年外)以下机构被拒记录情况
             </div>
             <van-checkbox-group v-model="module1Data.rejectedOrgs" direction="horizontal" class="checkbox-group">
               <van-checkbox name="中行">
@@ -1272,10 +1272,10 @@ onMounted(() => {
           </template>
         </van-cell>
         <div class="module-content">
-          <!-- 01考察情况 -->
+          <!-- 考察情况 -->
           <div class="section">
             <div class="section-title">
-              01考察情况
+              考察情况
             </div>
 
             <div class="form-item required">
@@ -1338,10 +1338,10 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- 02社保公积金个税情况 -->
+          <!-- 社保公积金个税情况 -->
           <div class="section">
             <div class="section-title">
-              02社保公积金个税情况
+              社保公积金个税情况
             </div>
 
             <div class="form-item required">
@@ -1714,10 +1714,10 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- 02企业情况 -->
+          <!-- 企业情况 -->
           <div class="section">
             <div class="section-title">
-              02企业情况
+              企业情况
             </div>
             <div class="form-item required">
               <div class="radio-title">
@@ -1926,7 +1926,7 @@ onMounted(() => {
           <!-- 01学历情况 -->
           <div class="section">
             <div class="section-title">
-              01学历情况
+              学历情况
             </div>
             <div class="form-item">
               <div class="radio-title">
@@ -1996,7 +1996,7 @@ onMounted(() => {
           <!-- 02房产情况 -->
           <div class="section">
             <div class="section-title">
-              02房产情况
+              房产情况
             </div>
             <div class="form-item">
               <div class="radio-title">
@@ -2316,7 +2316,7 @@ onMounted(() => {
           <!-- 03车产情况 -->
           <div class="section">
             <div class="section-title">
-              03车产情况
+              车产情况
             </div>
             <div class="form-item">
               <div class="radio-title">
@@ -2528,10 +2528,10 @@ onMounted(() => {
             </template>
           </div>
 
-          <!-- 04金融资产情况 -->
+          <!-- 金融资产情况 -->
           <div class="section">
             <div class="section-title">
-              04金融资产情况
+              金融资产情况
             </div>
             <div class="form-item">
               <div class="radio-title">
@@ -2606,10 +2606,10 @@ onMounted(() => {
             </template>
           </div>
 
-          <!-- 05流水情况 -->
+          <!-- 流水情况 -->
           <div class="section">
             <div class="section-title">
-              05流水情况
+              流水情况
             </div>
             <div class="form-item">
               <div class="radio-title">
@@ -2879,10 +2879,10 @@ onMounted(() => {
           </template>
         </van-cell>
         <div class="module-content">
-          <!-- 01普通话/粤语 -->
+          <!-- 普通话/粤语 -->
           <div class="section">
             <div class="section-title">
-              01普通话/粤语
+              普通话/粤语
             </div>
             <div class="form-item">
               <div class="radio-title">
@@ -2913,7 +2913,7 @@ onMounted(() => {
           <!-- 02写字能力 -->
           <div class="section">
             <div class="section-title">
-              02写字能力
+              写字能力
             </div>
             <div class="form-item">
               <div class="radio-title">
@@ -2941,7 +2941,7 @@ onMounted(() => {
           <!-- 03身体缺陷 -->
           <div class="section">
             <div class="section-title">
-              03身体缺陷
+              身体缺陷
             </div>
             <div class="form-item">
               <div class="radio-title">
@@ -3491,7 +3491,7 @@ onMounted(() => {
 .empty-state {
   padding: 40px 20px;
   text-align: center;
-  
+
   :deep(.van-empty__description) {
     color: #999;
     font-size: 14px;
