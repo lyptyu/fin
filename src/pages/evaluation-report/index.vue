@@ -190,11 +190,9 @@ const processedQueryRecords = computed(() => {
                 {{ reportData?.summaryConditions?.basicAttribute?.sex || '无' }} |
                 {{ reportData?.summaryConditions?.basicAttribute?.age || '0' }}岁 |
                 {{ reportData?.summaryConditions?.basicAttribute?.address || '无' }} |
-                真实婚姻情况：{{ reportData?.summaryConditions?.basicAttribute?.realMaritalStatus || '无' }} |
-                征信婚姻状态：{{ reportData?.summaryConditions?.basicAttribute?.creditMaritalStatus || '无' }} |
-                {{ reportData?.summaryConditions?.basicAttribute?.education || '无' }}/
-                {{ reportData?.summaryConditions?.basicAttribute?.educationCheck || '无' }}/
-                {{ reportData?.summaryConditions?.basicAttribute?.educationFullTime || '无' }}
+                {{ reportData?.summaryConditions?.basicAttribute?.realMaritalStatus || '无' }}（征信：{{ reportData?.summaryConditions?.basicAttribute?.creditMaritalStatus || '无' }}） |
+                {{ reportData?.summaryConditions?.basicAttribute?.education || '无' }}（学信网{{ reportData?.summaryConditions?.basicAttribute?.educationCheck || '不可查' }}/
+                {{ reportData?.summaryConditions?.basicAttribute?.educationCheck === '可查' ? reportData?.summaryConditions?.basicAttribute?.educationFullTime === '是' ? '全日制' : '非全日制' : '' }}）
               </div>
             </div>
             <div class="summary-item">
