@@ -1,7 +1,14 @@
-<script setup lang="ts">
-import { useRouter } from 'vue-router'
+<script setup>
+import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
 
 const router = useRouter()
+const route = useRoute()
+
+// 根据query参数获取提示信息
+const successMessage = computed(() => {
+  return route.query.tip || '您的信息已成功提交，我们将尽快处理您的申请'
+})
 
 // 返回首页
 function goHome() {
@@ -19,7 +26,7 @@ function goHome() {
         提交成功
       </div>
       <div class="success-message">
-        您的信息已成功提交，我们将尽快处理您的申请
+        {{ successMessage }}
       </div>
     </div>
   </div>

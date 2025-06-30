@@ -871,7 +871,8 @@ async function submitForm() {
       formData.cardOverdues = []
       formData.queryCount = ''
       formData.loanCount = ''
-    } else {
+    }
+    else {
       // 如果用户选择"是"，但某些子项选择"否"，确保对应数据为空数组
       if (formData.hasNewQuery === '否') {
         formData.queries = []
@@ -888,7 +889,8 @@ async function submitForm() {
         formData.cardOverdueDetails = []
         formData.loanOverdues = []
         formData.cardOverdues = []
-      } else {
+      }
+      else {
         // 处理贷款类逾期详情
         const loanOverdueDetailsArray = []
         for (const id of Object.keys(formData.loanOverdueDetails)) {
@@ -931,7 +933,7 @@ async function submitForm() {
     }
     const agentId = userStore.getAgentId()
     // 调用保存接口
-    const { code, msg } = await saveAndExecutionRules(agentId, submitData)
+    const { code, data, msg } = await saveAndExecutionRules(agentId, submitData)
 
     // 关闭加载提示
     closeToast()
@@ -941,7 +943,7 @@ async function submitForm() {
       showSuccessToast('提交成功')
 
       // 跳转到提交成功页面
-      router.push('/submit-success')
+      router.push(`/submit-success?tip=${data}`)
     }
     else {
       // 提交失败提示
@@ -996,11 +998,7 @@ function resetForm() {
       <div class="report-type glass-card">
         <h2>选择征信报告类型</h2>
         <div class="type-options">
-          <div
-            class="type-option"
-            :class="{ active: reportType === 'simple' }"
-            @click="reportType = 'simple'"
-          >
+          <div class="type-option" :class="{ active: reportType === 'simple' }" @click="reportType = 'simple'">
             <div class="option-icon">
               📄
             </div>
@@ -1009,11 +1007,7 @@ function resetForm() {
               <p>适用于快速审核场景</p>
             </div>
           </div>
-          <div
-            class="type-option"
-            :class="{ active: reportType === 'detail' }"
-            @click="reportType = 'detail'"
-          >
+          <div class="type-option" :class="{ active: reportType === 'detail' }" @click="reportType = 'detail'">
             <div class="option-icon">
               📑
             </div>
@@ -1027,12 +1021,7 @@ function resetForm() {
 
       <!-- 文件上传区域 -->
       <div class="glass-card upload-area">
-        <van-uploader
-          v-model="fileList"
-          :max-count="1"
-          :after-read="onUpload"
-          accept=".pdf"
-        >
+        <van-uploader v-model="fileList" :max-count="1" :after-read="onUpload" accept=".pdf">
           <div class="upload-trigger">
             <van-icon name="description" size="32" />
             <p>点击上传征信报告PDF文件</p>
@@ -1046,13 +1035,7 @@ function resetForm() {
     <div v-if="showAdditionalForm" class="glass-card additional-form">
       <!-- 返回按钮 -->
       <div class="back-button-container">
-        <van-button
-          type="text"
-          size="small"
-          icon="arrow-left"
-          class="harmony-back-button"
-          @click="resetForm"
-        >
+        <van-button type="text" size="small" icon="arrow-left" class="harmony-back-button" @click="resetForm">
           返回重新上传
         </van-button>
       </div>
@@ -1092,11 +1075,7 @@ function resetForm() {
           <!-- 新增查询次数 -->
           <div v-if="creditForm.hasNewQuery === '是'" class="query-count">
             <van-field
-              v-model="creditForm.queryCount"
-              label="合计"
-              type="digit"
-              placeholder="请输入次数"
-              input-align="right"
+              v-model="creditForm.queryCount" label="合计" type="digit" placeholder="请输入次数" input-align="right"
               @input="updateQueryForms"
             >
               <template #button>
@@ -1114,43 +1093,27 @@ function resetForm() {
 
               <!-- 查询类型 -->
               <van-field
-                v-model="query.type"
-                readonly
-                clickable
-                label="查询类型"
-                placeholder="请选择查询类型"
+                v-model="query.type" readonly clickable label="查询类型" placeholder="请选择查询类型"
                 @click="handleQueryTypeClick(index)"
               />
 
               <!-- 查询时间 -->
               <van-field
-                v-model="query.time"
-                readonly
-                clickable
-                label="查询时间"
-                placeholder="请选择查询时间"
+                v-model="query.time" readonly clickable label="查询时间" placeholder="请选择查询时间"
                 @click="handleQueryTimeClick(index)"
               />
 
               <!-- 机构查询特有字段 -->
               <template v-if="query.type === '机构查询'">
                 <van-field
-                  v-model="query.institution"
-                  readonly
-                  clickable
-                  label="查询机构"
-                  placeholder="请选择查询机构"
+                  v-model="query.institution" readonly clickable label="查询机构" placeholder="请选择查询机构"
                   @click="handleQueryInstitutionClick(index)"
                 />
               </template>
 
               <!-- 查询原因 -->
               <van-field
-                v-model="query.reason"
-                readonly
-                clickable
-                label="查询原因"
-                placeholder="请选择查询原因"
+                v-model="query.reason" readonly clickable label="查询原因" placeholder="请选择查询原因"
                 @click="handleQueryReasonClick(index)"
               />
             </div>
@@ -1174,11 +1137,7 @@ function resetForm() {
           <!-- 新增放款家数 -->
           <div v-if="creditForm.hasNewLoan === '是'" class="query-count">
             <van-field
-              v-model="creditForm.loanCount"
-              label="合计"
-              type="digit"
-              placeholder="请输入家数"
-              input-align="right"
+              v-model="creditForm.loanCount" label="合计" type="digit" placeholder="请输入家数" input-align="right"
               @input="updateLoanForms"
             >
               <template #button>
@@ -1196,41 +1155,26 @@ function resetForm() {
 
               <!-- 放款类型 -->
               <van-field
-                v-model="loan.type"
-                readonly
-                clickable
-                label="放款类型"
-                placeholder="请选择放款类型"
+                v-model="loan.type" readonly clickable label="放款类型" placeholder="请选择放款类型"
                 @click="handleLoanTypeClick(index)"
               />
 
               <!-- 放款时间/发卡时间 -->
               <van-field
-                v-model="loan.time"
-                readonly
-                clickable
-                :label="loan.type === '贷款' ? '放款时间' : '发卡时间'"
-                :placeholder="loan.type === '贷款' ? '请选择放款时间' : '请选择发卡时间'"
-                @click="handleLoanTimeClick(index)"
+                v-model="loan.time" readonly clickable :label="loan.type === '贷款' ? '放款时间' : '发卡时间'"
+                :placeholder="loan.type === '贷款' ? '请选择放款时间' : '请选择发卡时间'" @click="handleLoanTimeClick(index)"
               />
 
               <!-- 放款机构/发卡机构 -->
               <van-field
-                v-model="loan.institution"
-                readonly
-                clickable
-                :label="loan.type === '贷款' ? '放款机构' : '发卡机构'"
-                placeholder="请选择机构"
-                @click="handleLoanInstitutionClick(index)"
+                v-model="loan.institution" readonly clickable :label="loan.type === '贷款' ? '放款机构' : '发卡机构'"
+                placeholder="请选择机构" @click="handleLoanInstitutionClick(index)"
               />
 
               <!-- 放款额度/信用卡额度 -->
               <van-field
-                v-model="loan.amount"
-                :label="loan.type === '贷款' ? '放款额度' : '信用卡额度'"
-                type="digit"
-                placeholder="请输入额度"
-                input-align="right"
+                v-model="loan.amount" :label="loan.type === '贷款' ? '放款额度' : '信用卡额度'" type="digit"
+                placeholder="请输入额度" input-align="right"
               >
                 <template #button>
                   <span>元</span>
@@ -1265,8 +1209,7 @@ function resetForm() {
               <div class="overdue-selection">
                 <template v-for="(item, index) in creditForm.loanOverdues" :key="index">
                   <van-checkbox
-                    :name="item.id"
-                    :checked="!!creditForm.loanOverdueDetails[item.id]"
+                    :name="item.id" :checked="!!creditForm.loanOverdueDetails[item.id]"
                     @click="toggleOverdueItem('loan', item.id)"
                   >
                     {{ item.institution }} - {{ item.type }}
@@ -1291,10 +1234,7 @@ function resetForm() {
                   <!-- 逾期级别字段已移除 -->
 
                   <van-field
-                    v-model="detail.amount"
-                    label="逾期金额"
-                    type="digit"
-                    placeholder="请输入逾期金额"
+                    v-model="detail.amount" label="逾期金额" type="digit" placeholder="请输入逾期金额"
                     input-align="right"
                   >
                     <template #button>
@@ -1302,9 +1242,7 @@ function resetForm() {
                     </template>
                   </van-field>
 
-                  <van-field
-                    label="是否已还"
-                  >
+                  <van-field label="是否已还">
                     <template #input>
                       <van-radio-group v-model="detail.repaid" direction="horizontal">
                         <van-radio name="是">
@@ -1330,8 +1268,7 @@ function resetForm() {
               <div class="overdue-selection">
                 <template v-for="(item, index) in creditForm.cardOverdues" :key="index">
                   <van-checkbox
-                    :name="item.id"
-                    :checked="!!creditForm.cardOverdueDetails[item.id]"
+                    :name="item.id" :checked="!!creditForm.cardOverdueDetails[item.id]"
                     @click="toggleOverdueItem('card', item.id)"
                   >
                     {{ item.institution }} - {{ item.cardNo }}
@@ -1356,10 +1293,7 @@ function resetForm() {
                   <!-- 逾期级别字段已移除 -->
 
                   <van-field
-                    v-model="detail.amount"
-                    label="逾期金额"
-                    type="digit"
-                    placeholder="请输入逾期金额"
+                    v-model="detail.amount" label="逾期金额" type="digit" placeholder="请输入逾期金额"
                     input-align="right"
                   >
                     <template #button>
@@ -1367,9 +1301,7 @@ function resetForm() {
                     </template>
                   </van-field>
 
-                  <van-field
-                    label="是否已还"
-                  >
+                  <van-field label="是否已还">
                     <template #input>
                       <van-radio-group v-model="detail.repaid" direction="horizontal">
                         <van-radio name="是">
@@ -1391,11 +1323,8 @@ function resetForm() {
       <!-- 表单提交按钮 -->
       <div class="form-actions">
         <van-button
-          block
-          :loading="uploading"
-          :disabled="uploadFailed ? false : !analysisComplete"
-          class="submit-button"
-          :type="uploadFailed ? 'danger' : 'primary'"
+          block :loading="uploading" :disabled="uploadFailed ? false : !analysisComplete"
+          class="submit-button" :type="uploadFailed ? 'danger' : 'primary'"
           @click="uploadFailed ? resetForm() : submitForm()"
         >
           <template v-if="uploadFailed">
@@ -1415,10 +1344,7 @@ function resetForm() {
     <!-- 查询类型选择器 -->
     <van-popup v-model:show="showQueryTypePicker" position="bottom">
       <van-picker
-        :columns="queryTypeOptions"
-        show-toolbar
-        title="选择查询类型"
-        @confirm="onQueryTypeConfirm"
+        :columns="queryTypeOptions" show-toolbar title="选择查询类型" @confirm="onQueryTypeConfirm"
         @cancel="showQueryTypePicker = false"
       />
     </van-popup>
@@ -1428,9 +1354,7 @@ function resetForm() {
       <div class="search-picker">
         <div class="search-header">
           <van-field
-            v-model="institutionSearchValue"
-            placeholder="输入机构名称关键字"
-            clearable
+            v-model="institutionSearchValue" placeholder="输入机构名称关键字" clearable
             @input="onQueryInstitutionInput"
           >
             <template #button>
@@ -1439,10 +1363,7 @@ function resetForm() {
           </van-field>
         </div>
         <van-picker
-          :columns="filteredInstitutions"
-          show-toolbar
-          title="选择查询机构"
-          @confirm="onQueryInstitutionConfirm"
+          :columns="filteredInstitutions" show-toolbar title="选择查询机构" @confirm="onQueryInstitutionConfirm"
           @cancel="showQueryInstitutionPicker = false"
         />
       </div>
@@ -1452,32 +1373,22 @@ function resetForm() {
     <van-popup v-model:show="showQueryReasonPicker" position="bottom">
       <van-picker
         :columns="currentSelectingIndex >= 0 && creditForm.queries[currentSelectingIndex]?.type === '机构查询' ? orgQueryReasonOptions : selfQueryReasonOptions"
-        show-toolbar
-        title="选择查询原因"
-        @confirm="onQueryReasonConfirm"
-        @cancel="showQueryReasonPicker = false"
+        show-toolbar title="选择查询原因" @confirm="onQueryReasonConfirm" @cancel="showQueryReasonPicker = false"
       />
     </van-popup>
 
     <!-- 日期选择器 -->
     <van-popup v-model:show="showDatePicker" position="bottom">
       <van-date-picker
-        v-model="currentDate"
-        title="选择时间"
-        :min-date="minDate"
-        :max-date="maxDate"
-        @confirm="onDateConfirm"
-        @cancel="showDatePicker = false"
+        v-model="currentDate" title="选择时间" :min-date="minDate" :max-date="maxDate"
+        @confirm="onDateConfirm" @cancel="showDatePicker = false"
       />
     </van-popup>
 
     <!-- 放款类型选择器 -->
     <van-popup v-model:show="showLoanTypePicker" position="bottom">
       <van-picker
-        :columns="loanTypeOptions"
-        show-toolbar
-        title="选择放款类型"
-        @confirm="onLoanTypeConfirm"
+        :columns="loanTypeOptions" show-toolbar title="选择放款类型" @confirm="onLoanTypeConfirm"
         @cancel="showLoanTypePicker = false"
       />
     </van-popup>
@@ -1487,9 +1398,7 @@ function resetForm() {
       <div class="search-picker">
         <div class="search-header">
           <van-field
-            v-model="institutionSearchValue"
-            placeholder="输入机构名称关键字"
-            clearable
+            v-model="institutionSearchValue" placeholder="输入机构名称关键字" clearable
             @input="onQueryInstitutionInput"
           >
             <template #button>
@@ -1498,10 +1407,7 @@ function resetForm() {
           </van-field>
         </div>
         <van-picker
-          :columns="filteredInstitutions"
-          show-toolbar
-          title="选择机构"
-          @confirm="onLoanInstitutionConfirm"
+          :columns="filteredInstitutions" show-toolbar title="选择机构" @confirm="onLoanInstitutionConfirm"
           @cancel="showLoanInstitutionPicker = false"
         />
       </div>
