@@ -434,11 +434,11 @@ function handleSimpleReportData(data: any) {
         repaid = '否'
       }
 
-      // 添加逾期详情
-      creditForm.loanOverdueDetails[id] = {
-        amount,
-        repaid,
-      }
+      // 不自动添加逾期详情，让用户手动选择
+      // creditForm.loanOverdueDetails[id] = {
+      //   amount,
+      //   repaid,
+      // }
     })
   }
 
@@ -485,11 +485,11 @@ function handleSimpleReportData(data: any) {
         repaid = '否'
       }
 
-      // 添加逾期详情
-      creditForm.cardOverdueDetails[id] = {
-        amount,
-        repaid,
-      }
+      // 不自动添加逾期详情，让用户手动选择
+      // creditForm.cardOverdueDetails[id] = {
+      //   amount,
+      //   repaid,
+      // }
     })
   }
 }
@@ -527,11 +527,11 @@ function handleDetailedReportData(data: any) {
         type: loanType,
       })
 
-      // 添加逾期详情 - 无论是否有逾期都添加
-      creditForm.loanOverdueDetails[id] = {
-        amount: loan.currentOverdueAmount ? loan.currentOverdueAmount.toString() : '0',
-        repaid: loan.currentOverduePeriods > 0 ? '否' : '是',
-      }
+      // 不自动添加逾期详情，让用户手动选择
+      // creditForm.loanOverdueDetails[id] = {
+      //   amount: loan.currentOverdueAmount ? loan.currentOverdueAmount.toString() : '0',
+      //   repaid: loan.currentOverduePeriods > 0 ? '否' : '是',
+      // }
     })
   }
 
@@ -564,11 +564,11 @@ function handleDetailedReportData(data: any) {
         cardNo: maskedCardNo,
       })
 
-      // 添加逾期详情 - 无论是否有逾期都添加
-      creditForm.cardOverdueDetails[id] = {
-        amount: card.currentOverdueAmount ? card.currentOverdueAmount.toString() : '0',
-        repaid: card.currentOverduePeriods > 0 ? '否' : '是',
-      }
+      // 不自动添加逾期详情，让用户手动选择
+      // creditForm.cardOverdueDetails[id] = {
+      //   amount: card.currentOverdueAmount ? card.currentOverdueAmount.toString() : '0',
+      //   repaid: card.currentOverduePeriods > 0 ? '否' : '是',
+      // }
     })
   }
 
