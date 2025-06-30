@@ -236,9 +236,9 @@ function submitForm() {
 
   // 保存表单数据到本地存储
   saveFormDataToStorage()
-  
+
   showSuccessToast('保存成功')
-  
+
   // 跳转到下一页
   router.push('/last-examine/')
 }
@@ -403,8 +403,8 @@ function goBack() {
                 <van-icon name="arrow" class="arrow-icon" />
               </div>
             </div>
-            
-            <div v-if="formData.realMaritalStatus === '已婚'" class="form-item">
+
+            <div v-if="formData.hasDrivingLicense === '否' && formData.realMaritalStatus === '已婚'" class="form-item">
               <div class="form-label required">
                 配偶驾驶证情况
               </div>

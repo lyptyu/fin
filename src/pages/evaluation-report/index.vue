@@ -157,15 +157,15 @@ const processedQueryRecords = computed(() => {
                 </template>
                 <template v-else>
                   无社保
-                </template> |
+                </template> （
                 <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths">
                   当前单位{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths }}个月
                 </template>
                 <template v-else>
                   无社保
-                </template> |
+                </template> ）|
                 <template v-if="reportData?.basicConditions?.enterpriseSituation?.registeredMonths">
-                  {{ reportData?.basicConditions?.enterpriseSituation?.companyArea || '' }}企业注册{{
+                  {{ reportData?.basicConditions?.enterpriseSituation?.companyArea || '' }}企业注册满{{
                     reportData?.basicConditions?.enterpriseSituation?.registeredMonths }}个月
                 </template>
                 <template v-else>
@@ -190,11 +190,9 @@ const processedQueryRecords = computed(() => {
                 {{ reportData?.summaryConditions?.basicAttribute?.sex || '无' }} |
                 {{ reportData?.summaryConditions?.basicAttribute?.age || '0' }}岁 |
                 {{ reportData?.summaryConditions?.basicAttribute?.address || '无' }} |
-                真实婚姻情况：{{ reportData?.summaryConditions?.basicAttribute?.realMaritalStatus || '无' }} |
-                征信婚姻状态：{{ reportData?.summaryConditions?.basicAttribute?.creditMaritalStatus || '无' }} |
-                {{ reportData?.summaryConditions?.basicAttribute?.education || '无' }}/
-                {{ reportData?.summaryConditions?.basicAttribute?.educationCheck || '无' }}/
-                {{ reportData?.summaryConditions?.basicAttribute?.educationFullTime || '无' }}
+                {{ reportData?.summaryConditions?.basicAttribute?.realMaritalStatus || '无' }}（征信：{{ reportData?.summaryConditions?.basicAttribute?.creditMaritalStatus || '无' }}） |
+                {{ reportData?.summaryConditions?.basicAttribute?.education || '无' }}（学信网{{ reportData?.summaryConditions?.basicAttribute?.educationCheck || '不可查' }}/
+                {{ reportData?.summaryConditions?.basicAttribute?.educationCheck === '可查' ? reportData?.summaryConditions?.basicAttribute?.educationFullTime === '是' ? '全日制' : '非全日制' : '' }}）
               </div>
             </div>
             <div class="summary-item">
@@ -466,12 +464,8 @@ const processedQueryRecords = computed(() => {
                       公积金地区：{{ reportData?.basicConditions?.securitySituation?.providentFundArea
                         || reportData?.basicConditions?.securitySituation?.providentFundCompanyType || '-' }} |
                       <template
-                        v-if="reportData?.basicConditions?.securitySituation?.providentFundCompanyType === '同社保单位'"
+                        v-if="reportData?.basicConditions?.securitySituation?.providentFundCompanyType !== '同社保单位'"
                       >
-                        公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompany
-                          || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
-                      </template>
-                      <template v-else>
                         公积金单位名称：{{ reportData?.basicConditions?.securitySituation?.providentFundCompanyName || '无' }} |
                       </template>
                       连续缴公积金合计：{{ reportData?.basicConditions?.securitySituation?.providentFundTotalMonths || '0' }}个月 |
@@ -495,11 +489,7 @@ const processedQueryRecords = computed(() => {
                     <div class="security-content">
                       个税地区：{{ reportData?.basicConditions?.securitySituation?.taxArea
                         || reportData?.basicConditions?.securitySituation?.taxCompanyType || '-' }} |
-                      <template v-if="reportData?.basicConditions?.securitySituation?.taxCompanyType === '同社保单位'">
-                        个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompany
-                          || reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
-                      </template>
-                      <template v-else>
+                      <template v-if="reportData?.basicConditions?.securitySituation?.taxCompanyType !== '同社保单位'">
                         个税单位名称：{{ reportData?.basicConditions?.securitySituation?.taxCompanyName || '无' }} |
                       </template>
                       连续缴个税合计：{{ reportData?.basicConditions?.securitySituation?.taxTotalMonths || '0' }}个月 |
@@ -640,7 +630,7 @@ const processedQueryRecords = computed(() => {
 
                         <template v-if="flow.interest && flow.interest.length > 0">
                           <div class="flow-interest">
-                            近一年结息：{{ flow.interest.join('，') }}
+                            近一年结息：{{ flow.interest.map(item => item + '元').join('，') }}
                           </div>
                         </template>
                       </div>
@@ -1132,8 +1122,7 @@ const processedQueryRecords = computed(() => {
                   </td>
                   <td>
                     {{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.longestOverdueMonths
-                      || '-'
-                    }}
+                      || '-' }}
                   </td>
                   <td>
                     {{ reportData?.creditSituation?.overdueOverdraftSummary?.loan?.lastTwoYears?.maxOverdueAmount
@@ -1843,7 +1832,6 @@ const processedQueryRecords = computed(() => {
 .info-row {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 16px;
 }
 
 .info-row:last-child {
