@@ -811,7 +811,7 @@ const processedQueryRecords = computed(() => {
               <tbody>
                 <tr>
                   <td class="business-category-cell">
-                    住房按揭
+                    房屋抵押
                   </td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.houseMortgage?.institutionsCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.houseMortgage?.accountCount || '-' }}</td>
@@ -820,7 +820,7 @@ const processedQueryRecords = computed(() => {
                 </tr>
                 <tr>
                   <td class="business-category-cell">
-                    汽车按揭
+                    车辆抵押
                   </td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.vehicleMortgage?.institutionsCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.vehicleMortgage?.accountCount || '-' }}</td>
@@ -829,7 +829,7 @@ const processedQueryRecords = computed(() => {
                 </tr>
                 <tr>
                   <td class="business-category-cell">
-                    银行类贷款
+                    银行贷款
                   </td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.bankLoans?.institutionsCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.bankLoans?.accountCount || '-' }}</td>
@@ -838,7 +838,7 @@ const processedQueryRecords = computed(() => {
                 </tr>
                 <tr>
                   <td class="business-category-cell">
-                    非银行类贷款
+                    非银行贷款
                   </td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.nonBankLoans?.institutionsCount || '-' }}</td>
                   <td>{{ reportData?.creditSituation?.specialBusiness?.nonBankLoans?.accountCount || '-' }}</td>
@@ -847,7 +847,7 @@ const processedQueryRecords = computed(() => {
                 </tr>
                 <tr>
                   <td class="business-category-cell">
-                    个人经营贷
+                    个人经营
                   </td>
                   <td>
                     {{ reportData?.creditSituation?.specialBusiness?.personalBusiness?.institutionsCount || '-' }}
@@ -858,7 +858,7 @@ const processedQueryRecords = computed(() => {
                 </tr>
                 <tr>
                   <td class="business-category-cell">
-                    个人消费贷
+                    个人消费
                   </td>
                   <td>
                     {{ reportData?.creditSituation?.specialBusiness?.personalConsumption?.institutionsCount || '-' }}
