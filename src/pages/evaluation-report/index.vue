@@ -101,11 +101,11 @@ const processedQueryRecords = computed(() => {
             <div class="info-item">
               <span class="info-label">期望融资额度</span>
               <span class="info-value">{{ reportData?.basicInform?.financingMes?.financingAmount
-                ? `${reportData.basicInform.financingMes.financingAmount}元` : '无' }}</span>
+                ? `${reportData.basicInform.financingMes.financingAmount}元` : '-' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">资金用途</span>
-              <span class="info-value">{{ reportData?.basicInform?.financingMes?.financingPurpose || '无' }}</span>
+              <span class="info-value">{{ reportData?.basicInform?.financingMes?.financingPurpose || '-' }}</span>
             </div>
           </div>
           <div class="info-row">
