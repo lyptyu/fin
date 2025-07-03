@@ -1719,33 +1719,6 @@ const processedQueryRecords = computed(() => {
               </div>
             </div>
 
-            <!-- 无特殊情况 -->
-            <div
-              v-if="!reportData?.exceptionalCase?.specialNote?.blacklistReasons?.length
-                && !reportData?.exceptionalCase?.specialNote?.queryRecords?.length
-                && !reportData?.exceptionalCase?.specialNote?.blacklistOrgs
-                && !reportData?.exceptionalCase?.specialNote?.rejectedOrgs
-                && !reportData?.exceptionalCase?.specialNote?.carLoanrecords
-                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.loans?.length)
-                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.creditCards?.length)
-                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectedOrgs?.length)
-                && !(reportData?.exceptionalCase?.specialNote?.newLoans?.rejectReasons?.length)
-                && !reportData?.exceptionalCase?.specialNote?.language
-                && !reportData?.exceptionalCase?.specialNote?.writing
-                && !reportData?.exceptionalCase?.specialNote?.physical" class="special-item"
-            >
-              <div class="special-icon">
-                <i class="arrow-icon" />
-              </div>
-              <div class="special-content">
-                <div class="special-title">
-                  无特殊情况
-                </div>
-                <div class="special-detail">
-                  用户无任何特殊情况记录
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
