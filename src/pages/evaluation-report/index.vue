@@ -146,30 +146,19 @@ const processedQueryRecords = computed(() => {
                   v-if="reportData?.basicConditions?.housesConditions?.houses && reportData?.basicConditions?.housesConditions?.houses.length > 0"
                 >
                   {{ reportData?.basicConditions?.housesConditions?.houses[0]?.area || '无' }}・
-                  {{ reportData?.basicConditions?.housesConditions?.houses[0]?.type || '无' }}
+                  {{ reportData?.basicConditions?.housesConditions?.houses[0]?.type || '无' }}|
                 </template>
-                <template v-else>
-                  无房产
-                </template> |
                 <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths">
                   连续缴{{ reportData?.basicConditions?.securitySituation?.socialSecurityArea || '' }}社保合计{{
                     reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths }}个月
                 </template>
-                <template v-else>
-                  无社保
-                </template> （
                 <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths">
-                  当前单位{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths }}个月
+                  （当前单位{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths }}个月 ）|
                 </template>
-                <template v-else>
-                  无社保
-                </template> ）|
+
                 <template v-if="reportData?.basicConditions?.enterpriseSituation?.registeredMonths">
                   {{ reportData?.basicConditions?.enterpriseSituation?.companyArea || '' }}企业注册满{{
                     reportData?.basicConditions?.enterpriseSituation?.registeredMonths }}个月
-                </template>
-                <template v-else>
-                  无企业
                 </template>
                 <!--                <template v-if="reportData?.basicInform?.financingMes?.hasDrivingLicense === '是'"> -->
                 <!--                  本人驾照 -->
@@ -187,12 +176,30 @@ const processedQueryRecords = computed(() => {
                 基本属性：
               </div>
               <div class="summary-content">
-                {{ reportData?.summaryConditions?.basicAttribute?.sex || '无' }} |
-                {{ reportData?.summaryConditions?.basicAttribute?.age || '0' }}岁 |
-                {{ reportData?.summaryConditions?.basicAttribute?.address || '无' }} |
-                {{ reportData?.summaryConditions?.basicAttribute?.realMaritalStatus || '无' }}（征信：{{ reportData?.summaryConditions?.basicAttribute?.creditMaritalStatus || '无' }}） |
-                {{ reportData?.summaryConditions?.basicAttribute?.education || '无' }}（学信网{{ reportData?.summaryConditions?.basicAttribute?.educationCheck || '不可查' }}/
-                {{ reportData?.summaryConditions?.basicAttribute?.educationCheck === '可查' ? reportData?.summaryConditions?.basicAttribute?.educationFullTime === '是' ? '全日制' : '非全日制' : '' }}）
+                <template v-if="reportData?.summaryConditions?.basicAttribute?.sex">
+                  {{ reportData?.summaryConditions?.basicAttribute?.sex }} |
+                </template>
+                <template v-if="reportData?.summaryConditions?.basicAttribute?.age">
+                  {{ reportData?.summaryConditions?.basicAttribute?.age }}岁 |
+                </template>
+                <template v-if="reportData?.summaryConditions?.basicAttribute?.address">
+                  {{ reportData?.summaryConditions?.basicAttribute?.address }} |
+                </template>
+                <template v-if="reportData?.summaryConditions?.basicAttribute?.realMaritalStatus">
+                  {{ reportData?.summaryConditions?.basicAttribute?.realMaritalStatus }}
+                  <template v-if="reportData?.summaryConditions?.basicAttribute?.creditMaritalStatus">
+                    （征信：{{ reportData?.summaryConditions?.basicAttribute?.creditMaritalStatus }}）
+                  </template> |
+                </template>
+                <template v-if="reportData?.summaryConditions?.basicAttribute?.education">
+                  {{ reportData?.summaryConditions?.basicAttribute?.education }}
+                  <template v-if="reportData?.summaryConditions?.basicAttribute?.educationCheck">
+                    （学信网{{ reportData?.summaryConditions?.basicAttribute?.educationCheck || '不可查' }}
+                    <template v-if="reportData?.summaryConditions?.basicAttribute?.educationCheck === '可查' && reportData?.summaryConditions?.basicAttribute?.educationFullTime">
+                      /{{ reportData?.summaryConditions?.basicAttribute?.educationFullTime === '是' ? '全日制' : '非全日制' }}
+                    </template>）
+                  </template>
+                </template>
               </div>
             </div>
             <div class="summary-item">
@@ -200,7 +207,7 @@ const processedQueryRecords = computed(() => {
                 是否可考察：
               </div>
               <div class="summary-content">
-                {{ reportData?.summaryConditions?.investigate?.workType || '无' }} | <span
+                {{ reportData?.summaryConditions?.investigate?.workType ? `${reportData?.summaryConditions?.investigate?.workType}|` : '' }}  <span
                   v-for="(location, index) in reportData?.summaryConditions?.investigate?.investigateLocations"
                   :key="index" class="location-item"
                 ><span class="checked-box">☑</span>{{ location }}</span>
@@ -211,8 +218,8 @@ const processedQueryRecords = computed(() => {
                 配偶配合情况：
               </div>
               <div class="summary-content">
-                {{ reportData?.basicInform?.financingMes?.spouseAware === '是' ? '配偶可知情' : '配偶不可知情' }} |
-                {{ reportData?.basicInform?.financingMes?.spouseCanSign === '是' ? '配偶可共签' : '配偶不可共签' }}
+                {{ reportData?.basicInform?.financingMes?.spouseAware === '是' ? '配偶可知情 | ' : '' }}
+                {{ reportData?.basicInform?.financingMes?.spouseCanSign === '是' ? '配偶可共签' : '' }}
               </div>
             </div>
             <div class="summary-item">
@@ -220,7 +227,7 @@ const processedQueryRecords = computed(() => {
                 驾驶证情况：
               </div>
               <div class="summary-content">
-                本人驾驶证情况：{{ reportData?.basicInform?.financingMes?.hasDrivingLicense || '无' }}
+                {{ reportData?.basicInform?.financingMes?.hasDrivingLicense ? '本人驾驶证情况：是' : '' }}
                 <template v-if="reportData?.basicInform?.financingMes?.spouseHasDrivingLicense">
                   | 配偶驾驶证情况：{{ reportData?.basicInform?.financingMes?.spouseHasDrivingLicense }}
                 </template>
@@ -289,9 +296,9 @@ const processedQueryRecords = computed(() => {
 
                 <!-- 本人特殊情况补充 -->
                 <div class="special-note-item">
-                  <span class="checked-box">☑</span>{{ reportData?.exceptionalCase?.specialNote?.language || '无' }}
-                  <span class="checked-box">☑</span>{{ reportData?.exceptionalCase?.specialNote?.writing || '无' }}
-                  <span class="checked-box">☑</span>{{ reportData?.exceptionalCase?.specialNote?.physical || '无' }}
+                  <span class="checked-box" v-if="reportData?.exceptionalCase?.specialNote?.language">☑</span>{{ reportData?.exceptionalCase?.specialNote?.language || '' }}
+                  <span class="checked-box" v-if="reportData?.exceptionalCase?.specialNote?.writing">☑</span>{{ reportData?.exceptionalCase?.specialNote?.writing || '' }}
+                  <span class="checked-box" v-if="reportData?.exceptionalCase?.specialNote?.physical">☑</span>{{ reportData?.exceptionalCase?.specialNote?.physical || '' }}
                 </div>
               </div>
             </div>
@@ -435,13 +442,13 @@ const processedQueryRecords = computed(() => {
                 <div class="security-section">
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasSocialSecurity === '是'">
                     <div class="security-content">
-                      缴费主体：{{ reportData?.basicConditions?.securitySituation?.socialSecurityPayer || '无' }} |
-                      社保地区：{{ reportData?.basicConditions?.securitySituation?.socialSecurityArea || '无' }} |
-                      社保单位全称：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '无' }} |
-                      连续缴社保合计：{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths || '0' }}个月 |
-                      当前单位：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths || '0' }}个月 |
-                      近半年平均医疗基数：{{ reportData?.basicConditions?.securitySituation?.medicalBase || '0' }}元 |
-                      近半年平均养老基数：{{ reportData?.basicConditions?.securitySituation?.pensionBase || '0' }}元
+                      缴费主体：{{ reportData?.basicConditions?.securitySituation?.socialSecurityPayer || '-' }} |
+                      社保地区：{{ reportData?.basicConditions?.securitySituation?.socialSecurityArea || '-' }} |
+                      社保单位全称：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCompany || '-' }} |
+                      连续缴社保合计：{{ reportData?.basicConditions?.securitySituation?.socialSecurityTotalMonths || '-' }}个月 |
+                      当前单位：{{ reportData?.basicConditions?.securitySituation?.socialSecurityCurrentMonths || '-' }}个月 |
+                      近半年平均医疗基数：{{ reportData?.basicConditions?.securitySituation?.medicalBase || '-' }}元 |
+                      近半年平均养老基数：{{ reportData?.basicConditions?.securitySituation?.pensionBase || '-' }}元
                       <template v-if="reportData?.basicConditions?.securitySituation?.socialSecurityNote">
                         <div class="security-note">
                           社保补充：{{ reportData?.basicConditions?.securitySituation?.socialSecurityNote }}
@@ -457,7 +464,7 @@ const processedQueryRecords = computed(() => {
                     v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund !== '是'"
                     class="security-title"
                   >
-                    无公积金
+
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasProvidentFund === '是'">
                     <div class="security-content">
@@ -483,7 +490,7 @@ const processedQueryRecords = computed(() => {
                 <!-- 个税信息 -->
                 <div class="security-section">
                   <div v-if="reportData?.basicConditions?.securitySituation?.hasTax !== '是'" class="security-title">
-                    无个税
+
                   </div>
                   <template v-if="reportData?.basicConditions?.securitySituation?.hasTax === '是'">
                     <div class="security-content">
@@ -630,7 +637,7 @@ const processedQueryRecords = computed(() => {
 
                         <template v-if="flow.interest && flow.interest.length > 0">
                           <div class="flow-interest">
-                            近一年结息：{{ flow.interest.map(item => item + '元').join('，') }}
+                            近一年结息：{{ flow.interest.map(item => `${item}元`).join('，') }}
                           </div>
                         </template>
                       </div>
