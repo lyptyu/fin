@@ -779,6 +779,21 @@ const processedQueryRecords = computed(() => {
                 </tr>
                 <tr>
                   <td class="debt-category-cell">
+                    分期卡
+                  </td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCardAccount?.institutionsCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCardAccount?.accountCount || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCardAccount?.totalCreditLimit || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCardAccount?.balance || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCardAccount?.usedCreditLimit || '-' }}</td>
+                  <td>
+                    {{ reportData?.creditSituation?.debtSummary?.creditCardAccount?.averageRepaymentLast6Months || '-' }}
+                  </td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCardAccount?.averageUsageLast6Months || '-' }}</td>
+                  <td>{{ reportData?.creditSituation?.debtSummary?.creditCardAccount?.monthlyPayment || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="debt-category-cell">
                     合计
                   </td>
                   <td>{{ reportData?.creditSituation?.debtSummary?.debtSummaryCount?.institutionsCount || '-' }}</td>
