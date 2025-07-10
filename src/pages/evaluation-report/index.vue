@@ -238,7 +238,7 @@ const processedQueryRecords = computed(() => {
                 大数据情况：
               </div>
               <div class="summary-content">
-                伽马大数据{{ reportData?.bgLeave }}
+                伽马大数据{{ reportData?.summaryConditions?.bgLeave }}
               </div>
             </div>
             <div class="summary-item">

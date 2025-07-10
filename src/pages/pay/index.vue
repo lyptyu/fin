@@ -34,7 +34,6 @@ onMounted(async () => {
   // 如果route.query.out_trade_no存在，表示是支付回调，需要获取支付结果
   if (route.query.out_trade_no) {
     const res = await queryTradeNo({ outTradeNo: route.query.out_trade_no })
-    debugger
     if (res.code === 0) {
       // 支付成功，跳转到gama-bigdata页面
       router.push('/gama-bigdata')
